@@ -112,3 +112,49 @@
   -webkit-text-fill-color: transparent;
   animation: textGradient 6s ease infinite;
 }
+
+/* Private Jet Floating & Cloud Passing Animations */
+@keyframes jetFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-1.5deg); }
+}
+
+@keyframes cloudPass1 {
+  0% { transform: translateY(-50%) translateX(0); }
+  100% { transform: translateY(120%) translateX(50px); }
+}
+
+@keyframes cloudPass2 {
+  0% { transform: translateY(-60%) translateX(0); }
+  100% { transform: translateY(130%) translateX(-40px); }
+}
+
+@keyframes speedLine {
+  0% { transform: translateY(-40px); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(140px); opacity: 0; }
+}
+
+.animate-jet-float {
+  animation: jetFloat 4s ease-in-out infinite;
+}
+
+.animate-cloud-pass-1 {
+  animation: cloudPass1 7s linear infinite;
+}
+
+.animate-cloud-pass-2 {
+  animation: cloudPass2 9s linear infinite;
+}
+
+.animate-cloud-pass-3 {
+  animation: cloudPass1 11s linear infinite reverse;
+}
+
+.animate-speed-line-1 {
+  animation: speedLine 1.2s ease-in-out infinite;
+}
+
+.animate-speed-line-2 {
+  animation: speedLine 1.6s ease-in-out infinite 0.4s;
+}

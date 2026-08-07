@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
@@ -196,24 +197,8 @@ export function CanvasScroll() {
 
   return (
     <>
-      {/* Preloader Overlay */}
-      <div
-        className={`fixed inset-0 bg-[#04060a] z-50 flex items-center justify-center transition-opacity duration-700 pointer-events-none ${
-          isLoaded ? 'opacity-0 visibility-hidden' : 'opacity-100'
-        }`}
-      >
-        <div className="flex flex-col items-center space-y-3">
-          <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-amber-400 shadow-[0_0_12px_#fbbf24] transition-all duration-200"
-              style={{ width: `${loadProgress}%` }}
-            />
-          </div>
-          <span className="text-xs text-white/70 tracking-widest font-mono uppercase font-semibold">
-            Loading Paris Experience {loadProgress}%
-          </span>
-        </div>
-      </div>
+      {/* Animated Private Jet Preloader with Sound Effects */}
+      <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
       {/* Fixed Background Canvas */}
       <canvas
