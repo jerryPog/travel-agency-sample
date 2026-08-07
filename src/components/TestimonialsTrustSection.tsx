@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Star, MessageSquareQuote, MapPin, Compass, MessageCircleHeart, Globe2, ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function TestimonialsTrustSection() {
+  const { t } = useLanguage();
   const reviews = [
     {
       id: 1,
@@ -157,15 +159,15 @@ export function TestimonialsTrustSection() {
   return (
     <section id="why-us" className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Header */}
-      <div className="reveal-on-scroll text-center max-w-2xl mx-auto mb-12">
+      <div className="text-center max-w-2xl mx-auto mb-12">
         <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-white/90 mb-4 tracking-wide">
-          Why Choose Us
+          {t('testimonialsBadge')}
         </span>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white font-['Plus_Jakarta_Sans',sans-serif] tracking-tight mb-4">
-          Why Travelers Trust Us
+          {t('testimonialsTitle')}
         </h2>
         <p className="text-white/80 text-sm leading-relaxed">
-          We combine insider Parisian expertise with dedicated 24/7 support so you can explore Paris with total peace of mind.
+          {t('testimonialsSub')}
         </p>
       </div>
 

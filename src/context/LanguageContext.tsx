@@ -50,6 +50,15 @@ const translations: Record<Language, Record<string, string>> = {
     scenicRoutes: 'scenic routes',
     avgRating: 'average rating',
 
+    // Story Section
+    storyBadge: 'About Us',
+    storyTitle: 'Your Local Experts in Everything Paris',
+    storyDesc: 'We are a Paris-based travel company built on one simple idea: the best trips aren\'t just seen, they\'re felt. Our team of local experts and passionate travel planners designs journeys that go beyond the usual checklist of sights, blending iconic landmarks with quiet cafés, riverside walks, and neighborhood gems.',
+    storyQuote: '"Whether it\'s your first visit or your fifth, we tailor every itinerary to how you like to travel — slow and immersive, packed and adventurous, or somewhere in between."',
+    quietCafes: 'Quiet Cafés',
+    localTeam: 'Local Paris Team',
+    tailoredPace: 'Tailored Pacing',
+
     // Why Choose Us
     whyTitle: 'Why travelers choose Paris Travel Co.',
     whySub: 'Every journey we organize is built on trust, safety, and unforgettable views.',
@@ -65,11 +74,12 @@ const translations: Record<Language, Record<string, string>> = {
     // District Guide
     districtBadge: 'Interactive Neighborhood Guide',
     districtTitle: 'Explore Paris’s Most Iconic Arrondissements',
-    districtSub: 'Click any district on the interactive map below to uncover secret photo spots, top sights, and local guide recommendations.',
+    districtSub: 'Click any district on the interactive map below to uncover secret photo spots, top attractions, and local guide recommendations.',
 
     // Services
     servicesBadge: 'Our Offerings',
     servicesTitle: 'Crafted Experiences For Every Traveler',
+    learnMore: 'Learn More',
 
     // Pricing & Packages
     pricingBadge: 'Curated Pricing & Plans',
@@ -80,6 +90,11 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'Private VIP',
     filterFood: 'Art & Gastronomy',
     filterFamily: 'Family Friendly',
+
+    // Testimonials
+    testimonialsBadge: 'Traveler Stories & Reviews',
+    testimonialsTitle: 'Loved by Travelers Worldwide',
+    testimonialsSub: 'Real stories from couples, families, and solo adventurers who explored Paris with us.',
 
     // Quote Calculator
     calcTitle: 'Calculate Your Custom Itinerary Estimate',
@@ -140,6 +155,15 @@ const translations: Record<Language, Record<string, string>> = {
     scenicRoutes: 'parcours panoramiques',
     avgRating: 'note moyenne',
 
+    // Story Section
+    storyBadge: 'À Propos',
+    storyTitle: 'Vos Experts Locaux à Paris',
+    storyDesc: 'Nous sommes une agence basée à Paris créée autour d\'une idée simple : les meilleurs voyages ne se visitent pas seulement, ils se vivent. Notre équipe de guides passionnés conçoit des séjours qui vont au-delà des itinéraires touristiques classiques, mêlant monuments célèbres, cafés tranquilles et ruelles secrètes.',
+    storyQuote: '"Que ce soit votre première ou votre cinquième visite, nous adaptons chaque itinéraire à vos envies — immersif et doux, dynamique et aventureux, ou un juste milieu."',
+    quietCafes: 'Cafés Paisibles',
+    localTeam: 'Équipe Locale Parisienne',
+    tailoredPace: 'Rythme Sur Mesure',
+
     // Why Choose Us
     whyTitle: 'Pourquoi les voyageurs choisissent Paris Travel Co.',
     whySub: 'Chaque itinéraire est bâti sur la confiance, la sécurité et des vues inoubliables.',
@@ -160,6 +184,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Services
     servicesBadge: 'Nos Prestations',
     servicesTitle: 'Des Expériences Conçues Pour Chaque Voyageur',
+    learnMore: 'En Savoir Plus',
 
     // Pricing & Packages
     pricingBadge: 'Formules & Tarifs',
@@ -170,6 +195,11 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'VIP Privé',
     filterFood: 'Art & Gastronomie',
     filterFamily: 'En Famille',
+
+    // Testimonials
+    testimonialsBadge: 'Témoignages & Avis Voyageurs',
+    testimonialsTitle: 'Apprécié par les Voyageurs du Monde Entier',
+    testimonialsSub: 'De vraies histoires de couples, familles et aventuriers solitaires ayant exploré Paris avec nous.',
 
     // Quote Calculator
     calcTitle: 'Calculez l’Estimation de Votre Séjour Sur Mesure',

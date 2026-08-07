@@ -19,12 +19,12 @@ export function BannerNavbar({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: 'home', label: 'Home', href: '#' },
-    { id: 'about', label: 'About Us', href: '#about' },
-    { id: 'services', label: 'Services', href: '#services' },
-    { id: 'packages', label: 'Packages', href: '#packages' },
-    { id: 'why-us', label: 'Why Choose Us', href: '#why-us' },
-    { id: 'contact', label: 'Contact', href: '#contact' },
+    { id: 'home', label: t('home'), href: '#' },
+    { id: 'about', label: t('aboutUs'), href: '#about' },
+    { id: 'services', label: t('services'), href: '#services' },
+    { id: 'packages', label: t('packages'), href: '#packages' },
+    { id: 'why-us', label: t('whyUs'), href: '#why-us' },
+    { id: 'contact', label: t('contact'), href: '#contact' },
   ];
 
   const handleNavClick = (item: typeof navItems[0]) => {
@@ -40,7 +40,7 @@ export function BannerNavbar({
   };
 
   return (
-    <header className="w-full pt-5 pb-3 px-6 md:px-12 flex items-center justify-between z-20 relative flex-nowrap whitespace-nowrap">
+    <header className="w-full pt-5 pb-3 px-4 sm:px-6 md:px-12 flex items-center justify-between z-20 relative flex-nowrap whitespace-nowrap">
       {/* Brand Logo */}
       <button
         onClick={onBrandClick}
@@ -49,7 +49,7 @@ export function BannerNavbar({
         {brandName}
       </button>
 
-      {/* Center Navigation Links (Pill Container) - Perfectly Center Aligned */}
+      {/* Center Navigation Links (Pill Container) - Hidden on mobile, visible on desktop */}
       <nav className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2 flex-nowrap whitespace-nowrap">
         {navItems.map((item) => {
           const isActive = activeNav.toLowerCase() === item.id.toLowerCase() || (activeNav === 'Home' && item.id === 'home');
@@ -69,7 +69,7 @@ export function BannerNavbar({
         })}
       </nav>
 
-      {/* Right Controls: Language Toggle & Open Menu Button */}
+      {/* Right Controls: Language Toggle & Mobile Menu Toggle */}
       <div className="flex items-center space-x-2 sm:space-x-3 shrink-0 whitespace-nowrap">
         {/* Language Switcher Toggle */}
         <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 p-1 rounded-full text-xs font-semibold">
@@ -91,7 +91,7 @@ export function BannerNavbar({
           </button>
         </div>
 
-        {/* Mobile Menu Button - Hidden on laptop/desktop (lg:hidden) since main nav is visible */}
+        {/* Mobile Menu Button - Hidden on desktop (lg:hidden) */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="lg:hidden px-3.5 sm:px-4 py-1.5 text-xs sm:text-sm font-medium text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center space-x-1.5 cursor-pointer whitespace-nowrap shrink-0"
