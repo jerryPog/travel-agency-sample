@@ -12,29 +12,47 @@ interface PrivateJetLoaderProps {
 export function PrivateJetLoader({ isLoaded }: PrivateJetLoaderProps) {
   const [animProgress, setAnimProgress] = useState(0);
   const [hidden, setHidden] = useState(false);
+  const [soundPlayed, setSoundPlayed] = useState(false);
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
 
+  // ── Sound: try immediately, then re-try on first user gesture ───────
   useEffect(() => {
-    // Attempt autoplay; fallback to first pointer interaction
-    try {
-      playJetSound(DURATION_MS / 1000);
-    } catch {
-      const trySound = () => {
+    const tryPlay = () => {
+      if (!soundPlayed) {
         playJetSound(DURATION_MS / 1000);
-        window.removeEventListener('pointerdown', trySound);
-      };
-      window.addEventListener('pointerdown', trySound, { once: true });
-    }
+        setSoundPlayed(true);
+      }
+    };
 
-    // Cubic ease-in-out animation loop
+    // Attempt direct autoplay (works when page was activated via navigation)
+    tryPlay();
+
+    // Fallback: unlock on first pointer/touch in case browser blocked it
+    const unlock = () => {
+      tryPlay();
+      document.removeEventListener('pointerdown', unlock);
+      document.removeEventListener('touchstart', unlock);
+    };
+    document.addEventListener('pointerdown', unlock, { once: true });
+    document.addEventListener('touchstart', unlock, { once: true });
+
+    return () => {
+      document.removeEventListener('pointerdown', unlock);
+      document.removeEventListener('touchstart', unlock);
+    };
+  }, []);
+
+  // ── Cubic ease-in-out animation loop ────────────────────────────────
+  useEffect(() => {
     const tick = (now: number) => {
       if (startTimeRef.current === null) startTimeRef.current = now;
       const elapsed = now - startTimeRef.current;
       const raw = Math.min(elapsed / DURATION_MS, 1);
-      const eased = raw < 0.5
-        ? 4 * raw * raw * raw
-        : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+      const eased =
+        raw < 0.5
+          ? 4 * raw * raw * raw
+          : 1 - Math.pow(-2 * raw + 2, 3) / 2;
 
       setAnimProgress(eased);
 
@@ -47,6 +65,7 @@ export function PrivateJetLoader({ isLoaded }: PrivateJetLoaderProps) {
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, []);
 
+  // ── Hide after both animation done AND images ready ──────────────────
   useEffect(() => {
     if (isLoaded && animProgress >= 0.99) {
       setTimeout(() => setHidden(true), 300);
@@ -55,48 +74,43 @@ export function PrivateJetLoader({ isLoaded }: PrivateJetLoaderProps) {
 
   if (hidden) return null;
 
-  // Jet flies from 110vh → -110vh
+  // Jet flies from 110vh → -110vh as eased progress goes 0 → 1
   const jetYPercent = 110 - animProgress * 220;
   // Curtain clips from bottom upward as jet ascends
   const curtainClip = `inset(0 0 ${animProgress * 100}% 0)`;
 
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden select-none">
+    // pointer-events-auto so first tap on mobile triggers audio unlock
+    <div className="fixed inset-0 z-50 pointer-events-auto overflow-hidden select-none">
 
-      {/* ── CLOUDY NAVY CURTAIN wiped away bottom→top ── */}
+      {/* ── CLOUDY NAVY CURTAIN wiped away bottom → top ── */}
       <div
         className="absolute inset-0"
         style={{ clipPath: curtainClip, WebkitClipPath: curtainClip }}
       >
-        {/* Sky gradient base — deep navy at bottom, lighter at top */}
+        {/* Sky gradient: lighter near top (horizon), deep navy at bottom */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a2550] via-[#061830] to-[#030e1f]" />
 
-        {/* Large slow drifting cloud blobs */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Clouds — scattered across the full curtain */}
-          <div className="absolute top-[5%] left-[-5%] w-[55vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
-          <div className="absolute top-[8%] left-[35%] w-[40vw] h-[18vh] bg-white/[0.05] rounded-full blur-3xl" />
-          <div className="absolute top-[20%] right-[-10%] w-[50vw] h-[20vh] bg-white/[0.06] rounded-full blur-3xl" />
-
-          <div className="absolute top-[35%] left-[-8%] w-[60vw] h-[25vh] bg-white/[0.08] rounded-full blur-3xl" />
-          <div className="absolute top-[38%] right-[5%] w-[45vw] h-[20vh] bg-white/[0.05] rounded-full blur-3xl" />
-
-          <div className="absolute top-[55%] left-[10%] w-[55vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
-          <div className="absolute top-[60%] right-[-5%] w-[40vw] h-[18vh] bg-white/[0.06] rounded-full blur-3xl" />
-
-          <div className="absolute top-[75%] left-[-5%] w-[50vw] h-[20vh] bg-white/[0.08] rounded-full blur-3xl" />
-          <div className="absolute top-[78%] right-[10%] w-[45vw] h-[18vh] bg-white/[0.05] rounded-full blur-3xl" />
-
-          <div className="absolute top-[88%] left-[5%] w-[60vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
-
-          {/* Subtle blue atmospheric glow streaks */}
-          <div className="absolute top-[15%] left-1/2 -translate-x-1/2 w-[80vw] h-[8vh] bg-blue-400/[0.04] rounded-full blur-2xl" />
-          <div className="absolute top-[50%] left-1/2 -translate-x-1/2 w-[90vw] h-[10vh] bg-blue-300/[0.05] rounded-full blur-2xl" />
-          <div className="absolute top-[80%] left-1/2 -translate-x-1/2 w-[70vw] h-[8vh] bg-blue-400/[0.04] rounded-full blur-2xl" />
+        {/* Cloud blobs scattered across the full curtain height */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-[4%]  left-[-5%]  w-[55vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
+          <div className="absolute top-[7%]  left-[38%]  w-[40vw] h-[18vh] bg-white/[0.05] rounded-full blur-3xl" />
+          <div className="absolute top-[18%] right-[-8%] w-[50vw] h-[20vh] bg-white/[0.06] rounded-full blur-3xl" />
+          <div className="absolute top-[32%] left-[-6%] w-[58vw] h-[24vh] bg-white/[0.08] rounded-full blur-3xl" />
+          <div className="absolute top-[36%] right-[4%]  w-[44vw] h-[20vh] bg-white/[0.05] rounded-full blur-3xl" />
+          <div className="absolute top-[52%] left-[8%]   w-[55vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
+          <div className="absolute top-[58%] right-[-4%] w-[42vw] h-[18vh] bg-white/[0.06] rounded-full blur-3xl" />
+          <div className="absolute top-[72%] left-[-4%] w-[50vw] h-[20vh] bg-white/[0.08] rounded-full blur-3xl" />
+          <div className="absolute top-[76%] right-[8%]  w-[46vw] h-[18vh] bg-white/[0.05] rounded-full blur-3xl" />
+          <div className="absolute top-[88%] left-[4%]   w-[62vw] h-[22vh] bg-white/[0.07] rounded-full blur-3xl" />
+          {/* Blue atmospheric glow bands between cloud layers */}
+          <div className="absolute top-[12%] left-1/2 -translate-x-1/2 w-[90vw] h-[6vh] bg-blue-300/[0.04] rounded-full blur-2xl" />
+          <div className="absolute top-[48%] left-1/2 -translate-x-1/2 w-[80vw] h-[8vh] bg-blue-400/[0.05] rounded-full blur-2xl" />
+          <div className="absolute top-[82%] left-1/2 -translate-x-1/2 w-[75vw] h-[6vh] bg-blue-300/[0.04] rounded-full blur-2xl" />
         </div>
       </div>
 
-      {/* ── PRIVATE JET flying from bottom to top, above the curtain edge ── */}
+      {/* ── PRIVATE JET flying upward, on top of the curtain wipe edge ── */}
       <div
         className="absolute left-0 right-0 z-[60] flex flex-col items-center justify-center pointer-events-none"
         style={{
@@ -106,16 +120,16 @@ export function PrivateJetLoader({ isLoaded }: PrivateJetLoaderProps) {
       >
         <div className="relative">
           {/* Shockwave ring ahead of nose */}
-          <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-24 border border-blue-300/20 rounded-full animate-ping opacity-40 pointer-events-none blur-sm" />
+          <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-64 h-24 border border-blue-300/20 rounded-full animate-ping opacity-40 blur-sm" />
 
-          {/* Cloud parting wake */}
-          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[480px] h-24 bg-gradient-to-t from-white/10 via-white/[0.06] to-transparent rounded-full filter blur-xl pointer-events-none" />
+          {/* Cloud-parting wake behind jet */}
+          <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-[480px] h-24 bg-gradient-to-t from-white/10 via-white/[0.06] to-transparent rounded-full blur-xl" />
 
           {/* The Jet */}
           <JetGraphic scale={1.15} showEnginesGlow={true} />
 
-          {/* Nose searchlight beam */}
-          <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-48 h-56 bg-gradient-to-t from-blue-200/20 via-blue-300/[0.07] to-transparent rounded-full filter blur-lg pointer-events-none" />
+          {/* Nose searchlight beam cutting through clouds */}
+          <div className="absolute -top-48 left-1/2 -translate-x-1/2 w-48 h-56 bg-gradient-to-t from-blue-200/20 via-blue-300/[0.07] to-transparent rounded-full blur-lg" />
         </div>
       </div>
 
