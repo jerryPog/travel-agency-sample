@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CanvasScroll } from './components/CanvasScroll';
 import { ScrollObserver } from './components/ScrollObserver';
 import { BannerNavbar } from './components/BannerNavbar';
@@ -46,6 +46,14 @@ const navyPresets = [
 export default function App() {
   const [config, setConfig] = useState<BannerConfig>(defaultBannerConfig);
   const [showWizardModal, setShowWizardModal] = useState(false);
+
+  useEffect(() => {
+    // Disable browser automatic scroll restoration and force page to top on refresh
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   const getNavyHex = () => {
     if (config.navyTheme === 'custom') return config.customNavyColor;
