@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Landmark, Sparkles, Sliders, Sun, Users2, ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export function ServicesSection() {
+  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const services = [
@@ -60,86 +62,71 @@ export function ServicesSection() {
   };
 
   return (
-    <section id="services" className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-16 text-white font-['DM_Sans',sans-serif]">
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Section Header */}
-      <div className="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
         <div>
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-white/90 mb-4 tracking-wide">
-            Our Services & Packages
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-amber-300 mb-3">
+            {t('servicesBadge')}
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white font-['Plus_Jakarta_Sans',sans-serif] tracking-tight leading-tight max-w-xl">
-            What We Offer
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Plus_Jakarta_Sans',sans-serif] tracking-tight text-white">
+            {t('servicesTitle')}
           </h2>
         </div>
-        <p className="text-white/70 text-sm max-w-md leading-relaxed font-normal">
-          From iconic landmarks to secret cobblestone alleys, explore Paris with experiences built around your unique travel style.
-        </p>
       </div>
 
-      {/* Services Grid */}
+      {/* Services Grid - Fully responsive on Mobile, Tablet & Desktop */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {services.map((service, index) => {
+        {services.map((service) => {
           const Icon = service.icon;
-          const isLarge = index === 0 || index === 2;
-          const delayClass = `delay-${((index % 3) + 1) * 100}`;
-
           return (
             <div
               key={service.id}
-              className={`reveal-on-scroll ${delayClass} group bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-7 shadow-2xl glass-card-hover flex flex-col justify-between ${
-                isLarge ? 'lg:col-span-1' : ''
-              }`}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between glass-card-hover group min-h-[360px]"
             >
-              <div>
-                {/* Header Badge & Icon */}
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-10 h-10 rounded-2xl bg-white text-[#0B132B] flex items-center justify-center shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                    <Icon className="w-5 h-5 stroke-[2.2]" />
-                  </div>
-                  <span className="text-[11px] font-semibold text-white/90 bg-white/15 px-3 py-1 rounded-full border border-white/20">
-                    {service.tag}
-                  </span>
-                </div>
-
-                {/* Card Title */}
-                <h3 className="text-xl font-bold text-white mb-2.5 font-['Plus_Jakarta_Sans',sans-serif] tracking-tight">
-                  {service.title}
-                </h3>
-
-                {/* Card Description */}
-                <p className="text-white/80 text-xs sm:text-sm leading-relaxed mb-6 font-normal">
-                  {service.description}
-                </p>
-
-                {/* Highlights List */}
-                <div className="space-y-2 mb-6 border-t border-white/10 pt-4">
-                  {service.highlights.map((h, i) => (
-                    <div key={i} className="flex items-center space-x-2 text-xs text-white/85">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                      <span>{h}</span>
-                    </div>
-                  ))}
+              {/* Card Image Header */}
+              <div className="relative h-44 w-full overflow-hidden">
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#081028] via-[#081028]/40 to-transparent" />
+                <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-semibold px-3 py-1 rounded-full">
+                  {service.tag}
+                </span>
+                <div className="absolute bottom-3 left-4 w-9 h-9 rounded-full bg-white text-[#0B132B] flex items-center justify-center shadow-lg">
+                  <Icon className="w-4.5 h-4.5" />
                 </div>
               </div>
 
-              {/* Bottom Image Thumbnail & CTA */}
-              <div className="pt-2">
-                <div className="relative h-32 w-full rounded-2xl overflow-hidden mb-4 border border-white/20 shadow-md">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              {/* Card Body */}
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white mb-2">
+                    {service.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-white/75 leading-relaxed mb-4">
+                    {service.description}
+                  </p>
+
+                  <ul className="space-y-1.5 mb-6">
+                    {service.highlights.map((h, i) => (
+                      <li key={i} className="flex items-center space-x-2 text-xs text-white/90">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 <button
                   onClick={handleExploreClick}
-                  className="w-full bg-white/10 hover:bg-white text-white hover:text-[#0B132B] font-semibold text-xs py-2.5 px-4 rounded-full border border-white/20 transition-all duration-300 flex items-center justify-between group-hover:shadow-lg cursor-pointer"
+                  className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-[#0B132B] border border-white/20 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
-                  <span>Explore Package</span>
-                  <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+                  <span>Learn More</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>

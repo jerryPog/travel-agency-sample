@@ -76,13 +76,13 @@ export function ParisDistrictMap() {
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-amber-300 mb-3 shadow-lg">
           <Compass className="w-3.5 h-3.5 text-amber-300" />
-          <span>Interactive Neighborhood Guide</span>
+          <span>{t('districtBadge')}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Plus_Jakarta_Sans',sans-serif] tracking-tight text-white mb-3">
-          Explore Paris’s Most Iconic Arrondissements
+          {t('districtTitle')}
         </h2>
         <p className="text-xs sm:text-sm text-white/70">
-          Click any district on the interactive map below to uncover secret photo spots, top attractions, and local guide recommendations.
+          {t('districtSub')}
         </p>
       </div>
 
