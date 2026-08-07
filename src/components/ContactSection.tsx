@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Mail, Clock, Send, CheckCircle, Sparkles, MapPin } from 'lucide-react';
+import { Mail, Clock, Send, CheckCircle, Sparkles, MapPin, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function ContactSection() {
@@ -14,6 +14,11 @@ export function ContactSection() {
     e.preventDefault();
     if (!name || !email) return;
     setSubmitted(true);
+  };
+
+  const scrollToPackages = () => {
+    const el = document.querySelector('#packages');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -89,25 +94,39 @@ export function ContactSection() {
           </div>
         </div>
 
-        {/* Center: Eiffel Tower Viewport */}
-        <div className="lg:col-span-4 min-h-[320px] sm:min-h-[420px] flex flex-col items-center justify-between p-6 rounded-3xl border-2 border-dashed border-amber-300/40 bg-transparent relative shadow-[inset_0_0_40px_rgba(0,0,0,0.6)]">
-          <div className="flex items-center space-x-2 px-4 py-1.5 rounded-full bg-black/60 border border-amber-300/50 backdrop-blur-md text-xs font-semibold text-amber-300 tracking-wider uppercase font-mono shadow-xl animate-float">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>Eiffel Tower View</span>
+        {/* Center: Redesigned Eiffel Tower Night Showcase Card */}
+        <div className="lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] shadow-2xl border border-white/20 group flex flex-col justify-between p-6 sm:p-8">
+          <img
+            src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1000&q=80"
+            alt="Eiffel Tower Night Sunset"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#050C1E] via-[#050C1E]/50 to-black/30" />
+
+          {/* Top Glass Badge */}
+          <div className="relative z-10 self-start">
+            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-black/60 border border-amber-300/40 backdrop-blur-md text-xs font-semibold text-amber-300 shadow-xl">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+              <span>Eiffel Sunset & Sparkle Hour</span>
+            </div>
           </div>
 
-          <div className="my-auto text-center px-4">
-            <MapPin className="w-8 h-8 text-amber-300 mx-auto mb-2 animate-bounce" />
-            <p className="text-xs font-extrabold uppercase tracking-widest text-white/90 font-mono">
-              Unobstructed Viewport
+          {/* Bottom Overlay Content */}
+          <div className="relative z-10 space-y-3">
+            <h3 className="text-xl sm:text-2xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white leading-tight">
+              Experience the Magic of Paris Illuminated
+            </h3>
+            <p className="text-xs sm:text-sm text-white/80 leading-relaxed">
+              Private summit access, champagne toasts, and Seine river viewings curated by local expert guides.
             </p>
-            <p className="text-[11px] text-white/70 mt-1">
-              Watch the Eiffel Tower light ray shine through as you scroll
-            </p>
-          </div>
-
-          <div className="px-4 py-2 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-[10px] text-white/80 text-center font-mono tracking-wide">
-            Scroll further for full panorama
+            <button
+              onClick={scrollToPackages}
+              className="w-full py-2.5 px-4 bg-white/10 hover:bg-white text-white hover:text-[#0B132B] border border-white/30 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer shadow-lg"
+            >
+              <span>Explore Eiffel Tours</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 

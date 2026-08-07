@@ -25,6 +25,11 @@ export function AboutParisSection() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToDistricts = () => {
+    const el = document.querySelector('#districts');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Top Header Row */}
@@ -74,9 +79,13 @@ export function AboutParisSection() {
             >
               <span>{t('contactUs')}</span>
             </button>
-            <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white group-hover:bg-white group-hover:text-[#0B132B] transition-colors">
+            <button
+              onClick={scrollToContact}
+              title="Contact Us"
+              className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[#0B132B] transition-all cursor-pointer shadow-md hover:scale-110"
+            >
               <ArrowUpRight className="w-4 h-4" />
-            </div>
+            </button>
           </div>
         </div>
 
@@ -94,7 +103,7 @@ export function AboutParisSection() {
           </div>
         </div>
 
-        {/* Card 3: Travelers Moments Gallery (Fully responsive grid layout, no overflowing absolute offsets) */}
+        {/* Card 3: Travelers Moments Gallery */}
         <div className="md:col-span-12 lg:col-span-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 flex flex-col justify-between shadow-2xl min-h-[280px] glass-card-hover">
           <div className="grid grid-cols-3 gap-2 mb-4">
             <img
@@ -210,8 +219,11 @@ export function AboutParisSection() {
           </div>
         </div>
 
-        {/* Card C: Visual Moment Card */}
-        <div className="md:col-span-12 lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[300px] shadow-2xl border border-white/20 group">
+        {/* Card C: Visual Moment Card (Interactive Button) */}
+        <button
+          onClick={scrollToDistricts}
+          className="md:col-span-12 lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[300px] shadow-2xl border border-white/20 group text-left cursor-pointer"
+        >
           <img
             src="https://images.unsplash.com/photo-1522093007474-d86e9bf7ba6f?auto=format&fit=crop&w=800&q=80"
             alt="Trip moment"
@@ -227,7 +239,7 @@ export function AboutParisSection() {
               <ArrowUpRight className="w-4.5 h-4.5" />
             </div>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* Brand & Partner Logos Row */}
