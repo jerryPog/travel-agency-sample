@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface BannerNavbarProps {
   brandName: string;
@@ -14,6 +15,7 @@ export function BannerNavbar({
   onNavClick,
   onBrandClick,
 }: BannerNavbarProps) {
+  const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -67,13 +69,33 @@ export function BannerNavbar({
         })}
       </nav>
 
-      {/* Right Controls: Open Menu Button */}
-      <div className="flex items-center space-x-3 shrink-0 whitespace-nowrap">
+      {/* Right Controls: Language Toggle & Open Menu Button */}
+      <div className="flex items-center space-x-2 sm:space-x-3 shrink-0 whitespace-nowrap">
+        {/* Language Switcher Toggle */}
+        <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 p-1 rounded-full text-xs font-semibold">
+          <button
+            onClick={() => setLanguage('en')}
+            className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+              language === 'en' ? 'bg-white text-[#0B132B] font-bold shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLanguage('fr')}
+            className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+              language === 'fr' ? 'bg-white text-[#0B132B] font-bold shadow-xs' : 'text-white/70 hover:text-white'
+            }`}
+          >
+            FR
+          </button>
+        </div>
+
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-medium text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center space-x-2 cursor-pointer whitespace-nowrap shrink-0"
         >
-          <span className="whitespace-nowrap">Open menu</span>
+          <span className="whitespace-nowrap">{t('openMenu')}</span>
           {mobileMenuOpen ? (
             <X className="w-4 h-4 text-white shrink-0" />
           ) : (

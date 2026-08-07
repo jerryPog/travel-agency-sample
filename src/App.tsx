@@ -10,7 +10,11 @@ import { ServicesSection } from './components/ServicesSection';
 import { PricingPlansSection } from './components/PricingPlansSection';
 import { TestimonialsTrustSection } from './components/TestimonialsTrustSection';
 import { ContactSection } from './components/ContactSection';
-import { CodeExportModal } from './components/CodeExportModal';
+import { WeatherCurrencyWidget } from './components/WeatherCurrencyWidget';
+import { ItineraryWizardModal } from './components/ItineraryWizardModal';
+import { ParisDistrictMap } from './components/ParisDistrictMap';
+import { WhatsAppChatButton } from './components/WhatsAppChatButton';
+import { LanguageProvider } from './context/LanguageContext';
 import { BannerConfig } from './types';
 
 const defaultBannerConfig: BannerConfig = {
@@ -41,6 +45,7 @@ const navyPresets = [
 
 export default function App() {
   const [config, setConfig] = useState<BannerConfig>(defaultBannerConfig);
+  const [showWizardModal, setShowWizardModal] = useState(false);
 
   const getNavyHex = () => {
     if (config.navyTheme === 'custom') return config.customNavyColor;
@@ -52,17 +57,16 @@ export default function App() {
     setConfig((prev) => ({ ...prev, ...updated }));
   };
 
-  const handleReset = () => {
-    setConfig(defaultBannerConfig);
-  };
-
   return (
-    <>
+    <LanguageProvider>
       {/* Scroll Reveal Intersection Observer */}
       <ScrollObserver />
 
       {/* Fixed Background Smooth Canvas Animation */}
       <CanvasScroll />
+
+      {/* Live Weather & Currency Bar */}
+      <WeatherCurrencyWidget />
 
       {/* Foreground Translucent Content Container */}
       <main
@@ -72,7 +76,7 @@ export default function App() {
         className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
         {/* Hero Section Container */}
-        <section id="home" className="w-full max-w-[1440px] h-screen max-h-[900px] min-h-[580px] flex flex-col justify-between relative overflow-hidden pt-10 pb-6 px-2">
+        <section id="home" className="w-full max-w-[1440px] h-screen max-h-[900px] min-h-[580px] flex flex-col justify-between relative overflow-hidden pt-6 pb-6 px-2">
           <BannerNavbar
             brandName={config.brandName}
             activeNav={config.activeNav}
@@ -84,10 +88,7 @@ export default function App() {
             headline={config.headline}
             subtitle={config.subtitle}
             ctaText={config.ctaText}
-            onCtaClick={() => {
-              const el = document.querySelector('#contact');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+            onCtaClick={() => setShowWizardModal(true)}
           />
 
           <BannerGlassCards
@@ -101,40 +102,44 @@ export default function App() {
           <AboutParisSection />
         </div>
 
-        {/* Section 2: About Us Story */}
+        {/* Section 2: Interactive District Explorer Map */}
+        <div className="w-full">
+          <ParisDistrictMap />
+        </div>
+
+        {/* Section 3: About Us Story */}
         <div className="w-full">
           <AboutUsStorySection />
         </div>
 
-        {/* Section 3: Services */}
+        {/* Section 4: Services */}
         <div id="services" className="w-full">
           <ServicesSection />
         </div>
 
-        {/* Section 4: Pricing Packages */}
+        {/* Section 5: Pricing Packages & Custom Calculator */}
         <div id="packages" className="w-full">
           <PricingPlansSection />
         </div>
 
-        {/* Section 5: Why Choose Us / Testimonials */}
+        {/* Section 6: Why Choose Us / Testimonials */}
         <div id="why-us" className="w-full">
           <TestimonialsTrustSection />
         </div>
 
-        {/* Section 6: Contact Section (Features 4-col Central Viewport & 550px Eiffel Landing View) */}
+        {/* Section 7: Contact Section */}
         <div id="contact" className="w-full">
           <ContactSection />
         </div>
 
-        {/* Code Modal */}
-        {config.showCodeModal && (
-          <CodeExportModal
-            config={config}
-            getNavyHex={getNavyHex}
-            onClose={() => handleUpdateConfig({ showCodeModal: false })}
-          />
+        {/* Interactive Itinerary Wizard Modal */}
+        {showWizardModal && (
+          <ItineraryWizardModal onClose={() => setShowWizardModal(false)} />
         )}
+
+        {/* Floating WhatsApp Local Guide Button */}
+        <WhatsAppChatButton />
       </main>
-    </>
+    </LanguageProvider>
   );
 }
