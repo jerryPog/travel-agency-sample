@@ -5,7 +5,7 @@ import { useLanguage } from '../context/LanguageContext';
 export function WeatherCurrencyWidget() {
   const { t } = useLanguage();
   const [parisTime, setParisTime] = useState('');
-  const [amount, setAmount] = useState('1000');
+  const [amount, setAmount] = useState('10000');
   const [currency, setCurrency] = useState<'INR' | 'USD' | 'GBP' | 'CAD'>('INR');
   const rates = { INR: 0.011, USD: 0.92, GBP: 1.18, CAD: 0.68 };
 
@@ -53,7 +53,7 @@ export function WeatherCurrencyWidget() {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-14 bg-transparent text-center text-white font-mono text-xs focus:outline-none"
+            className="w-16 bg-transparent text-center text-white font-mono text-xs focus:outline-none"
           />
           <select
             value={currency}
