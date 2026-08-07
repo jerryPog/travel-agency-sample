@@ -92,6 +92,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Contact
     contactTitle: 'Ready to Experience Paris?',
     contactSub: 'Send us a message or start a live consultation.',
+    accepting2026: 'Accepting Bookings for 2026–27',
     yourName: 'Your Name',
     emailAddr: 'Email Address',
     travelDates: 'Travel Dates (Optional)',
@@ -181,6 +182,7 @@ const translations: Record<Language, Record<string, string>> = {
     // Contact
     contactTitle: 'Prêt à Découvrir Paris ?',
     contactSub: 'Envoyez-nous un message ou démarrez une consultation.',
+    accepting2026: 'Réservations Ouvertes pour 2026–27',
     yourName: 'Votre Nom',
     emailAddr: 'Adresse Email',
     travelDates: 'Dates de Voyage (Optionnel)',
