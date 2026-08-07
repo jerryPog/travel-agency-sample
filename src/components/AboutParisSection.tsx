@@ -30,7 +30,7 @@ export function AboutParisSection() {
       {/* Top Header Row */}
       <div className="mb-8 sm:mb-12 space-y-3">
         <div>
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-amber-300 tracking-wide">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-white/90 tracking-wide">
             {t('aboutBadge')}
           </span>
         </div>
