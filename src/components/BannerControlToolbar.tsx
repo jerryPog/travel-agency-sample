@@ -10,15 +10,9 @@ interface BannerControlToolbarProps {
   navyPresets: Array<{ id: BannerConfig['navyTheme']; name: string; hex: string }>;
 }
 
-export function BannerControlToolbar({
-  config,
-  onChange,
-  onOpenCode,
-  onReset,
-  navyPresets,
-}: BannerControlToolbarProps) {
-  const [panelOpen, setPanelOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'colors' | 'text'>('colors');
+export function BannerControlToolbar() {
+  return null;
+}
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center">

@@ -4,7 +4,6 @@ import { ScrollObserver } from './components/ScrollObserver';
 import { BannerNavbar } from './components/BannerNavbar';
 import { BannerHeroContent } from './components/BannerHeroContent';
 import { BannerGlassCards } from './components/BannerGlassCards';
-import { BannerControlToolbar } from './components/BannerControlToolbar';
 import { AboutParisSection } from './components/AboutParisSection';
 import { AboutUsStorySection } from './components/AboutUsStorySection';
 import { ServicesSection } from './components/ServicesSection';
@@ -72,15 +71,6 @@ export default function App() {
         }}
         className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
-        {/* Top Control Toolbar */}
-        <BannerControlToolbar
-          config={config}
-          onChange={handleUpdateConfig}
-          onOpenCode={() => handleUpdateConfig({ showCodeModal: true })}
-          onReset={handleReset}
-          navyPresets={navyPresets}
-        />
-
         {/* Hero Section Container */}
         <section id="home" className="w-full max-w-[1440px] h-screen max-h-[900px] min-h-[580px] flex flex-col justify-between relative overflow-hidden pt-10 pb-6 px-2">
           <BannerNavbar
@@ -94,7 +84,10 @@ export default function App() {
             headline={config.headline}
             subtitle={config.subtitle}
             ctaText={config.ctaText}
-            onCtaClick={() => handleUpdateConfig({ showCodeModal: true })}
+            onCtaClick={() => {
+              const el = document.querySelector('#contact');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
           />
 
           <BannerGlassCards
