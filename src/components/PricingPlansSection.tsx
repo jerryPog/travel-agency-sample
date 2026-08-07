@@ -23,7 +23,8 @@ export function PricingPlansSection() {
       id: 'discovery',
       category: ['all', 'art', 'family'],
       name: 'Discovery Experience',
-      price: '€490',
+      price: '₹43,900',
+      subPrice: '≈ €490',
       pricePeriod: 'per trip',
       tagline: 'For short trips & essential Paris highlights',
       badge: 'Essential',
@@ -40,7 +41,8 @@ export function PricingPlansSection() {
       id: 'classic',
       category: ['all', 'romantic', 'art'],
       name: 'Classic Paris Plan',
-      price: '€950',
+      price: '₹85,500',
+      subPrice: '≈ €950',
       pricePeriod: 'per trip',
       tagline: 'For travelers who want a seamless, fully guided stay',
       badge: 'Most Popular',
@@ -58,7 +60,8 @@ export function PricingPlansSection() {
       id: 'premium',
       category: ['all', 'vip', 'romantic'],
       name: 'Bespoke VIP Luxury',
-      price: '€1,850',
+      price: '₹1,66,500',
+      subPrice: '≈ €1,850',
       pricePeriod: 'per trip',
       tagline: 'For a fully personalized, ultra-exclusive Paris journey',
       badge: 'Bespoke VIP',
@@ -79,7 +82,8 @@ export function PricingPlansSection() {
     : plans.filter((p) => p.category.includes(activeCategory));
 
   // Dynamic Quote Calculation (€120 base/day + €75/person/day)
-  const estimatedTotal = (calcDays * 120 + calcTravelers * calcDays * 75);
+  const estimatedTotalEur = (calcDays * 120 + calcTravelers * calcDays * 75);
+  const estimatedTotalInr = estimatedTotalEur * 90;
 
   const handleChoosePlan = () => {
     const el = document.querySelector('#contact');
@@ -160,6 +164,9 @@ export function PricingPlansSection() {
                   </span>
                   <span className="text-xs text-white/60 font-normal">/{plan.pricePeriod}</span>
                 </div>
+                <div className="text-xs font-mono text-amber-300/80 mt-1">
+                  ({plan.subPrice})
+                </div>
               </div>
 
               <ul className="space-y-3 mb-8">
@@ -239,10 +246,13 @@ export function PricingPlansSection() {
           </div>
 
           {/* Estimate Display Box */}
-          <div className="md:col-span-4 bg-white/10 border border-white/20 rounded-2xl p-5 text-center space-y-2">
+          <div className="md:col-span-4 bg-white/10 border border-white/20 rounded-2xl p-5 text-center space-y-1.5">
             <div className="text-xs text-white/70 font-medium">{t('calcTotal')}</div>
-            <div className="text-3xl font-extrabold text-amber-300 font-['Plus_Jakarta_Sans',sans-serif]">
-              €{estimatedTotal.toLocaleString()}
+            <div className="text-2xl sm:text-3xl font-extrabold text-amber-300 font-['Plus_Jakarta_Sans',sans-serif]">
+              ₹{estimatedTotalInr.toLocaleString()}
+            </div>
+            <div className="text-xs font-mono text-amber-200/80">
+              (≈ €{estimatedTotalEur.toLocaleString()})
             </div>
             <div className="text-[11px] text-white/50">{t('calcSub')}</div>
             <button
