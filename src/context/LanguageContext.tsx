@@ -233,6 +233,38 @@ const translations: Record<Language, Record<string, string>> = {
     trustGlobalTitle: 'Global Love',
     trustGlobalDesc: 'Loved by travelers from over 20 countries worldwide.',
 
+    rev1Quote: 'Our 6-day trip felt like it was planned by a friend who actually lives in Paris — not a travel agency. Every café recommendation in Le Marais was spot on!',
+    rev1Plan: 'Classic Plan',
+    rev1Date: 'Traveled Oct 2025',
+
+    rev2Quote: 'The private tour of Versailles and Monet’s gardens in Giverny was the highlight of our honeymoon. Having a personal concierge on WhatsApp 24/7 gave us total peace of mind.',
+    rev2Plan: 'Premium VIP Plan',
+    rev2Date: 'Traveled Dec 2025',
+
+    rev3Quote: 'As a solo female traveler on my first trip to Europe, the self-guided walking maps and safety tips were invaluable. I discovered local bakeries I never would have found.',
+    rev3Plan: 'Discovery Plan',
+    rev3Date: 'Traveled Jan 2026',
+
+    rev4Quote: 'Exceptional service! Skip-the-line access at the Louvre saved us hours of waiting. The private wine tasting in Montmartre was unforgettable.',
+    rev4Plan: 'Premium VIP Plan',
+    rev4Date: 'Traveled Jan 2026',
+
+    rev5Quote: 'Ronak and his team designed the perfect balance of iconic sights and relaxed neighborhood walks. Best travel planning service we have ever used!',
+    rev5Plan: 'Classic Plan',
+    rev5Date: 'Traveled Nov 2025',
+
+    rev6Quote: 'From our airport transfer to our anniversary dinner at a hidden bistro near the Seine, everything was seamless. Highly recommended!',
+    rev6Plan: 'Classic Plan',
+    rev6Date: 'Traveled Dec 2025',
+
+    rev7Quote: 'The 3-day Paris itinerary was beautifully structured. Not rushed, super easy to follow, and packed with insider local secrets.',
+    rev7Plan: 'Discovery Plan',
+    rev7Date: 'Traveled Sep 2025',
+
+    rev8Quote: 'Worth every rupee and dollar. Having local experts handle bookings and transfers allowed us to just sit back and soak in Paris.',
+    rev8Plan: 'Premium VIP Plan',
+    rev8Date: 'Traveled Oct 2025',
+
     // Quote Calculator
     calcTitle: 'Calculate Your Custom Itinerary Estimate',
     calcDays: 'Trip Duration:',
@@ -511,6 +543,38 @@ const translations: Record<Language, Record<string, string>> = {
     trustSupportDesc: 'Une assistance 24/7 durant tout votre voyage.',
     trustGlobalTitle: 'Reconnaissance Mondiale',
     trustGlobalDesc: 'Apprécié par des voyageurs de plus de 20 pays.',
+
+    rev1Quote: 'Notre séjour de 6 jours donnait l’impression d’avoir été organisé par un ami vivant à Paris. Chaque recommandation de café dans Le Marais était parfaite !',
+    rev1Plan: 'Formule Classique',
+    rev1Date: 'Voyage en Oct 2025',
+
+    rev2Quote: 'La visite privée de Versailles et des jardins de Monet à Giverny était le moment fort de notre lune de miel. Le concierge sur WhatsApp 24/7 nous a apporté une sérénité totale.',
+    rev2Plan: 'Formule VIP',
+    rev2Date: 'Voyage en Déc 2025',
+
+    rev3Quote: 'Voyageant seule en Europe pour la première fois, les cartes d’itinéraires à pied et conseils de sécurité m’ont été d’une valeur inestimable. J’ai découvert des boulangeries locales uniques.',
+    rev3Plan: 'Formule Découverte',
+    rev3Date: 'Voyage en Janv 2026',
+
+    rev4Quote: 'Un service exceptionnel ! L’accès coupe-file au Louvre nous a fait gagner des heures d’attente. La dégustation privée de vin à Montmartre était inoubliable.',
+    rev4Plan: 'Formule VIP',
+    rev4Date: 'Voyage en Janv 2026',
+
+    rev5Quote: 'Ronak et son équipe ont conçu l’équilibre parfait entre monuments mythiques et balades relaxantes dans les quartiers. Le meilleur service de voyage que nous ayons utilisé !',
+    rev5Plan: 'Formule Classique',
+    rev5Date: 'Voyage en Nov 2025',
+
+    rev6Quote: 'Du transfert aéroport jusqu’à notre dîner d’anniversaire dans un bistro secret près de la Seine, tout était parfait. Nous recommandons vivement !',
+    rev6Plan: 'Formule Classique',
+    rev6Date: 'Voyage en Déc 2025',
+
+    rev7Quote: 'L’itinéraire de 3 jours à Paris était merveilleusement structuré. Sans précipitation, très facile à suivre et rempli de secrets locaux.',
+    rev7Plan: 'Formule Découverte',
+    rev7Date: 'Voyage en Sept 2025',
+
+    rev8Quote: 'Chaque euro valait le coup. Avoir des experts locaux qui gèrent les réservations et transferts nous a permis de profiter pleinement de Paris.',
+    rev8Plan: 'Formule VIP',
+    rev8Date: 'Voyage en Oct 2025',
 
     // Quote Calculator
     calcTitle: 'Calculez l’Estimation de Votre Séjour Sur Mesure',
