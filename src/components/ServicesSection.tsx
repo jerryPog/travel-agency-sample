@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Landmark, Sparkles, Sliders, Sun, Users2, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80';
+
 export function ServicesSection() {
   const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -40,7 +42,7 @@ export function ServicesSection() {
       description: t('serviceDaytripsDesc'),
       tag: t('serviceDaytripsTag'),
       icon: Sun,
-      image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=800&q=80',
+      image: 'https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=800&q=80',
       highlights: [t('serviceDaytripsH1'), t('serviceDaytripsH2'), t('serviceDaytripsH3')],
     },
     {
@@ -85,10 +87,13 @@ export function ServicesSection() {
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between glass-card-hover group min-h-[360px]"
             >
               {/* Card Image Header */}
-              <div className="relative h-44 w-full overflow-hidden">
+              <div className="relative h-48 w-full overflow-hidden bg-black/40">
                 <img
                   src={service.image}
                   alt={service.title}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
