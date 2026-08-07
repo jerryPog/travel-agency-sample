@@ -84,7 +84,7 @@ export default function App() {
         className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
         {/* Hero Section Container */}
-        <section id="home" className="w-full max-w-[1440px] min-h-[100dvh] flex flex-col justify-between relative overflow-hidden pt-4 sm:pt-6 pb-12 px-4 sm:px-6">
+        <section id="home" className="w-full max-w-[1440px] min-h-[600px] lg:h-screen lg:max-h-[850px] flex flex-col justify-between relative overflow-hidden pt-2 pb-4 px-4 sm:px-6">
           <BannerNavbar
             brandName={config.brandName}
             activeNav={config.activeNav}

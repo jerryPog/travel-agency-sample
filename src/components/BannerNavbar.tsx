@@ -40,7 +40,7 @@ export function BannerNavbar({
   };
 
   return (
-    <header className="w-full pt-5 pb-3 px-4 sm:px-6 md:px-12 flex items-center justify-between z-20 relative flex-nowrap whitespace-nowrap">
+    <header className="w-full pt-3 sm:pt-4 pb-2 px-4 sm:px-6 md:px-12 flex items-center justify-between z-20 relative flex-nowrap whitespace-nowrap">
       {/* Brand Logo */}
       <button
         onClick={onBrandClick}
