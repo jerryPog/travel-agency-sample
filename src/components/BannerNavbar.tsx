@@ -91,11 +91,11 @@ export function BannerNavbar({
           </button>
         </div>
 
+        {/* Mobile Menu Button - Hidden on laptop/desktop (lg:hidden) since main nav is visible */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-medium text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center space-x-2 cursor-pointer whitespace-nowrap shrink-0"
+          className="lg:hidden px-3.5 sm:px-4 py-1.5 text-xs sm:text-sm font-medium text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all flex items-center space-x-1.5 cursor-pointer whitespace-nowrap shrink-0"
         >
-          <span className="whitespace-nowrap">{t('openMenu')}</span>
           {mobileMenuOpen ? (
             <X className="w-4 h-4 text-white shrink-0" />
           ) : (
