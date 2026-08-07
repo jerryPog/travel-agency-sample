@@ -27,6 +27,8 @@ const translations: Record<Language, Record<string, string>> = {
     planMyTrip: 'Plan My Trip',
     statTravelers: 'Every trip is planned around you — your pace, your interests, your budget.',
     statConcierge: 'From the moment you land to the moment you leave, our team is one message away.',
+    tailorMadeItineraries: 'Tailor-Made Itineraries',
+    travelSupport247: '24/7 Travel Support',
 
     // Top Bar Widget
     weatherParis: 'Paris',
@@ -70,6 +72,14 @@ const translations: Record<Language, Record<string, string>> = {
     communityPartDesc: 'Working hand in hand with Paris’s local community to preserve culture and share stories.',
     seeRealMoments: 'See real moments from our trips.',
     trustedByPartners: 'Trusted by Leading Global Travel & Media Partners',
+
+    // Brand Badges
+    badgeOfficialPartner: 'Official Partner',
+    badgeFeatured: 'Featured',
+    badgeTopPick: 'Traveler Top Pick',
+    badgeExcellence: 'Excellence Award',
+    badge5Star: '5-Star Rated',
+    badgeHeritage: 'Heritage Partner',
 
     // District Guide
     districtBadge: 'Interactive Neighborhood Guide',
@@ -184,6 +194,8 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'Private VIP',
     filterFood: 'Art & Gastronomy',
     filterFamily: 'Family Friendly',
+    perTrip: 'per trip',
+    choosePlan: 'Choose Plan',
 
     planDiscTitle: 'Discovery Experience',
     planDiscTagline: 'For short trips & essential Paris highlights',
@@ -208,10 +220,18 @@ const translations: Record<Language, Record<string, string>> = {
     planPremH4: 'Personal luxury travel concierge available anytime',
     planPremH5: 'VIP Airport Meet & Greet + Priority transfers',
 
-    // Testimonials
+    // Testimonials & Trust
     testimonialsBadge: 'Traveler Stories & Reviews',
     testimonialsTitle: 'Loved by Travelers Worldwide',
     testimonialsSub: 'Real stories from couples, families, and solo adventurers who explored Paris with us.',
+    trustLocalTitle: 'Local Knowledge',
+    trustLocalDesc: 'Local knowledge you won\'t find in guidebooks.',
+    trustCustomTitle: 'Customized Itineraries',
+    trustCustomDesc: 'Fully customized itineraries, not cookie-cutter tours.',
+    trustSupportTitle: '24/7 Support',
+    trustSupportDesc: '24/7 support during your entire trip.',
+    trustGlobalTitle: 'Global Love',
+    trustGlobalDesc: 'Loved by travelers from over 20 countries worldwide.',
 
     // Quote Calculator
     calcTitle: 'Calculate Your Custom Itinerary Estimate',
@@ -221,15 +241,52 @@ const translations: Record<Language, Record<string, string>> = {
     calcSub: 'Includes hotels, skip-line passes & guide',
     lockEstimate: 'Lock in Estimate',
 
-    // Contact
+    // Contact Section
     contactTitle: 'Ready to Experience Paris?',
     contactSub: 'Send us a message or start a live consultation.',
     accepting2026: 'Accepting Bookings for 2026–27',
+    founderRole: 'Founder & Travel Consultant',
+    founderQuote: '"Our mission is to help you experience Paris as a local, with custom routes, handpicked hotels, and 24/7 support."',
+    responseTime: 'We typically respond within 24 hours.',
+    eiffelBadge: 'Eiffel Sunset & Sparkle Hour',
+    eiffelTitle: 'Experience the Magic of Paris Illuminated',
+    eiffelDesc: 'Private summit access, champagne toasts, and Seine river viewings curated by local expert guides.',
+    exploreEiffelTours: 'Explore Eiffel Tours',
+    startConsultation: 'Start Consultation',
+    messageSentTitle: 'Message Sent!',
+    sendAnotherMsg: 'Send Another Message',
     yourName: 'Your Name',
     emailAddr: 'Email Address',
     travelDates: 'Travel Dates (Optional)',
     tellTrip: 'Tell us about your trip',
     sendInquiry: 'Send Inquiry',
+
+    // Itinerary Wizard Modal
+    wizTitle: 'Paris Custom Itinerary Builder',
+    wizStepSub: 'Step {step} of 5 — Tailored in 60 seconds',
+    wizSuccessTitle: 'Itinerary Request Submitted!',
+    wizSuccessSub: 'Our Paris travel concierge has received your preferences and will send a custom proposal to',
+    wizBackToSite: 'Back to Site',
+    wizStep1Title: 'How long is your ideal trip to Paris?',
+    wizStep2Title: 'Who will be traveling with you?',
+    wizStep3Title: 'Select your top interests in Paris (Pick multiple)',
+    wizStep4Title: 'What is your preferred comfort tier?',
+    wizStep5Summary: 'Your Travel Summary:',
+    wizLabelDuration: 'Duration:',
+    wizLabelGroup: 'Group:',
+    wizLabelInterests: 'Interests:',
+    wizLabelTier: 'Tier:',
+    wizBtnSubmit: 'Submit & Get Custom Itinerary',
+    wizBtnBack: 'Back',
+    wizBtnContinue: 'Continue',
+
+    // WhatsApp Chat
+    waConcierge: 'Paris Travel Concierge',
+    waOnlineStatus: 'Online • Responds in ~5 minutes',
+    waWelcomeMsg: 'Bonjour! 👋 How can we help you plan your ideal Paris itinerary today?',
+    waTypeMsg: 'Type your message...',
+    waStartChat: 'Start WhatsApp Chat',
+    waChatWithGuide: 'Chat with Guide',
   },
   fr: {
     // Navigation
@@ -249,6 +306,8 @@ const translations: Record<Language, Record<string, string>> = {
     planMyTrip: 'Créer Mon Voyage',
     statTravelers: 'Chaque voyage est conçu pour vous — votre rythme, vos intérêts, votre budget.',
     statConcierge: 'Dès votre arrivée jusqu’à votre départ, notre équipe est à votre écoute à tout moment.',
+    tailorMadeItineraries: 'Itinéraires Sur Mesure',
+    travelSupport247: 'Support Voyage 24/7',
 
     // Top Bar Widget
     weatherParis: 'Paris',
@@ -292,6 +351,14 @@ const translations: Record<Language, Record<string, string>> = {
     communityPartDesc: 'En collaboration directe avec les artisans et la communauté locale de Paris.',
     seeRealMoments: 'Voir les moments réels de nos séjours.',
     trustedByPartners: 'Recommandé par les plus grands partenaires médias & voyage',
+
+    // Brand Badges
+    badgeOfficialPartner: 'Partenaire Officiel',
+    badgeFeatured: 'Recommandé',
+    badgeTopPick: 'Choix des Voyageurs',
+    badgeExcellence: 'Prix d\'Excellence',
+    badge5Star: 'Noté 5 Étoiles',
+    badgeHeritage: 'Partenaire Patrimoine',
 
     // District Guide
     districtBadge: 'Guide Interactif des Quartiers',
@@ -363,7 +430,7 @@ const translations: Record<Language, Record<string, string>> = {
     learnMore: 'En Savoir Plus',
 
     serviceClassicTitle: 'Circuits Classiques de Paris',
-    serviceClassicDesc: 'Tour Eiffel, Musée du Louvre, Notre-Dame et les incontournables avec billets coupe-file et historiens de l\'art.',
+    serviceClassicDesc: 'Tour Eiffel, Musée du Louvre, Notre-Dame et les incontournables avec billets coupe-file et historiens de\'art.',
     serviceClassicTag: 'Plus Populaire',
     serviceClassicH1: 'Sommet de la Tour Eiffel',
     serviceClassicH2: 'Chefs-d\'œuvre du Louvre',
@@ -406,6 +473,8 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'VIP Privé',
     filterFood: 'Art & Gastronomie',
     filterFamily: 'En Famille',
+    perTrip: 'par séjour',
+    choosePlan: 'Choisir la Formule',
 
     planDiscTitle: 'Expérience Découverte',
     planDiscTagline: 'Pour séjours courts et incontournables de Paris',
@@ -430,10 +499,18 @@ const translations: Record<Language, Record<string, string>> = {
     planPremH4: 'Concierge de luxe disponible à tout moment',
     planPremH5: 'Accueil VIP Aéroport & Transferts prioritaires',
 
-    // Testimonials
+    // Testimonials & Trust
     testimonialsBadge: 'Témoignages & Avis Voyageurs',
     testimonialsTitle: 'Apprécié par les Voyageurs du Monde Entier',
     testimonialsSub: 'De vraies histoires de couples, familles et aventuriers solitaires ayant exploré Paris avec nous.',
+    trustLocalTitle: 'Expertise Locale',
+    trustLocalDesc: 'Une connaissance du terrain introuvable dans les guides.',
+    trustCustomTitle: 'Itinéraires Personnalisés',
+    trustCustomDesc: 'Des séjours 100% sur mesure, pas de circuits standardisés.',
+    trustSupportTitle: 'Support 24/7',
+    trustSupportDesc: 'Une assistance 24/7 durant tout votre voyage.',
+    trustGlobalTitle: 'Reconnaissance Mondiale',
+    trustGlobalDesc: 'Apprécié par des voyageurs de plus de 20 pays.',
 
     // Quote Calculator
     calcTitle: 'Calculez l’Estimation de Votre Séjour Sur Mesure',
@@ -443,15 +520,52 @@ const translations: Record<Language, Record<string, string>> = {
     calcSub: 'Hôtels, pass coupe-file & guide inclus',
     lockEstimate: 'Valider l’Estimation',
 
-    // Contact
+    // Contact Section
     contactTitle: 'Prêt à Découvrir Paris ?',
     contactSub: 'Envoyez-nous un message ou démarrez une consultation.',
     accepting2026: 'Réservations Ouvertes pour 2026–27',
+    founderRole: 'Fondateur & Consultant Voyage',
+    founderQuote: '"Notre mission est de vous faire vivre Paris comme un habitant, avec des parcours sur mesure et un accompagnement 24/7."',
+    responseTime: 'Réponse habituelle sous 24h.',
+    eiffelBadge: 'Coucher de Soleil & Heure Scintillante',
+    eiffelTitle: 'Découvrez la Magie de Paris Illuminé',
+    eiffelDesc: 'Accès privé au sommet, toast au champagne et croisière sur la Seine avec nos guides locaux.',
+    exploreEiffelTours: 'Découvrir les Tours Eiffel',
+    startConsultation: 'Démarrer une Consultation',
+    messageSentTitle: 'Message Envoyé !',
+    sendAnotherMsg: 'Envoyer un Autre Message',
     yourName: 'Votre Nom',
     emailAddr: 'Adresse Email',
     travelDates: 'Dates de Voyage (Optionnel)',
     tellTrip: 'Parlez-nous de votre projet',
     sendInquiry: 'Envoyer la Demande',
+
+    // Itinerary Wizard Modal
+    wizTitle: 'Créateur d\'Itinéraire Paris Sur Mesure',
+    wizStepSub: 'Étape {step} sur 5 — Conçu en 60 secondes',
+    wizSuccessTitle: 'Demande d\'Itinéraire Envoyée !',
+    wizSuccessSub: 'Notre concierge voyage à Paris a bien reçu vos préférences et vous enverra une proposition personnalisée à',
+    wizBackToSite: 'Retour au Site',
+    wizStep1Title: 'Quelle est la durée idéale de votre séjour ?',
+    wizStep2Title: 'Qui voyage avec vous ?',
+    wizStep3Title: 'Sélectionnez vos centres d\'intérêt à Paris',
+    wizStep4Title: 'Quel est votre niveau de confort souhaité ?',
+    wizStep5Summary: 'Résumé de Votre Voyage :',
+    wizLabelDuration: 'Durée :',
+    wizLabelGroup: 'Groupe :',
+    wizLabelInterests: 'Intérêts :',
+    wizLabelTier: 'Niveau :',
+    wizBtnSubmit: 'Valider & Obtenir Mon Itinéraire',
+    wizBtnBack: 'Retour',
+    wizBtnContinue: 'Continuer',
+
+    // WhatsApp Chat
+    waConcierge: 'Concierge Voyage Paris',
+    waOnlineStatus: 'En Ligne • Réponse sous ~5 minutes',
+    waWelcomeMsg: 'Bonjour ! 👋 Comment pouvons-nous vous aider à créer votre séjour idéal à Paris ?',
+    waTypeMsg: 'Écrivez votre message...',
+    waStartChat: 'Démarrer la Discussion WhatsApp',
+    waChatWithGuide: 'Discuter avec un Guide',
   },
 };
 

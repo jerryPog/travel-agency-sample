@@ -12,12 +12,12 @@ export function AboutParisSection() {
   ];
 
   const brandLogos = [
-    { name: 'AIR FRANCE', badge: 'Official Partner' },
-    { name: 'MICHELIN GUIDE', badge: 'Featured' },
-    { name: 'CONDÉ NAST', badge: 'Traveler Top Pick' },
-    { name: 'NATIONAL GEOGRAPHIC', badge: 'Excellence Award' },
-    { name: 'FORBES TRAVEL', badge: '5-Star Rated' },
-    { name: 'UNESCO', badge: 'Heritage Partner' },
+    { name: 'AIR FRANCE', badge: t('badgeOfficialPartner') },
+    { name: 'MICHELIN GUIDE', badge: t('badgeFeatured') },
+    { name: 'CONDÉ NAST', badge: t('badgeTopPick') },
+    { name: 'NATIONAL GEOGRAPHIC', badge: t('badgeExcellence') },
+    { name: 'FORBES TRAVEL', badge: t('badge5Star') },
+    { name: 'UNESCO', badge: t('badgeHeritage') },
   ];
 
   const scrollToContact = () => {

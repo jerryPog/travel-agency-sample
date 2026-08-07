@@ -74,9 +74,9 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
             </div>
             <div>
               <h3 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif]">
-                Paris Custom Itinerary Builder
+                {t('wizTitle')}
               </h3>
-              <p className="text-xs text-white/60">Step {step} of 5 — Tailored in 60 seconds</p>
+              <p className="text-xs text-white/60">{t('wizStepSub').replace('{step}', step.toString())}</p>
             </div>
           </div>
 
@@ -104,41 +104,46 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                 <Check className="w-8 h-8" />
               </div>
               <h4 className="text-2xl font-bold font-['Plus_Jakarta_Sans',sans-serif]">
-                Itinerary Request Submitted!
+                {t('wizSuccessTitle')}
               </h4>
               <p className="text-sm text-white/80 max-w-md mx-auto leading-relaxed">
-                Merci <span className="text-white font-semibold">{name}</span>! Our Paris travel concierge has received your preferences ({duration}, {travelers}) and will send a custom proposal to <span className="text-amber-300 underline">{email}</span> within 12 hours.
+                {t('wizSuccessSub')} <span className="text-amber-300 underline">{email}</span>.
               </p>
               <button
                 onClick={onClose}
                 className="mt-4 px-6 py-2.5 rounded-full bg-white text-[#0B132B] font-bold text-xs hover:bg-white/90 transition-all cursor-pointer"
               >
-                Back to Site
+                {t('wizBackToSite')}
               </button>
             </div>
           ) : (
             <>
               {/* STEP 1: Duration */}
               {step === 1 && (
-                <div className="space-y-4">
-                  <h4 className="text-base font-semibold text-white flex items-center space-x-2">
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-amber-300" />
-                    <span>How long is your ideal trip to Paris?</span>
+                    <span>{t('wizStep1Title')}</span>
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {durationOptions.map((opt) => (
+                  <div className="grid grid-cols-1 gap-3">
+                    {durationOptions.map((opt, i) => (
                       <button
-                        key={opt.label}
+                        key={i}
                         type="button"
                         onClick={() => setDuration(opt.label)}
-                        className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        className={`p-4 rounded-2xl border text-left transition-all flex items-center justify-between cursor-pointer ${
                           duration === opt.label
-                            ? 'border-amber-400 bg-amber-400/15 font-bold shadow-lg'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10'
+                            ? 'bg-white text-[#0B132B] border-amber-400 font-bold shadow-lg'
+                            : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
                         }`}
                       >
-                        <div className="text-sm text-white">{opt.label}</div>
-                        <div className="text-xs text-white/60 mt-1">{opt.sub}</div>
+                        <div>
+                          <div className="text-xs sm:text-sm font-semibold">{opt.label}</div>
+                          <div className={`text-[11px] mt-0.5 ${duration === opt.label ? 'text-[#0B132B]/70' : 'text-white/60'}`}>
+                            {opt.sub}
+                          </div>
+                        </div>
+                        {duration === opt.label && <Check className="w-4 h-4 text-[#0B132B]" />}
                       </button>
                     ))}
                   </div>
@@ -147,25 +152,30 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
 
               {/* STEP 2: Travelers */}
               {step === 2 && (
-                <div className="space-y-4">
-                  <h4 className="text-base font-semibold text-white flex items-center space-x-2">
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
                     <Users className="w-4 h-4 text-amber-300" />
-                    <span>Who will be traveling with you?</span>
+                    <span>{t('wizStep2Title')}</span>
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {travelerOptions.map((opt) => (
+                    {travelerOptions.map((opt, i) => (
                       <button
-                        key={opt.label}
+                        key={i}
                         type="button"
                         onClick={() => setTravelers(opt.label)}
-                        className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        className={`p-4 rounded-2xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                           travelers === opt.label
-                            ? 'border-amber-400 bg-amber-400/15 font-bold shadow-lg'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10'
+                            ? 'bg-white text-[#0B132B] border-amber-400 font-bold shadow-lg'
+                            : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
                         }`}
                       >
-                        <div className="text-sm text-white">{opt.label}</div>
-                        <div className="text-xs text-white/60 mt-1">{opt.desc}</div>
+                        <div>
+                          <div className="text-xs sm:text-sm font-semibold mb-1">{opt.label}</div>
+                          <div className={`text-[11px] ${travelers === opt.label ? 'text-[#0B132B]/70' : 'text-white/60'}`}>
+                            {opt.desc}
+                          </div>
+                        </div>
+                        {travelers === opt.label && <Check className="w-4 h-4 text-[#0B132B] self-end mt-2" />}
                       </button>
                     ))}
                   </div>
@@ -174,26 +184,27 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
 
               {/* STEP 3: Interests */}
               {step === 3 && (
-                <div className="space-y-4">
-                  <h4 className="text-base font-semibold text-white flex items-center space-x-2">
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
                     <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>Select your top interests in Paris (Pick multiple)</span>
+                    <span>{t('wizStep3Title')}</span>
                   </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                    {interestOptions.map((item) => {
-                      const selected = interests.includes(item);
+                  <div className="grid grid-cols-2 gap-3">
+                    {interestOptions.map((opt, i) => {
+                      const isSelected = interests.includes(opt);
                       return (
                         <button
-                          key={item}
+                          key={i}
                           type="button"
-                          onClick={() => toggleInterest(item)}
-                          className={`p-3 rounded-xl border text-center text-xs transition-all cursor-pointer ${
-                            selected
-                              ? 'border-amber-400 bg-amber-400/20 font-bold text-amber-200 shadow-md'
-                              : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/80'
+                          onClick={() => toggleInterest(opt)}
+                          className={`p-3.5 rounded-2xl border text-xs text-left transition-all flex items-center justify-between cursor-pointer ${
+                            isSelected
+                              ? 'bg-amber-400 text-[#0B132B] border-amber-400 font-bold shadow-lg'
+                              : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
                           }`}
                         >
-                          {selected && '✓ '}{item}
+                          <span>{opt}</span>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#0B132B]" />}
                         </button>
                       );
                     })}
@@ -203,115 +214,125 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
 
               {/* STEP 4: Budget */}
               {step === 4 && (
-                <div className="space-y-4">
-                  <h4 className="text-base font-semibold text-white flex items-center space-x-2">
-                    <DollarSign className="w-4 h-4 text-emerald-400" />
-                    <span>What is your preferred comfort tier?</span>
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
+                    <DollarSign className="w-4 h-4 text-amber-300" />
+                    <span>{t('wizStep4Title')}</span>
                   </h4>
-                  <div className="space-y-2.5">
-                    {budgetOptions.map((opt) => (
+                  <div className="grid grid-cols-1 gap-3">
+                    {budgetOptions.map((opt, i) => (
                       <button
-                        key={opt}
+                        key={i}
                         type="button"
                         onClick={() => setBudget(opt)}
-                        className={`w-full p-4 rounded-2xl border text-left text-sm transition-all cursor-pointer ${
+                        className={`p-4 rounded-2xl border text-left text-xs sm:text-sm font-semibold transition-all flex items-center justify-between cursor-pointer ${
                           budget === opt
-                            ? 'border-emerald-400 bg-emerald-400/15 font-bold text-white shadow-lg'
-                            : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/80'
+                            ? 'bg-white text-[#0B132B] border-amber-400 font-bold shadow-lg'
+                            : 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
                         }`}
                       >
-                        {opt}
+                        <span>{opt}</span>
+                        {budget === opt && <Check className="w-4 h-4 text-[#0B132B]" />}
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* STEP 5: Final Submission Details */}
+              {/* STEP 5: Summary & Submit */}
               {step === 5 && (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs space-y-1.5">
-                    <div className="font-semibold text-amber-300">Your Travel Summary:</div>
-                    <div className="text-white/80">• Duration: <span className="text-white">{duration}</span></div>
-                    <div className="text-white/80">• Group: <span className="text-white">{travelers}</span></div>
-                    <div className="text-white/80">• Interests: <span className="text-white">{interests.join(', ')}</span></div>
-                    <div className="text-white/80">• Tier: <span className="text-white">{budget}</span></div>
+                <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in duration-200">
+                  <div className="bg-white/10 border border-white/20 rounded-2xl p-4 text-xs space-y-2">
+                    <div className="font-bold text-amber-300 uppercase tracking-wider">{t('wizStep5Summary')}</div>
+                    <div className="grid grid-cols-2 gap-2 text-white/80">
+                      <div><strong className="text-white">{t('wizLabelDuration')}</strong> {duration}</div>
+                      <div><strong className="text-white">{t('wizLabelGroup')}</strong> {travelers}</div>
+                      <div><strong className="text-white">{t('wizLabelInterests')}</strong> {interests.join(', ')}</div>
+                      <div><strong className="text-white">{t('wizLabelTier')}</strong> {budget}</div>
+                    </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">Your Full Name *</label>
+                    <label className="block text-xs font-medium text-white/80 mb-1">
+                      {t('yourName')} *
+                    </label>
                     <input
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Sarah Jenkins"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
+                      placeholder="e.g. Jean Dupont"
+                      className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">Email Address *</label>
+                    <label className="block text-xs font-medium text-white/80 mb-1">
+                      {t('emailAddr')} *
+                    </label>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="e.g. sarah@example.com"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
+                      placeholder="e.g. jean@example.com"
+                      className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">Special Notes / Requests (Optional)</label>
+                    <label className="block text-xs font-medium text-white/80 mb-1">
+                      {t('tellTrip')}
+                    </label>
                     <textarea
                       rows={2}
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      placeholder="e.g. Celebrating our anniversary on Night 3..."
-                      className="w-full bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300 resize-none"
+                      placeholder="e.g. Special anniversary dinner, hotel recommendations..."
+                      className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300 resize-none"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-white text-[#0B132B] hover:bg-white/95 font-bold rounded-xl text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xl"
+                    className="w-full bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs py-3 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer"
                   >
-                    <span>Submit & Get Custom Itinerary</span>
-                    <Send className="w-4 h-4 text-[#0B132B]" />
+                    <span>{t('wizBtnSubmit')}</span>
+                    <Send className="w-3.5 h-3.5" />
                   </button>
                 </form>
+              )}
+
+              {/* Navigation Controls (Step 1 to 4) */}
+              {!submitted && (
+                <div className="flex items-center justify-between pt-6 mt-6 border-t border-white/10">
+                  <button
+                    type="button"
+                    disabled={step === 1}
+                    onClick={() => setStep(step - 1)}
+                    className={`flex items-center space-x-1.5 text-xs font-semibold px-4 py-2 rounded-xl transition-all ${
+                      step === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-white cursor-pointer'
+                    }`}
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <span>{t('wizBtnBack')}</span>
+                  </button>
+
+                  {step < 5 && (
+                    <button
+                      type="button"
+                      onClick={() => setStep(step + 1)}
+                      className="flex items-center space-x-1.5 bg-white text-[#0B132B] hover:bg-white/90 font-bold text-xs px-5 py-2 rounded-xl shadow-md transition-all cursor-pointer"
+                    >
+                      <span>{t('wizBtnContinue')}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               )}
             </>
           )}
         </div>
-
-        {/* Footer Navigation Controls */}
-        {!submitted && (
-          <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between bg-white/5">
-            {step > 1 ? (
-              <button
-                type="button"
-                onClick={() => setStep(step - 1)}
-                className="px-4 py-2 rounded-full border border-white/20 text-xs font-medium hover:bg-white/10 flex items-center space-x-1.5 transition-all cursor-pointer"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </button>
-            ) : <div />}
-
-            {step < 5 && (
-              <button
-                type="button"
-                onClick={() => setStep(step + 1)}
-                className="px-5 py-2 rounded-full bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs flex items-center space-x-1.5 transition-all cursor-pointer shadow-md"
-              >
-                <span>Continue</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-        )}
 
       </div>
     </div>

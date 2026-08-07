@@ -1,39 +1,49 @@
-import { Compass, Headphones } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function BannerGlassCards() {
   const { t } = useLanguage();
 
   return (
-    <div className="w-full px-4 sm:px-6 md:px-12 pb-5 pt-1 flex flex-col md:flex-row justify-between items-stretch gap-4 z-10 relative">
-      {/* Bottom Left Card - Tailor-Made Itineraries */}
-      <div className="w-full md:w-[320px] lg:w-[340px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4.5 shadow-2xl glass-card-hover group">
-        <div className="w-8.5 h-8.5 rounded-xl bg-white text-[#0B132B] flex items-center justify-center mb-3 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-          <Compass className="w-4.5 h-4.5 text-[#0B132B] stroke-[2.2]" />
+    <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 mt-10 md:mt-16 z-20 relative font-['DM_Sans',sans-serif]">
+      {/* 2 Equal Columns Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
+        
+        {/* Left Card: Clean Energy / Custom Itineraries */}
+        <div className="reveal-fade-left delay-100 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl flex flex-col justify-between glass-card-hover group">
+          <div>
+            <div className="flex items-center space-x-2 text-white/70 text-xs font-medium uppercase tracking-wider mb-4">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{t('tailorMadeItineraries')}</span>
+            </div>
+
+            <div className="text-4xl sm:text-5xl md:text-6xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white tracking-tight mb-4 group-hover:scale-105 transition-transform duration-300 origin-left">
+              1,200+
+            </div>
+          </div>
+
+          <p className="text-white/80 text-xs sm:text-sm md:text-base leading-relaxed font-normal mt-2">
+            {t('statTravelers')}
+          </p>
         </div>
 
-        <h3 className="text-base md:text-lg font-bold text-white mb-1.5 tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
-          Tailor-Made Itineraries
-        </h3>
+        {/* Right Card: Impact Value / 24/7 Support */}
+        <div className="reveal-fade-right delay-200 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl flex flex-col justify-between glass-card-hover group">
+          <div>
+            <div className="flex items-center space-x-2 text-white/70 text-xs font-medium uppercase tracking-wider mb-4">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <span>{t('travelSupport247')}</span>
+            </div>
 
-        <p className="text-white/80 text-xs leading-relaxed font-normal">
-          {t('statTravelers')}
-        </p>
-      </div>
+            <div className="text-4xl sm:text-5xl md:text-6xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white tracking-tight mb-4 group-hover:scale-105 transition-transform duration-300 origin-left">
+              100%
+            </div>
+          </div>
 
-      {/* Bottom Right Card - 24/7 Travel Support */}
-      <div className="w-full md:w-[320px] lg:w-[340px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4.5 shadow-2xl glass-card-hover group">
-        <div className="w-8.5 h-8.5 rounded-xl bg-white text-[#0B132B] flex items-center justify-center mb-3 shadow-md group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300">
-          <Headphones className="w-4.5 h-4.5 text-[#0B132B] stroke-[2.2]" />
+          <p className="text-white/80 text-xs sm:text-sm md:text-base leading-relaxed font-normal mt-2">
+            {t('statConcierge')}
+          </p>
         </div>
 
-        <h3 className="text-base md:text-lg font-bold text-white mb-1.5 tracking-tight font-['Plus_Jakarta_Sans',sans-serif]">
-          24/7 Travel Support
-        </h3>
-
-        <p className="text-white/80 text-xs leading-relaxed font-normal">
-          {t('statConcierge')}
-        </p>
       </div>
     </div>
   );
