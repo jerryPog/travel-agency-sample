@@ -9,7 +9,7 @@ export function WhatsAppChatButton() {
 
   const handleSendWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
-    const phone = '33142685500';
+    const phone = '917892145475';
     const text = encodeURIComponent(message || 'Bonjour! I would like help planning my Paris trip.');
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
     setIsOpen(false);
