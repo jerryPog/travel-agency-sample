@@ -32,7 +32,7 @@ export function CanvasScroll() {
 
     updateCanvasSize();
 
-    // Draw frame to canvas with aspect-ratio cover scaling & globalAlpha
+    // Draw frame to canvas with wider plane window scale & centered cover ratio
     const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
       const canvas = canvasRef.current;
       if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
@@ -45,19 +45,23 @@ export function CanvasScroll() {
       const imgAspect = imgWidth / imgHeight;
       const canvasAspect = canvasWidth / canvasHeight;
 
-      let renderWidth: number, renderHeight: number, offsetX: number, offsetY: number;
+      let renderWidth: number, renderHeight: number;
 
       if (canvasAspect > imgAspect) {
         renderWidth = canvasWidth;
         renderHeight = canvasWidth / imgAspect;
-        offsetX = 0;
-        offsetY = (canvasHeight - renderHeight) / 2;
       } else {
         renderWidth = canvasHeight * imgAspect;
         renderHeight = canvasHeight;
-        offsetX = (canvasWidth - renderWidth) / 2;
-        offsetY = 0;
       }
+
+      // Slightly expand scale (1.08x) to make the inner plane window view wider on screen
+      const scale = 1.08;
+      renderWidth *= scale;
+      renderHeight *= scale;
+
+      const offsetX = (canvasWidth - renderWidth) / 2;
+      const offsetY = (canvasHeight - renderHeight) / 2;
 
       ctx.save();
       ctx.globalAlpha = alpha;
