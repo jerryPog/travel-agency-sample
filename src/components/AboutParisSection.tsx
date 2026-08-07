@@ -28,17 +28,15 @@ export function AboutParisSection() {
   return (
     <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Top Header Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-8 sm:mb-12">
-        <div className="lg:col-span-3">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-white/90 tracking-wide">
+      <div className="mb-8 sm:mb-12 space-y-3">
+        <div>
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-amber-300 tracking-wide">
             {t('aboutBadge')}
           </span>
         </div>
-        <div className="lg:col-span-9">
-          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-white leading-snug font-['Plus_Jakarta_Sans',sans-serif] tracking-tight">
-            {t('aboutHeadline')}
-          </h2>
-        </div>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight font-['Plus_Jakarta_Sans',sans-serif] tracking-tight max-w-4xl">
+          {t('aboutHeadline')}
+        </h2>
       </div>
 
       {/* Bento Grid Row 1 */}
