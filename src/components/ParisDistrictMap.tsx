@@ -1,77 +1,68 @@
 import React, { useState } from 'react';
-import { MapPin, Sparkles, X, Camera, Compass, Award, ArrowRight } from 'lucide-react';
+import { MapPin, Sparkles, Camera, Compass } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-
-interface DistrictInfo {
-  id: string;
-  name: string;
-  arrondissement: string;
-  vibe: string;
-  highlights: string[];
-  photoSpot: string;
-  description: string;
-  bestTime: string;
-}
-
-const districtsData: DistrictInfo[] = [
-  {
-    id: 'eiffel-7th',
-    name: '7th Arr. (Eiffel & Invalides)',
-    arrondissement: '7th Arrondissement',
-    vibe: 'Iconic Grandeur & Riverside Romance',
-    highlights: ['Eiffel Tower Summit Access', 'Musée d’Orsay Impressionists', 'Rue CLAR Bakery Walk'],
-    photoSpot: 'Avenue de Camoëns & Pont Bir-Hakeim',
-    description: 'Home to the iron lady, leafy avenues, Michelin-starred bistros, and grand museums along the Seine.',
-    bestTime: 'Sunset & Sparkle Hour (10 PM)',
-  },
-  {
-    id: 'marais-4th',
-    name: '4th Arr. (Le Marais & Place des Vosges)',
-    arrondissement: '4th Arrondissement',
-    vibe: 'Historic Mansions, Art Boutiques & Secret Courtyards',
-    highlights: ['Place des Vosges', 'Victor Hugo Residence', 'Artisanal Jewish Quarter Falafel & Pastries'],
-    photoSpot: 'Rue des Rosiers & Cour du Commerce',
-    description: 'Paris’s most vibrant neighborhood filled with 17th-century aristocratic palaces converted into trendy boutiques.',
-    bestTime: 'Morning Coffee & Sunday Stroll',
-  },
-  {
-    id: 'louvre-1st',
-    name: '1st Arr. (Louvre & Palais-Royal)',
-    arrondissement: '1st Arrondissement',
-    vibe: 'Royal Heritage & Classical Architecture',
-    highlights: ['Louvre Masterpieces', 'Palais-Royal Columns', 'Jardin des Tuileries'],
-    photoSpot: 'Palais-Royal Black & White Columns',
-    description: 'The ancient heart of French royalty, hosting world-famous galleries, manicured gardens, and luxury shopping.',
-    bestTime: 'Early Morning (8:30 AM before crowds)',
-  },
-  {
-    id: 'montmartre-18th',
-    name: '18th Arr. (Montmartre & Sacré-Cœur)',
-    arrondissement: '18th Arrondissement',
-    vibe: 'Bohemian Art, Cobblestone Hillside & Vineyards',
-    highlights: ['Sacré-Cœur Basilica Viewpoint', 'Place du Tertre Painters', 'Vignes de Montmartre'],
-    photoSpot: 'Maison Rose & Square Marcel Bleustein',
-    description: 'The hill of artists where Picasso and Van Gogh painted, featuring village charm, windmills, and panoramic city views.',
-    bestTime: 'Golden Hour & Twilight',
-  },
-  {
-    id: 'saint-germain-6th',
-    name: '6th Arr. (Saint-Germain-des-Prés)',
-    arrondissement: '6th Arrondissement',
-    vibe: 'Literary Cafes, Jazz & Luxembourg Gardens',
-    highlights: ['Jardin du Luxembourg', 'Café de Flore & Les Deux Magots', 'Antique Bookshops'],
-    photoSpot: 'Medici Fountain in Luxembourg Gardens',
-    description: 'The intellectual soul of Paris where Hemingway and Simone de Beauvoir debated over espresso.',
-    bestTime: 'Afternoon Reading & Wine Hour',
-  },
-];
 
 export function ParisDistrictMap() {
   const { t } = useLanguage();
-  const [selectedDistrict, setSelectedDistrict] = useState<DistrictInfo | null>(districtsData[0]);
+
+  const districtsData = [
+    {
+      id: 'eiffel-7th',
+      name: t('d7Name'),
+      arrondissement: t('d7Arr'),
+      vibe: t('d7Vibe'),
+      highlights: [t('d7H1'), t('d7H2'), t('d7H3')],
+      photoSpot: t('d7Photo'),
+      description: t('d7Desc'),
+      bestTime: t('d7Time'),
+    },
+    {
+      id: 'marais-4th',
+      name: t('d4Name'),
+      arrondissement: t('d4Arr'),
+      vibe: t('d4Vibe'),
+      highlights: [t('d4H1'), t('d4H2'), t('d4H3')],
+      photoSpot: t('d4Photo'),
+      description: t('d4Desc'),
+      bestTime: t('d4Time'),
+    },
+    {
+      id: 'louvre-1st',
+      name: t('d1Name'),
+      arrondissement: t('d1Arr'),
+      vibe: t('d1Vibe'),
+      highlights: [t('d1H1'), t('d1H2'), t('d1H3')],
+      photoSpot: t('d1Photo'),
+      description: t('d1Desc'),
+      bestTime: t('d1Time'),
+    },
+    {
+      id: 'montmartre-18th',
+      name: t('d18Name'),
+      arrondissement: t('d18Arr'),
+      vibe: t('d18Vibe'),
+      highlights: [t('d18H1'), t('d18H2'), t('d18H3')],
+      photoSpot: t('d18Photo'),
+      description: t('d18Desc'),
+      bestTime: t('d18Time'),
+    },
+    {
+      id: 'saint-germain-6th',
+      name: t('d6Name'),
+      arrondissement: t('d6Arr'),
+      vibe: t('d6Vibe'),
+      highlights: [t('d6H1'), t('d6H2'), t('d6H3')],
+      photoSpot: t('d6Photo'),
+      description: t('d6Desc'),
+      bestTime: t('d6Time'),
+    },
+  ];
+
+  const [selectedId, setSelectedId] = useState<string>('eiffel-7th');
+  const selectedDistrict = districtsData.find((d) => d.id === selectedId) || districtsData[0];
 
   return (
-    <section id="districts" className="w-full max-w-[1440px] mx-auto px-6 md:px-12 py-16 text-white font-['DM_Sans',sans-serif]">
+    <section id="districts" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-12">
         <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-amber-300 mb-3 shadow-lg">
@@ -92,7 +83,7 @@ export function ParisDistrictMap() {
         {/* Left Interactive SVG Map Display */}
         <div className="lg:col-span-7 bg-white/5 backdrop-blur-xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden min-h-[380px] sm:min-h-[460px] flex flex-col justify-between">
           <div className="absolute top-3 left-4 text-xs font-mono text-amber-300/80 bg-black/40 px-3 py-1 rounded-full border border-amber-300/30">
-            Interactive Seine Map Pinboard
+            {t('distMapPinboard')}
           </div>
 
           {/* Seine River Curve Background SVG */}
@@ -103,11 +94,11 @@ export function ParisDistrictMap() {
           {/* District Pins Container */}
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-4 my-auto pt-8">
             {districtsData.map((d) => {
-              const isSelected = selectedDistrict?.id === d.id;
+              const isSelected = selectedDistrict.id === d.id;
               return (
                 <button
                   key={d.id}
-                  onClick={() => setSelectedDistrict(d)}
+                  onClick={() => setSelectedId(d.id)}
                   className={`p-4 rounded-2xl border text-left transition-all duration-300 flex items-start space-x-3 cursor-pointer group ${
                     isSelected
                       ? 'bg-white text-[#0B132B] border-amber-400 font-bold shadow-xl scale-[1.03]'
@@ -157,7 +148,7 @@ export function ParisDistrictMap() {
             <div>
               <h4 className="text-xs font-semibold text-white/90 mb-2 flex items-center space-x-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                <span>Curated District Highlights:</span>
+                <span>{t('distHighlightsLabel')}</span>
               </h4>
               <ul className="space-y-1.5 text-xs text-white/80">
                 {selectedDistrict.highlights.map((h, i) => (
@@ -173,10 +164,10 @@ export function ParisDistrictMap() {
             <div className="p-3.5 rounded-2xl bg-amber-400/10 border border-amber-400/30 text-xs space-y-1">
               <div className="font-semibold text-amber-300 flex items-center space-x-1.5">
                 <Camera className="w-3.5 h-3.5" />
-                <span>Insider Secret Photo Spot:</span>
+                <span>{t('distPhotoSpotLabel')}</span>
               </div>
               <div className="text-white/90 font-medium">{selectedDistrict.photoSpot}</div>
-              <div className="text-[11px] text-white/60">Best Time: {selectedDistrict.bestTime}</div>
+              <div className="text-[11px] text-white/60">{t('distBestTimeLabel')} {selectedDistrict.bestTime}</div>
             </div>
           </div>
         )}

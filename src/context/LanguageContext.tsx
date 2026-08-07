@@ -75,6 +75,65 @@ const translations: Record<Language, Record<string, string>> = {
     districtBadge: 'Interactive Neighborhood Guide',
     districtTitle: 'Explore Paris’s Most Iconic Arrondissements',
     districtSub: 'Click any district on the interactive map below to uncover secret photo spots, top attractions, and local guide recommendations.',
+    distHighlightsLabel: 'Curated District Highlights:',
+    distPhotoSpotLabel: 'Insider Secret Photo Spot:',
+    distBestTimeLabel: 'Best Time:',
+    distMapPinboard: 'Interactive Seine Map Pinboard',
+
+    // District 7th
+    d7Name: '7th Arr. (Eiffel & Invalides)',
+    d7Arr: '7th Arrondissement',
+    d7Vibe: 'Iconic Grandeur & Riverside Romance',
+    d7Desc: 'Home to the iron lady, leafy avenues, Michelin-starred bistros, and grand museums along the Seine.',
+    d7H1: 'Eiffel Tower Summit Access',
+    d7H2: 'Musée d’Orsay Impressionists',
+    d7H3: 'Rue Cler Bakery Walk',
+    d7Photo: 'Avenue de Camoëns & Pont Bir-Hakeim',
+    d7Time: 'Sunset & Sparkle Hour (10 PM)',
+
+    // District 4th
+    d4Name: '4th Arr. (Le Marais & Place des Vosges)',
+    d4Arr: '4th Arrondissement',
+    d4Vibe: 'Historic Mansions, Art Boutiques & Secret Courtyards',
+    d4Desc: 'Paris’s most vibrant neighborhood filled with 17th-century aristocratic palaces converted into trendy boutiques.',
+    d4H1: 'Place des Vosges',
+    d4H2: 'Victor Hugo Residence',
+    d4H3: 'Artisanal Jewish Quarter Falafel & Pastries',
+    d4Photo: 'Rue des Rosiers & Cour du Commerce',
+    d4Time: 'Morning Coffee & Sunday Stroll',
+
+    // District 1st
+    d1Name: '1st Arr. (Louvre & Palais-Royal)',
+    d1Arr: '1st Arrondissement',
+    d1Vibe: 'Royal Heritage & Classical Architecture',
+    d1Desc: 'The ancient heart of French royalty, hosting world-famous galleries, manicured gardens, and luxury shopping.',
+    d1H1: 'Louvre Masterpieces',
+    d1H2: 'Palais-Royal Columns',
+    d1H3: 'Jardin des Tuileries',
+    d1Photo: 'Palais-Royal Black & White Columns',
+    d1Time: 'Early Morning (8:30 AM before crowds)',
+
+    // District 18th
+    d18Name: '18th Arr. (Montmartre & Sacré-Cœur)',
+    d18Arr: '18th Arrondissement',
+    d18Vibe: 'Bohemian Art, Cobblestone Hillside & Vineyards',
+    d18Desc: 'The hill of artists where Picasso and Van Gogh painted, featuring village charm, windmills, and panoramic city views.',
+    d18H1: 'Sacré-Cœur Basilica Viewpoint',
+    d18H2: 'Place du Tertre Painters',
+    d18H3: 'Vignes de Montmartre',
+    d18Photo: 'Maison Rose & Square Marcel Bleustein',
+    d18Time: 'Golden Hour & Twilight',
+
+    // District 6th
+    d6Name: '6th Arr. (Saint-Germain-des-Prés)',
+    d6Arr: '6th Arrondissement',
+    d6Vibe: 'Literary Cafes, Jazz & Luxembourg Gardens',
+    d6Desc: 'The intellectual soul of Paris where Hemingway and Simone de Beauvoir debated over espresso.',
+    d6H1: 'Jardin du Luxembourg',
+    d6H2: 'Café de Flore & Les Deux Magots',
+    d6H3: 'Antique Bookshops',
+    d6Photo: 'Medici Fountain in Luxembourg Gardens',
+    d6Time: 'Afternoon Reading & Wine Hour',
 
     // Services
     servicesBadge: 'Our Offerings',
@@ -238,6 +297,65 @@ const translations: Record<Language, Record<string, string>> = {
     districtBadge: 'Guide Interactif des Quartiers',
     districtTitle: 'Explorez les Arrondissements Mythiques de Paris',
     districtSub: 'Cliquez sur un quartier de la carte pour découvrir les spots photos secrets et nos recommandations.',
+    distHighlightsLabel: 'Points Forts du Quartier :',
+    distPhotoSpotLabel: 'Spot Photo Secret :',
+    distBestTimeLabel: 'Meilleur Moment :',
+    distMapPinboard: 'Carte Interactive de la Seine',
+
+    // District 7th
+    d7Name: '7e Arr. (Tour Eiffel & Invalides)',
+    d7Arr: '7e Arrondissement',
+    d7Vibe: 'Grandeur Iconique & Romance au Bord de Seine',
+    d7Desc: 'Foyer de la dame de fer, d\'avenues arborées, de bistros étoilés et de grands musées le long de la Seine.',
+    d7H1: 'Accès au Sommet de la Tour Eiffel',
+    d7H2: 'Impressionnistes du Musée d’Orsay',
+    d7H3: 'Balade Gourmande Rue Cler',
+    d7Photo: 'Avenue de Camoëns & Pont de Bir-Hakeim',
+    d7Time: 'Coucher de Soleil & Heure Scintillante (22h)',
+
+    // District 4th
+    d4Name: '4e Arr. (Le Marais & Place des Vosges)',
+    d4Arr: '4e Arrondissement',
+    d4Vibe: 'Hôtels Particuliers, Boutiques d\'Art & Cours Secrètes',
+    d4Desc: 'Le quartier le plus vivant de Paris abritant de magnifiques palais aristocratiques du XVIIe siècle.',
+    d4H1: 'Place des Vosges',
+    d4H2: 'Maison de Victor Hugo',
+    d4H3: 'Falafels et Pâtisseries du Quartier Juif',
+    d4Photo: 'Rue des Rosiers & Cour du Commerce',
+    d4Time: 'Café du Matin & Flânerie Dominicale',
+
+    // District 1st
+    d1Name: '1er Arr. (Louvre & Palais-Royal)',
+    d1Arr: '1er Arrondissement',
+    d1Vibe: 'Héritage Royal & Architecture Classique',
+    d1Desc: 'Le cœur historique de la royauté française, abritant des galeries célèbres et des jardins magnifiques.',
+    d1H1: 'Chefs-d\'œuvre du Louvre',
+    d1H2: 'Colonnes du Palais-Royal',
+    d1H3: 'Jardin des Tuileries',
+    d1Photo: 'Colonnes de Buren du Palais-Royal',
+    d1Time: 'Tôt le Matin (8h30 avant la foule)',
+
+    // District 18th
+    d18Name: '18e Arr. (Montmartre & Sacré-Cœur)',
+    d18Arr: '18e Arrondissement',
+    d18Vibe: 'Art Bohème, Ruelles Pavées & Vignes',
+    d18Desc: 'La Butte des artistes où ont peint Picasso et Van Gogh, avec son charme de village et ses moulins.',
+    d18H1: 'Panorama de la Basilique du Sacré-Cœur',
+    d18H2: 'Peintres de la Place du Tertre',
+    d18H3: 'Vignes de Montmartre',
+    d18Photo: 'La Maison Rose & Square Marcel Bleustein',
+    d18Time: 'Heure Dorée & Crépuscule',
+
+    // District 6th
+    d6Name: '6e Arr. (Saint-Germain-des-Prés)',
+    d6Arr: '6e Arrondissement',
+    d6Vibe: 'Cafés Littéraires, Jazz & Jardin du Luxembourg',
+    d6Desc: 'L\'âme intellectuelle de Paris où Hemingway et Simone de Beauvoir débattaient en terrasse.',
+    d6H1: 'Jardin du Luxembourg',
+    d6H2: 'Café de Flore & Les Deux Magots',
+    d6H3: 'Librairies Anciennes',
+    d6Photo: 'Fontaine de Médicis au Jardin du Luxembourg',
+    d6Time: 'Lecture de l\'Après-midi & Verre de Vin',
 
     // Services
     servicesBadge: 'Nos Prestations',
