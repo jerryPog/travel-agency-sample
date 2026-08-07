@@ -3,6 +3,7 @@ import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
+const MANDATORY_MIN_LOAD_TIME_MS = 2600; // Mandatory 2.6s loading experience for all users
 
 function getFrameUrl(index: number): string {
   const paddedIndex = String(index + 1).padStart(3, '0');
@@ -21,6 +22,8 @@ export function CanvasScroll() {
 
   useEffect(() => {
     let loadedCount = 0;
+    let imagesReady = false;
+    let minTimePassed = false;
     const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
     const updateCanvasSize = () => {
@@ -104,20 +107,42 @@ export function CanvasScroll() {
       }
     };
 
-    // Preload critical initial 30 frames first for an ultra-smooth start
+    const checkComplete = () => {
+      if (imagesReady && minTimePassed) {
+        setLoadProgress(100);
+        setTimeout(() => {
+          setIsLoaded(true);
+        }, 200);
+      }
+    };
+
+    // Smooth Mandatory Timer Ticker (0 to 100%)
+    const startTime = Date.now();
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const timePercent = Math.min(100, Math.round((elapsed / MANDATORY_MIN_LOAD_TIME_MS) * 100));
+      
+      setLoadProgress((prev) => Math.max(prev, Math.min(99, timePercent)));
+
+      if (elapsed >= MANDATORY_MIN_LOAD_TIME_MS) {
+        minTimePassed = true;
+        clearInterval(progressInterval);
+        checkComplete();
+      }
+    }, 30);
+
+    // Preload critical initial 30 frames first
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
         img.decoding = 'async';
         img.onload = () => {
           loadedCount++;
-          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
           if (index === 0) renderFrame();
           resolve(img);
         };
         img.onerror = () => {
           loadedCount++;
-          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
           resolve(img);
         };
         img.src = getFrameUrl(index);
@@ -132,9 +157,10 @@ export function CanvasScroll() {
         initialBatch.push(loadSingleImage(i));
       }
       await Promise.all(initialBatch);
-      setIsLoaded(true);
+      imagesReady = true;
+      checkComplete();
 
-      // Load remaining frames
+      // Load remaining frames in background
       for (let i = 30; i < TOTAL_FRAMES; i++) {
         loadSingleImage(i);
       }
@@ -187,6 +213,7 @@ export function CanvasScroll() {
     animFrameIdRef.current = requestAnimationFrame(renderLoop);
 
     return () => {
+      clearInterval(progressInterval);
       window.removeEventListener('scroll', updateTargetFrame);
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
@@ -197,7 +224,7 @@ export function CanvasScroll() {
 
   return (
     <>
-      {/* Animated Private Jet Preloader with Sound Effects */}
+      {/* Mandatory Animated Private Jet Preloader */}
       <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
       {/* Fixed Background Canvas */}
