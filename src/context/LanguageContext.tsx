@@ -81,6 +81,41 @@ const translations: Record<Language, Record<string, string>> = {
     servicesTitle: 'Crafted Experiences For Every Traveler',
     learnMore: 'Learn More',
 
+    serviceClassicTitle: 'Classic Paris Tours',
+    serviceClassicDesc: 'Eiffel Tower, Louvre, Notre-Dame, and the essentials, done right with skip-the-line access and expert art historians.',
+    serviceClassicTag: 'Most Popular',
+    serviceClassicH1: 'Eiffel Tower Summit Access',
+    serviceClassicH2: 'Louvre Museum Masterpieces',
+    serviceClassicH3: 'Historic Notre-Dame Walk',
+
+    serviceHiddenTitle: 'Hidden Paris Experiences',
+    serviceHiddenDesc: 'Local markets, secret rooftop gardens, underground speakeasies, and off-the-map neighborhoods in Belleville & Le Marais.',
+    serviceHiddenTag: 'Insider Favorite',
+    serviceHiddenH1: 'Artisan Bakery Walk',
+    serviceHiddenH2: 'Secret Courtyards & Gardens',
+    serviceHiddenH3: 'Local Wine & Cheese Tasting',
+
+    serviceCustomTitle: 'Custom Itineraries',
+    serviceCustomDesc: 'Fully personalized trips designed around your rhythm, interests, food preferences, and pace — 100% tailor-made.',
+    serviceCustomTag: 'Bespoke',
+    serviceCustomH1: 'Personal Travel Concierge',
+    serviceCustomH2: 'Flexible Daily Schedule',
+    serviceCustomH3: 'Curated Interactive Map App',
+
+    serviceDaytripsTitle: 'Day Trips & Countryside',
+    serviceDaytripsDesc: 'Château de Versailles, Monet’s Gardens in Giverny, Champagne vineyards, and Normandy coast with private transfers.',
+    serviceDaytripsTag: 'Day Excursion',
+    serviceDaytripsH1: 'Private Chauffeur Transfer',
+    serviceDaytripsH2: 'Vineyard Wine Tasting',
+    serviceDaytripsH3: 'Skip-The-Line Palace Entry',
+
+    serviceGroupTitle: 'Group & Family Packages',
+    serviceGroupDesc: 'Thoughtfully planned trips for families with children, milestone birthdays, corporate retreats, and couples.',
+    serviceGroupTag: 'Family & Groups',
+    serviceGroupH1: 'Kids Scavenger Hunts',
+    serviceGroupH2: 'Group Dining Reservations',
+    serviceGroupH3: 'Spacious Vehicles',
+
     // Pricing & Packages
     pricingBadge: 'Curated Pricing & Plans',
     pricingTitle: 'Transparent Packages Tailored to Your Journey',
@@ -90,6 +125,29 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'Private VIP',
     filterFood: 'Art & Gastronomy',
     filterFamily: 'Family Friendly',
+
+    planDiscTitle: 'Discovery Experience',
+    planDiscTagline: 'For short trips & essential Paris highlights',
+    planDiscH1: '3-day curated Paris itinerary',
+    planDiscH2: 'Skip-the-line Eiffel Tower & Louvre timed entries',
+    planDiscH3: 'Self-guided walking routes with local tips',
+    planDiscH4: 'Direct WhatsApp support before your trip',
+
+    planClassTitle: 'Classic Paris Plan',
+    planClassTagline: 'For travelers who want a seamless, fully guided stay',
+    planClassH1: '5–7 day full day-by-day bespoke itinerary',
+    planClassH2: 'Private Seine River Sunset Cruise with Champagne',
+    planClassH3: 'Handpicked boutique hotels, cafés & hidden bistros',
+    planClassH4: 'Dedicated Paris travel consultant',
+    planClassH5: '24/7 concierge support during your stay',
+
+    planPremTitle: 'Bespoke VIP Luxury',
+    planPremTagline: 'For a fully personalized, ultra-exclusive Paris journey',
+    planPremH1: '100% custom itinerary tailored to your exact pace',
+    planPremH2: 'Private Mercedes Chauffeur & Private Licensed Guide',
+    planPremH3: 'Day trips included (Versailles, Champagne & Giverny)',
+    planPremH4: 'Personal luxury travel concierge available anytime',
+    planPremH5: 'VIP Airport Meet & Greet + Priority transfers',
 
     // Testimonials
     testimonialsBadge: 'Traveler Stories & Reviews',
@@ -186,6 +244,41 @@ const translations: Record<Language, Record<string, string>> = {
     servicesTitle: 'Des Expériences Conçues Pour Chaque Voyageur',
     learnMore: 'En Savoir Plus',
 
+    serviceClassicTitle: 'Circuits Classiques de Paris',
+    serviceClassicDesc: 'Tour Eiffel, Musée du Louvre, Notre-Dame et les incontournables avec billets coupe-file et historiens de l\'art.',
+    serviceClassicTag: 'Plus Populaire',
+    serviceClassicH1: 'Sommet de la Tour Eiffel',
+    serviceClassicH2: 'Chefs-d\'œuvre du Louvre',
+    serviceClassicH3: 'Balade à Notre-Dame',
+
+    serviceHiddenTitle: 'Expériences Parisiennes Secrètes',
+    serviceHiddenDesc: 'Marchés locaux, jardins suspendus secrets, bars cachés et quartiers typiques de Belleville et du Marais.',
+    serviceHiddenTag: 'Favori des Habitants',
+    serviceHiddenH1: 'Balade des Boulangeries',
+    serviceHiddenH2: 'Cours Intérieures Secrètes',
+    serviceHiddenH3: 'Dégustation de Vins',
+
+    serviceCustomTitle: 'Itinéraires Sur Mesure',
+    serviceCustomDesc: 'Séjours 100% personnalisés selon votre rythme, vos centres d\'intérêt et vos envies culinaires.',
+    serviceCustomTag: 'Sur Mesure',
+    serviceCustomH1: 'Concierge Dédié',
+    serviceCustomH2: 'Programme Flexible',
+    serviceCustomH3: 'Application Carte Dédiée',
+
+    serviceDaytripsTitle: 'Excursions & Campagne',
+    serviceDaytripsDesc: 'Château de Versailles, Jardins de Monet à Giverny, vignobles de Champagne et côte normande avec chauffeur privé.',
+    serviceDaytripsTag: 'Excursion d\'une Journée',
+    serviceDaytripsH1: 'Chauffeur Privé',
+    serviceDaytripsH2: 'Dégustation dans les Vignes',
+    serviceDaytripsH3: 'Entrée Coupe-File',
+
+    serviceGroupTitle: 'Offres Famille & Groupes',
+    serviceGroupDesc: 'Voyages sur mesure pour familles avec enfants, anniversaires, séminaires et séjours en groupe.',
+    serviceGroupTag: 'Famille & Groupes',
+    serviceGroupH1: 'Chasses au Trésor Enfants',
+    serviceGroupH2: 'Réservations Restaurants de Groupe',
+    serviceGroupH3: 'Véhicules Spacieux',
+
     // Pricing & Packages
     pricingBadge: 'Formules & Tarifs',
     pricingTitle: 'Des Offres Transparentes Adaptées à Votre Séjour',
@@ -195,6 +288,29 @@ const translations: Record<Language, Record<string, string>> = {
     filterVIP: 'VIP Privé',
     filterFood: 'Art & Gastronomie',
     filterFamily: 'En Famille',
+
+    planDiscTitle: 'Expérience Découverte',
+    planDiscTagline: 'Pour séjours courts et incontournables de Paris',
+    planDiscH1: 'Itinéraire 3 jours personnalisé',
+    planDiscH2: 'Billets horodatés Tour Eiffel & Louvre',
+    planDiscH3: 'Parcours à pied avec conseils locaux',
+    planDiscH4: 'Assistance WhatsApp directe avant séjour',
+
+    planClassTitle: 'Formule Paris Classique',
+    planClassTagline: 'Pour les voyageurs souhaitant un séjour guidé et fluide',
+    planClassH1: 'Itinéraire 5-7 jours jour par jour',
+    planClassH2: 'Croisière privée au coucher du soleil avec Champagne',
+    planClassH3: 'Hôtels sélects, cafés et bistros secrets',
+    planClassH4: 'Consultant voyage dédié à Paris',
+    planClassH5: 'Support concierge 24/7 durant le séjour',
+
+    planPremTitle: 'Luxe VIP Sur Mesure',
+    planPremTagline: 'Pour un voyage ultra-exclusif et 100% personnalisé',
+    planPremH1: 'Itinéraire 100% sur mesure selon votre rythme',
+    planPremH2: 'Chauffeur privé Mercedes & Guide officiel privé',
+    planPremH3: 'Excursions incluses (Versailles, Champagne & Giverny)',
+    planPremH4: 'Concierge de luxe disponible à tout moment',
+    planPremH5: 'Accueil VIP Aéroport & Transferts prioritaires',
 
     // Testimonials
     testimonialsBadge: 'Témoignages & Avis Voyageurs',

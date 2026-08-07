@@ -9,48 +9,48 @@ export function ServicesSection() {
   const services = [
     {
       id: 'classic',
-      title: 'Classic Paris Tours',
-      description: 'Eiffel Tower, Louvre, Notre-Dame, and the essentials, done right with skip-the-line access and expert art historians.',
-      tag: 'Most Popular',
+      title: t('serviceClassicTitle'),
+      description: t('serviceClassicDesc'),
+      tag: t('serviceClassicTag'),
       icon: Landmark,
       image: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=800&q=80',
-      highlights: ['Eiffel Tower Summit', 'Louvre Masterpieces', 'Notre-Dame Walk'],
+      highlights: [t('serviceClassicH1'), t('serviceClassicH2'), t('serviceClassicH3')],
     },
     {
       id: 'hidden',
-      title: 'Hidden Paris Experiences',
-      description: 'Local markets, secret rooftop gardens, underground speakeasies, and off-the-map neighborhoods in Belleville & Le Marais.',
-      tag: 'Insider Favorite',
+      title: t('serviceHiddenTitle'),
+      description: t('serviceHiddenDesc'),
+      tag: t('serviceHiddenTag'),
       icon: Sparkles,
       image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80',
-      highlights: ['Artisan Bakery Walk', 'Secret Courtyards', 'Local Wine Tasting'],
+      highlights: [t('serviceHiddenH1'), t('serviceHiddenH2'), t('serviceHiddenH3')],
     },
     {
       id: 'custom',
-      title: 'Custom Itineraries',
-      description: 'Fully personalized trips designed around your rhythm, interests, food preferences, and pace — 100% tailor-made.',
-      tag: 'Bespoke',
+      title: t('serviceCustomTitle'),
+      description: t('serviceCustomDesc'),
+      tag: t('serviceCustomTag'),
       icon: Sliders,
       image: 'https://images.unsplash.com/photo-1509299349698-dd22323b5963?auto=format&fit=crop&w=800&q=80',
-      highlights: ['Personal Travel Concierge', 'Flexible Schedule', 'Curated Map App'],
+      highlights: [t('serviceCustomH1'), t('serviceCustomH2'), t('serviceCustomH3')],
     },
     {
       id: 'daytrips',
-      title: 'Day Trips & Countryside',
-      description: 'Château de Versailles, Monet’s Gardens in Giverny, Champagne vineyards, and Normandy coast with private transfers.',
-      tag: 'Day Excursion',
+      title: t('serviceDaytripsTitle'),
+      description: t('serviceDaytripsDesc'),
+      tag: t('serviceDaytripsTag'),
       icon: Sun,
       image: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?auto=format&fit=crop&w=800&q=80',
-      highlights: ['Private Chauffeur', 'Vineyard Tasting', 'Skip-The-Line Entry'],
+      highlights: [t('serviceDaytripsH1'), t('serviceDaytripsH2'), t('serviceDaytripsH3')],
     },
     {
       id: 'group',
-      title: 'Group & Family Packages',
-      description: 'Thoughtfully planned trips for families with children, milestone birthdays, corporate retreats, and couples.',
-      tag: 'Family & Groups',
+      title: t('serviceGroupTitle'),
+      description: t('serviceGroupDesc'),
+      tag: t('serviceGroupTag'),
       icon: Users2,
       image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
-      highlights: ['Kids Scavenger Hunts', 'Group Dining Reservations', 'Spacious Vehicles'],
+      highlights: [t('serviceGroupH1'), t('serviceGroupH2'), t('serviceGroupH3')],
     },
   ];
 
@@ -62,11 +62,11 @@ export function ServicesSection() {
   };
 
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
+    <section id="services" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-12 py-12 sm:py-16 text-white font-['DM_Sans',sans-serif]">
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
         <div>
-          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-medium text-amber-300 mb-3">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-amber-300 mb-3">
             {t('servicesBadge')}
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Plus_Jakarta_Sans',sans-serif] tracking-tight text-white">
@@ -125,7 +125,7 @@ export function ServicesSection() {
                   onClick={handleExploreClick}
                   className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-[#0B132B] border border-white/20 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
-                  <span>Learn More</span>
+                  <span>{t('learnMore')}</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
               </div>
