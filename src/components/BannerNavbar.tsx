@@ -152,13 +152,6 @@ export function BannerNavbar({
         </div>
       </header>
 
-      {/* Invisible full-screen tap-away backdrop */}
-      <div
-        onClick={() => setMobileMenuOpen(false)}
-        className={`fixed inset-0 z-40 lg:hidden transition-opacity duration-300 ${
-          mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-      />
     </>
   );
 }
