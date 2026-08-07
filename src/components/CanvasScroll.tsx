@@ -55,8 +55,8 @@ export function CanvasScroll() {
         renderHeight = canvasHeight;
       }
 
-      // Expand scale (1.15x) to make the inner plane window view wider & more spacious
-      const scale = 1.15;
+      // Expand scale (1.25x) for an ultra-spacious, wide plane window view
+      const scale = 1.25;
       renderWidth *= scale;
       renderHeight *= scale;
 
