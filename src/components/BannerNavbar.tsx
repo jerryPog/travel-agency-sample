@@ -69,12 +69,12 @@ export function BannerNavbar({
         flex flex-col gap-2
         lg:flex-row lg:items-center lg:justify-between lg:gap-0">
 
-        {/* Top row on mobile: Brand left, controls right */}
-        <div className="flex items-center justify-between w-full">
+        {/* Top row: Brand centered on mobile, left on desktop */}
+        <div className="flex items-center justify-center lg:justify-between w-full">
           {/* Brand */}
           <button
             onClick={onBrandClick}
-            className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif]"
+            className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif] text-center lg:text-left"
           >
             {brandName}
           </button>
