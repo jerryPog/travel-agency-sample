@@ -1,200 +1,217 @@
 import { useEffect, useRef, useState } from 'react';
-import { Volume2, VolumeX, Plane } from 'lucide-react';
+import { Compass, Gauge, ShieldCheck, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { JetGraphic } from './JetGraphic';
+import { playJetSound } from '../utils/audio';
+
+const DURATION_MS = 2600; // Mandatory display time for all users
 
 interface PrivateJetLoaderProps {
-  progress: number;
-  isLoaded: boolean;
+  progress: number;  // 0-100, drives the progress bar
+  isLoaded: boolean; // true when images are ready AND minimum time passed
 }
 
 export function PrivateJetLoader({ progress, isLoaded }: PrivateJetLoaderProps) {
-  const [muted, setMuted] = useState(false);
-  const [audioStarted, setAudioStarted] = useState(false);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
+  const [animProgress, setAnimProgress] = useState(0); // 0.0 → 1.0 internal animation progress
+  const [altitude, setAltitude] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundStarted, setSoundStarted] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
 
-  // Initialize Web Audio API Jet Engine Sound Generator
   useEffect(() => {
-    if (isLoaded) {
-      if (gainNodeRef.current && audioCtxRef.current) {
-        // Fade out jet audio smoothly over 0.5s when loaded
-        gainNodeRef.current.gain.linearRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.5);
-        setTimeout(() => {
-          audioCtxRef.current?.close();
-        }, 600);
+    // Auto-play sound on first render (requires user gesture on some browsers)
+    const trySound = () => {
+      if (!soundStarted && soundEnabled) {
+        playJetSound(DURATION_MS / 1000);
+        setSoundStarted(true);
       }
-    }
-  }, [isLoaded]);
-
-  const startAudio = () => {
-    if (audioStarted || muted) return;
+      window.removeEventListener('pointerdown', trySound);
+    };
+    // Try immediately (works on desktop/most browsers); fallback on first touch
     try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      audioCtxRef.current = ctx;
+      playJetSound(DURATION_MS / 1000);
+      setSoundStarted(true);
+    } catch {
+      window.addEventListener('pointerdown', trySound, { once: true });
+    }
 
-      // White Noise Buffer for High-Speed Jet Thruster Rumble
-      const bufferSize = ctx.sampleRate * 2;
-      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
+    // Cubic ease-in-out animation loop
+    const tick = (now: number) => {
+      if (startTimeRef.current === null) startTimeRef.current = now;
+      const elapsed = now - startTimeRef.current;
+      const raw = Math.min(elapsed / DURATION_MS, 1);
+      // Cubic ease-in-out
+      const eased = raw < 0.5
+        ? 4 * raw * raw * raw
+        : 1 - Math.pow(-2 * raw + 2, 3) / 2;
+
+      setAnimProgress(eased);
+      setAltitude(Math.round(eased * 45000));
+
+      if (raw < 1) {
+        rafRef.current = requestAnimationFrame(tick);
       }
+    };
 
-      const whiteNoise = ctx.createBufferSource();
-      whiteNoise.buffer = noiseBuffer;
-      whiteNoise.loop = true;
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
-      // Resonant Lowpass Filter for Thruster Airflow
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(320, ctx.currentTime);
-
-      // Sub-Bass Sine Oscillator for Engine Thrust Vibration
-      const osc = ctx.createOscillator();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(65, ctx.currentTime);
-
-      const oscGain = ctx.createGain();
-      oscGain.gain.setValueAtTime(0.18, ctx.currentTime);
-      osc.connect(oscGain);
-
-      // Master Gain Node
-      const masterGain = ctx.createGain();
-      masterGain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gainNodeRef.current = masterGain;
-
-      whiteNoise.connect(filter);
-      filter.connect(masterGain);
-      oscGain.connect(masterGain);
-      masterGain.connect(ctx.destination);
-
-      whiteNoise.start();
-      osc.start();
-      setAudioStarted(true);
-    } catch (e) {
-      console.warn('Web Audio API not supported or user blocked audio auto-play');
+  // Once both animation finished AND images loaded → fade out & unmount
+  useEffect(() => {
+    if (isLoaded && animProgress >= 0.99) {
+      setTimeout(() => setHidden(true), 300);
     }
-  };
+  }, [isLoaded, animProgress]);
 
-  const toggleMute = () => {
-    if (!audioStarted) {
-      startAudio();
-      setMuted(false);
-      return;
-    }
-    if (gainNodeRef.current && audioCtxRef.current) {
-      if (muted) {
-        gainNodeRef.current.gain.setValueAtTime(0.15, audioCtxRef.current.currentTime);
-        setMuted(false);
-      } else {
-        gainNodeRef.current.gain.setValueAtTime(0.0001, audioCtxRef.current.currentTime);
-        setMuted(true);
-      }
-    }
+  if (hidden) return null;
+
+  // Jet travels from 110vh → -110vh as animProgress goes 0 → 1
+  const jetYPercent = 110 - animProgress * 220;
+  // Curtain clips away from bottom to top as jet ascends
+  const curtainClip = `inset(0 0 ${animProgress * 100}% 0)`;
+
+  const toggleSound = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSoundEnabled((prev) => !prev);
   };
 
   return (
-    <div
-      onClick={startAudio}
-      className={`fixed inset-0 bg-[#030712] z-50 flex flex-col items-center justify-between py-10 px-6 transition-all duration-700 font-['DM_Sans',sans-serif] pointer-events-auto ${
-        isLoaded ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'
-      }`}
-    >
-      {/* Dynamic Background Animated Fast Cloud Layers */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Sky Ambient Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0A1A2F] via-[#050C1E] to-[#02050E]" />
+    <div className="fixed inset-0 z-50 pointer-events-auto overflow-hidden select-none font-['DM_Sans',sans-serif]">
 
-        {/* High Speed Passing Cloud Volumetrics */}
-        <div className="absolute top-[-20%] left-[-10%] w-[700px] h-[300px] bg-white/20 rounded-full blur-3xl animate-cloud-pass-1" />
-        <div className="absolute top-[20%] right-[-20%] w-[800px] h-[350px] bg-blue-300/15 rounded-full blur-3xl animate-cloud-pass-2" />
-        <div className="absolute top-[50%] left-[-15%] w-[600px] h-[250px] bg-amber-300/15 rounded-full blur-2xl animate-cloud-pass-3" />
-      </div>
+      {/* ── DARK CURTAIN that gets wiped away bottom→top by the jet ── */}
+      <div
+        className="absolute inset-0 bg-[#050505] flex flex-col justify-between text-[#f5f5f5] transition-none"
+        style={{ clipPath: curtainClip, WebkitClipPath: curtainClip }}
+      >
+        {/* Subtle Gold Radial Atmosphere */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(197,160,89,0.12),rgba(5,5,5,0))]" />
+        {/* Fine grid lines */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#c5a05908_1px,transparent_1px),linear-gradient(to_bottom,#c5a05908_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
-      {/* Top Header: Sound Control & Flight Status */}
-      <div className="relative z-10 w-full max-w-4xl flex items-center justify-between text-white/80">
-        <div className="flex items-center space-x-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-1.5 rounded-full text-xs font-semibold">
-          <Plane className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
-          <span className="tracking-wider uppercase text-[11px] text-amber-300 font-mono">
-            Flight PA-707 • Descending Into Paris
-          </span>
+        {/* Top Brand & Flight Status Bar */}
+        <div className="relative z-10 p-6 sm:p-8 flex justify-between items-center max-w-7xl mx-auto w-full">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#0a0a0a] border border-[#c5a059]/40 flex items-center justify-center text-[#c5a059] font-serif text-lg sm:text-xl tracking-widest shadow-inner">
+              P
+            </div>
+            <div>
+              <span className="text-[#f5f5f5] font-serif font-light text-base sm:text-xl tracking-[0.2em] uppercase block">
+                PARIS TRAVEL CO.
+              </span>
+              <span className="text-[#c5a059] text-[10px] font-mono tracking-[0.3em] uppercase flex items-center gap-2 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-ping" />
+                PRIVATE JET • FLIGHT PA-707
+              </span>
+            </div>
+          </div>
+
+          {/* Flight Metrics Badge */}
+          <div className="hidden sm:flex items-center gap-6 px-5 py-2.5 rounded-full bg-[#0a0a0a] border border-[#c5a059]/30 text-xs font-mono text-slate-300">
+            <div className="flex items-center gap-2">
+              <Gauge className="w-4 h-4 text-[#c5a059]" />
+              <span className="text-[#c5a059]">MACH:</span>
+              <span className="text-white font-serif font-light text-sm">0.925</span>
+            </div>
+            <div className="w-px h-3 bg-[#c5a059]/30" />
+            <div className="flex items-center gap-2">
+              <Compass className="w-4 h-4 text-[#c5a059]" />
+              <span className="text-[#c5a059]">ALTITUDE:</span>
+              <span className="text-white font-serif font-light text-sm">{altitude.toLocaleString()} FT</span>
+            </div>
+          </div>
         </div>
 
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleMute();
-          }}
-          className="flex items-center space-x-2 bg-white/10 hover:bg-white/20 border border-white/20 px-3.5 py-1.5 rounded-full text-xs font-semibold text-white transition-all cursor-pointer"
-        >
-          {muted ? (
-            <>
-              <VolumeX className="w-3.5 h-3.5 text-white/60" />
-              <span className="text-[11px] font-mono">Sound Off</span>
-            </>
-          ) : (
-            <>
-              <Volume2 className="w-3.5 h-3.5 text-amber-300" />
-              <span className="text-[11px] font-mono font-bold">Jet Engine Audio</span>
-            </>
-          )}
-        </button>
-      </div>
+        {/* Center: Headline & Progress */}
+        <div className="relative z-10 text-center px-4 max-w-lg mx-auto my-auto">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c5a059]/10 border border-[#c5a059]/30 text-[#c5a059] text-[10px] font-mono uppercase tracking-[0.3em] mb-5 sm:mb-6">
+            <Sparkles className="w-3.5 h-3.5 animate-spin" />
+            UNCOVERING PARIS • {(DURATION_MS / 1000).toFixed(1)}S PASS
+          </div>
 
-      {/* Center Animated Private Jet Silhouette */}
-      <div className="relative z-10 flex flex-col items-center justify-center my-auto space-y-6">
-        
-        {/* Glowing Contrail & Jet Container */}
-        <div className="relative flex flex-col items-center animate-jet-float">
-          
-          {/* Engine Exhaust Flame / Supersonic Glow */}
-          <div className="absolute -bottom-8 w-10 h-24 bg-gradient-to-t from-transparent via-amber-400/50 to-blue-500 rounded-full blur-lg animate-pulse" />
-          
-          {/* Wingtip Navigation LED Lights */}
-          <div className="absolute top-[48%] -left-12 sm:-left-16 w-2.5 h-2.5 bg-red-500 rounded-full shadow-[0_0_12px_#ef4444] animate-ping" />
-          <div className="absolute top-[48%] -right-12 sm:-right-16 w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_12px_#10b981] animate-ping" />
-
-          {/* Luxury Private Jet SVG */}
-          <svg
-            className="w-36 sm:w-48 md:w-56 h-auto text-white drop-shadow-[0_0_35px_rgba(251,191,36,0.4)] transition-transform duration-300"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
-          </svg>
-
-          {/* Fast Cloud Speed Streaks */}
-          <div className="absolute -top-16 -left-16 w-1 h-20 bg-gradient-to-b from-transparent via-white/60 to-transparent rounded-full animate-speed-line-1" />
-          <div className="absolute -top-12 -right-16 w-1 h-24 bg-gradient-to-b from-transparent via-amber-300/50 to-transparent rounded-full animate-speed-line-2" />
-        </div>
-
-        {/* Flight Status Label */}
-        <div className="text-center space-y-1">
-          <h2 className="text-lg sm:text-2xl font-extrabold font-['Plus_Jakarta_Sans',sans-serif] text-white tracking-tight">
-            Approaching Paris Horizon
+          <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif font-light text-[#f5f5f5] tracking-tight leading-none mb-3 italic">
+            Beyond the Horizon.
           </h2>
-          <p className="text-xs text-amber-300 font-mono tracking-widest uppercase font-semibold">
-            High Altitude Cloud Entry • {progress}%
+          <p className="text-slate-400 text-xs uppercase tracking-[0.2em] font-mono mb-7 max-w-sm mx-auto">
+            Bespoke Paris journeys, crafted for discerning travelers.
           </p>
+
+          {/* Progress Bar */}
+          <div className="relative w-full h-1.5 bg-[#171717] rounded-full overflow-hidden mb-3 border border-[#c5a059]/20">
+            <div
+              className="h-full bg-gradient-to-r from-[#c5a059]/40 via-[#c5a059] to-[#E5C178] rounded-full shadow-[0_0_15px_rgba(197,160,89,0.8)] transition-none"
+              style={{ width: `${Math.round(animProgress * 100)}%` }}
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] font-mono tracking-widest text-[#c5a059] uppercase">
+            <span>0.0s</span>
+            <span className="font-bold text-white text-xs">{Math.round(animProgress * 100)}% UNCOVERED</span>
+            <span>{(DURATION_MS / 1000).toFixed(1)}s</span>
+          </div>
+
+          {/* Flight Metric Badges */}
+          <div className="grid grid-cols-3 gap-4 mt-7 pt-5 border-t border-[#c5a059]/20 text-left">
+            <div className="border-l border-[#c5a059]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Mach</div>
+              <div className="text-xl font-serif font-light text-white">0.925</div>
+            </div>
+            <div className="border-l border-[#c5a059]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Range</div>
+              <div className="text-xl font-serif font-light text-white">7,500 nm</div>
+            </div>
+            <div className="border-l border-[#c5a059]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Cabin</div>
+              <div className="text-xl font-serif font-light text-white">Ultra Quiet</div>
+            </div>
+          </div>
         </div>
 
+        {/* Bottom Status Footer */}
+        <div className="relative z-10 p-6 sm:p-8 flex justify-between items-center max-w-7xl mx-auto w-full text-[10px] text-slate-500 font-mono tracking-widest uppercase border-t border-[#c5a059]/10">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-[#c5a059]" />
+            <span>EST. 2019 &mdash; PRIVATE PARIS CONCIERGE</span>
+          </div>
+          <button onClick={toggleSound} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
+            {soundEnabled ? (
+              <span className="flex items-center gap-1.5 text-[#c5a059]">
+                <Volume2 className="w-3.5 h-3.5" /> TURBINE ACOUSTICS ACTIVE
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-slate-600">
+                <VolumeX className="w-3.5 h-3.5" /> ACOUSTICS MUTED
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Bottom Progress Bar */}
-      <div className="relative z-10 w-full max-w-md space-y-2 text-center">
-        <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/15">
-          <div
-            className="h-full bg-gradient-to-r from-blue-400 via-amber-300 to-amber-400 rounded-full shadow-[0_0_15px_#fbbf24] transition-all duration-200"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <div className="flex justify-between text-[10px] font-mono text-white/50 uppercase tracking-widest font-medium">
-          <span>Takeoff</span>
-          <span>Cloud Entry</span>
-          <span>Paris Arrival</span>
+      {/* ── PRIVATE JET flying from bottom to top, on top of the curtain wipe edge ── */}
+      <div
+        className="absolute left-0 right-0 z-[60] flex flex-col items-center justify-center pointer-events-none"
+        style={{
+          top: `${jetYPercent}vh`,
+          transform: 'translateY(-50%)',
+        }}
+      >
+        <div className="relative">
+          {/* Shockwave Ring around Jet Nose */}
+          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-72 h-28 border-2 border-sky-400/30 rounded-full animate-ping opacity-50 pointer-events-none blur-sm" />
+
+          {/* Cloud Parting Wake Particles */}
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-[500px] h-28 bg-gradient-to-t from-sky-400/15 via-white/10 to-transparent rounded-full filter blur-xl pointer-events-none opacity-70" />
+
+          {/* The Detailed Private Jet */}
+          <JetGraphic scale={1.15} showEnginesGlow={true} />
+
+          {/* Nose Spotlight Beam */}
+          <div className="absolute -top-52 left-1/2 -translate-x-1/2 w-56 h-64 bg-gradient-to-t from-sky-200/25 via-sky-300/10 to-transparent rounded-full filter blur-md pointer-events-none" />
         </div>
       </div>
+
     </div>
   );
 }
