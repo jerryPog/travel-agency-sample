@@ -84,7 +84,7 @@ export default function App() {
         className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
         {/* Hero Section Container */}
-        <section id="home" className="w-full max-w-[1440px] min-h-[100dvh] lg:h-screen lg:max-h-[900px] flex flex-col justify-between relative overflow-hidden pt-4 sm:pt-6 pb-6 px-2">
+        <section id="home" className="w-full max-w-[1440px] min-h-[100dvh] flex flex-col justify-between relative overflow-hidden pt-4 sm:pt-6 pb-12 px-4 sm:px-6">
           <BannerNavbar
             brandName={config.brandName}
             activeNav={config.activeNav}
@@ -93,16 +93,10 @@ export default function App() {
           />
 
           <BannerHeroContent
-            headline={config.headline}
-            subtitle={config.subtitle}
-            ctaText={config.ctaText}
             onCtaClick={() => setShowWizardModal(true)}
           />
 
-          <BannerGlassCards
-            cleanEnergyText={config.cleanEnergyText}
-            impactText={config.impactText}
-          />
+          <BannerGlassCards />
         </section>
 
         {/* Section 1: About & Bento Grid */}
