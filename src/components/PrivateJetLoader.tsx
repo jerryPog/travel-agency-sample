@@ -84,42 +84,42 @@ export function PrivateJetLoader({ progress, isLoaded }: PrivateJetLoaderProps) 
 
       {/* ── DARK CURTAIN that gets wiped away bottom→top by the jet ── */}
       <div
-        className="absolute inset-0 bg-[#050505] flex flex-col justify-between text-[#f5f5f5] transition-none"
+        className="absolute inset-0 bg-[#050E24] flex flex-col justify-between text-[#f5f5f5] transition-none"
         style={{ clipPath: curtainClip, WebkitClipPath: curtainClip }}
       >
         {/* Subtle Gold Radial Atmosphere */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(197,160,89,0.12),rgba(5,5,5,0))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.18),rgba(5,14,36,0))]" />
         {/* Fine grid lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#c5a05908_1px,transparent_1px),linear-gradient(to_bottom,#c5a05908_1px,transparent_1px)] bg-[size:4rem_4rem]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#3b82f608_1px,transparent_1px),linear-gradient(to_bottom,#3b82f608_1px,transparent_1px)] bg-[size:4rem_4rem]" />
 
         {/* Top Brand & Flight Status Bar */}
         <div className="relative z-10 p-6 sm:p-8 flex justify-between items-center max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#0a0a0a] border border-[#c5a059]/40 flex items-center justify-center text-[#c5a059] font-serif text-lg sm:text-xl tracking-widest shadow-inner">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-[#0B1A35] border border-[#60a5fa]/40 flex items-center justify-center text-[#60a5fa] font-serif text-lg sm:text-xl tracking-widest shadow-inner">
               P
             </div>
             <div>
               <span className="text-[#f5f5f5] font-serif font-light text-base sm:text-xl tracking-[0.2em] uppercase block">
                 PARIS TRAVEL CO.
               </span>
-              <span className="text-[#c5a059] text-[10px] font-mono tracking-[0.3em] uppercase flex items-center gap-2 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-ping" />
+              <span className="text-[#93c5fd] text-[10px] font-mono tracking-[0.3em] uppercase flex items-center gap-2 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#60a5fa] animate-ping" />
                 PRIVATE JET • FLIGHT PA-707
               </span>
             </div>
           </div>
 
           {/* Flight Metrics Badge */}
-          <div className="hidden sm:flex items-center gap-6 px-5 py-2.5 rounded-full bg-[#0a0a0a] border border-[#c5a059]/30 text-xs font-mono text-slate-300">
+          <div className="hidden sm:flex items-center gap-6 px-5 py-2.5 rounded-full bg-[#0B1A35] border border-[#3b82f6]/30 text-xs font-mono text-slate-300">
             <div className="flex items-center gap-2">
-              <Gauge className="w-4 h-4 text-[#c5a059]" />
-              <span className="text-[#c5a059]">MACH:</span>
+              <Gauge className="w-4 h-4 text-[#60a5fa]" />
+              <span className="text-[#93c5fd]">MACH:</span>
               <span className="text-white font-serif font-light text-sm">0.925</span>
             </div>
-            <div className="w-px h-3 bg-[#c5a059]/30" />
+            <div className="w-px h-3 bg-[#3b82f6]/30" />
             <div className="flex items-center gap-2">
-              <Compass className="w-4 h-4 text-[#c5a059]" />
-              <span className="text-[#c5a059]">ALTITUDE:</span>
+              <Compass className="w-4 h-4 text-[#60a5fa]" />
+              <span className="text-[#93c5fd]">ALTITUDE:</span>
               <span className="text-white font-serif font-light text-sm">{altitude.toLocaleString()} FT</span>
             </div>
           </div>
@@ -127,7 +127,7 @@ export function PrivateJetLoader({ progress, isLoaded }: PrivateJetLoaderProps) 
 
         {/* Center: Headline & Progress */}
         <div className="relative z-10 text-center px-4 max-w-lg mx-auto my-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#c5a059]/10 border border-[#c5a059]/30 text-[#c5a059] text-[10px] font-mono uppercase tracking-[0.3em] mb-5 sm:mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#1e3a8a]/40 border border-[#3b82f6]/30 text-[#93c5fd] text-[10px] font-mono uppercase tracking-[0.3em] mb-5 sm:mb-6">
             <Sparkles className="w-3.5 h-3.5 animate-spin" />
             UNCOVERING PARIS • {(DURATION_MS / 1000).toFixed(1)}S PASS
           </div>
@@ -140,44 +140,44 @@ export function PrivateJetLoader({ progress, isLoaded }: PrivateJetLoaderProps) 
           </p>
 
           {/* Progress Bar */}
-          <div className="relative w-full h-1.5 bg-[#171717] rounded-full overflow-hidden mb-3 border border-[#c5a059]/20">
+          <div className="relative w-full h-1.5 bg-[#0B1A35] rounded-full overflow-hidden mb-3 border border-[#3b82f6]/20">
             <div
-              className="h-full bg-gradient-to-r from-[#c5a059]/40 via-[#c5a059] to-[#E5C178] rounded-full shadow-[0_0_15px_rgba(197,160,89,0.8)] transition-none"
+              className="h-full bg-gradient-to-r from-[#1d4ed8]/60 via-[#3b82f6] to-[#93c5fd] rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)] transition-none"
               style={{ width: `${Math.round(animProgress * 100)}%` }}
             />
           </div>
-          <div className="flex justify-between items-center text-[10px] font-mono tracking-widest text-[#c5a059] uppercase">
+          <div className="flex justify-between items-center text-[10px] font-mono tracking-widest text-[#93c5fd] uppercase">
             <span>0.0s</span>
             <span className="font-bold text-white text-xs">{Math.round(animProgress * 100)}% UNCOVERED</span>
             <span>{(DURATION_MS / 1000).toFixed(1)}s</span>
           </div>
 
           {/* Flight Metric Badges */}
-          <div className="grid grid-cols-3 gap-4 mt-7 pt-5 border-t border-[#c5a059]/20 text-left">
-            <div className="border-l border-[#c5a059]/40 pl-4">
-              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Mach</div>
+          <div className="grid grid-cols-3 gap-4 mt-7 pt-5 border-t border-[#3b82f6]/20 text-left">
+            <div className="border-l border-[#3b82f6]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#93c5fd] font-mono">Mach</div>
               <div className="text-xl font-serif font-light text-white">0.925</div>
             </div>
-            <div className="border-l border-[#c5a059]/40 pl-4">
-              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Range</div>
+            <div className="border-l border-[#3b82f6]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#93c5fd] font-mono">Range</div>
               <div className="text-xl font-serif font-light text-white">7,500 nm</div>
             </div>
-            <div className="border-l border-[#c5a059]/40 pl-4">
-              <div className="text-[9px] uppercase tracking-widest text-[#c5a059] font-mono">Cabin</div>
+            <div className="border-l border-[#3b82f6]/40 pl-4">
+              <div className="text-[9px] uppercase tracking-widest text-[#93c5fd] font-mono">Cabin</div>
               <div className="text-xl font-serif font-light text-white">Ultra Quiet</div>
             </div>
           </div>
         </div>
 
         {/* Bottom Status Footer */}
-        <div className="relative z-10 p-6 sm:p-8 flex justify-between items-center max-w-7xl mx-auto w-full text-[10px] text-slate-500 font-mono tracking-widest uppercase border-t border-[#c5a059]/10">
+        <div className="relative z-10 p-6 sm:p-8 flex justify-between items-center max-w-7xl mx-auto w-full text-[10px] text-slate-500 font-mono tracking-widest uppercase border-t border-[#3b82f6]/10">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-[#c5a059]" />
+            <ShieldCheck className="w-4 h-4 text-[#60a5fa]" />
             <span>EST. 2019 &mdash; PRIVATE PARIS CONCIERGE</span>
           </div>
           <button onClick={toggleSound} className="flex items-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity">
             {soundEnabled ? (
-              <span className="flex items-center gap-1.5 text-[#c5a059]">
+              <span className="flex items-center gap-1.5 text-[#93c5fd]">
                 <Volume2 className="w-3.5 h-3.5" /> TURBINE ACOUSTICS ACTIVE
               </span>
             ) : (

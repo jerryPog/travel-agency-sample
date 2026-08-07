@@ -34,41 +34,41 @@ export const JetGraphic: React.FC<JetGraphicProps> = ({
           {/* Body Gradient */}
           <linearGradient id="fuselageGrad" x1="160" y1="10" x2="160" y2="350" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="25%" stopColor="#171717" />
-            <stop offset="70%" stopColor="#0A0A0A" />
-            <stop offset="100%" stopColor="#090D16" />
+            <stop offset="25%" stopColor="#0B1A35" />
+            <stop offset="70%" stopColor="#050E24" />
+            <stop offset="100%" stopColor="#030912" />
           </linearGradient>
 
           <linearGradient id="wingLeftGrad" x1="20" y1="200" x2="160" y2="200" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#262626" />
-            <stop offset="50%" stopColor="#171717" />
-            <stop offset="100%" stopColor="#0A0A0A" />
+            <stop offset="0%" stopColor="#1e3a5f" />
+            <stop offset="50%" stopColor="#0B1A35" />
+            <stop offset="100%" stopColor="#050E24" />
           </linearGradient>
 
           <linearGradient id="wingRightGrad" x1="160" y1="200" x2="300" y2="200" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#0A0A0A" />
-            <stop offset="50%" stopColor="#171717" />
-            <stop offset="100%" stopColor="#262626" />
+            <stop offset="0%" stopColor="#050E24" />
+            <stop offset="50%" stopColor="#0B1A35" />
+            <stop offset="100%" stopColor="#1e3a5f" />
           </linearGradient>
 
           <linearGradient id="stripeGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#E5C178" />
-            <stop offset="100%" stopColor="#c5a059" />
+            <stop offset="0%" stopColor="#93c5fd" />
+            <stop offset="100%" stopColor="#3b82f6" />
           </linearGradient>
 
-          {/* Gold Glass Cockpit */}
+          {/* Blue Glass Cockpit */}
           <linearGradient id="glassGold" x1="160" y1="50" x2="160" y2="110" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#E5C178" stopOpacity="0.95" />
-            <stop offset="50%" stopColor="#c5a059" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#8A6B29" stopOpacity="0.95" />
+            <stop offset="0%" stopColor="#93c5fd" stopOpacity="0.95" />
+            <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#1d4ed8" stopOpacity="0.95" />
           </linearGradient>
 
           {/* Engine Exhaust Glow */}
           <radialGradient id="engineExhaust" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="30%" stopColor="#c5a059" />
-            <stop offset="70%" stopColor="#D4AF37" stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+            <stop offset="30%" stopColor="#60a5fa" />
+            <stop offset="70%" stopColor="#3b82f6" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -77,8 +77,8 @@ export const JetGraphic: React.FC<JetGraphicProps> = ({
         <path d="M160 160 L302 245 L305 255 L285 258 L160 215 Z" fill="url(#wingRightGrad)" stroke="#475569" strokeWidth="0.8" />
 
         {/* Winglets */}
-        <path d="M15 255 L10 230 L18 245 Z" fill="#c5a059" />
-        <path d="M305 255 L310 230 L302 245 Z" fill="#c5a059" />
+        <path d="M15 255 L10 230 L18 245 Z" fill="#3b82f6" />
+        <path d="M305 255 L310 230 L302 245 Z" fill="#3b82f6" />
 
         {/* Navigation LED Lights */}
         <circle cx="10" cy="230" r="3" fill="#EF4444" className="animate-ping" />
@@ -87,8 +87,8 @@ export const JetGraphic: React.FC<JetGraphicProps> = ({
         <circle cx="310" cy="230" r="2" fill="#00FF66" />
 
         {/* --- REAR TAIL WINGS --- */}
-        <path d="M160 300 L90 350 L88 358 L105 360 L160 335 Z" fill="#0A0A0A" />
-        <path d="M160 300 L230 350 L232 358 L215 360 L160 335 Z" fill="#0A0A0A" />
+        <path d="M160 300 L90 350 L88 358 L105 360 L160 335 Z" fill="#050E24" />
+        <path d="M160 300 L230 350 L232 358 L215 360 L160 335 Z" fill="#050E24" />
 
         {/* --- ENGINE NACELLES --- */}
         <rect x="122" y="260" width="16" height="55" rx="8" fill="#1E293B" stroke="#64748B" strokeWidth="1" />
@@ -149,7 +149,7 @@ export const JetGraphic: React.FC<JetGraphicProps> = ({
         </g>
 
         {/* Vertical Tail Fin */}
-        <path d="M160 290 L160 360" stroke="#c5a059" strokeWidth="3" strokeLinecap="round" />
+        <path d="M160 290 L160 360" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" />
         <circle cx="160" cy="290" r="2.5" fill="#FFFFFF" className="animate-pulse" />
       </svg>
     </div>
