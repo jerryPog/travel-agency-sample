@@ -65,46 +65,71 @@ export function BannerNavbar({
 
   return (
     <>
-      <header className="w-full pt-3 sm:pt-4 pb-2 px-4 sm:px-6 md:px-12 flex items-center justify-between z-20 relative">
-        {/* Brand */}
-        <button
-          onClick={onBrandClick}
-          className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif]"
-        >
-          {brandName}
-        </button>
+      <header className="w-full pt-3 sm:pt-4 pb-2 px-4 sm:px-6 md:px-12 z-20 relative
+        flex flex-col gap-2
+        lg:flex-row lg:items-center lg:justify-between lg:gap-0">
 
-        {/* Desktop nav pill */}
-        <nav className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2">
-          {navItems.map((item) => {
-            const isActive =
-              activeNav.toLowerCase() === item.id.toLowerCase() ||
-              (activeNav === 'Home' && item.id === 'home');
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item)}
-                className={`px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? 'bg-white text-[#0B132B] font-semibold shadow-sm'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Top row on mobile: Brand left, controls right */}
+        <div className="flex items-center justify-between w-full">
+          {/* Brand */}
+          <button
+            onClick={onBrandClick}
+            className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif]"
+          >
+            {brandName}
+          </button>
 
-        {/* Right controls */}
-        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+          {/* Desktop nav pill — absolute center */}
+          <nav className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2">
+            {navItems.map((item) => {
+              const isActive =
+                activeNav.toLowerCase() === item.id.toLowerCase() ||
+                (activeNav === 'Home' && item.id === 'home');
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item)}
+                  className={`px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                    isActive
+                      ? 'bg-white text-[#0B132B] font-semibold shadow-sm'
+                      : 'text-white/80 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Controls — desktop only inline, hidden on mobile (shown in row below) */}
+          <div className="hidden lg:flex items-center space-x-3 shrink-0">
+            <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 p-1 rounded-full text-xs font-semibold">
+              {(['en', 'fr'] as const).map((lang) => (
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                    language === lang
+                      ? 'bg-white text-[#0B132B] font-bold shadow-sm'
+                      : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  {lang.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Second row — mobile only: EN/FR + hamburger */}
+        <div className="flex lg:hidden items-center justify-between w-full">
           {/* Language toggle */}
           <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 p-1 rounded-full text-xs font-semibold">
             {(['en', 'fr'] as const).map((lang) => (
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                   language === lang
                     ? 'bg-white text-[#0B132B] font-bold shadow-sm'
                     : 'text-white/70 hover:text-white'
@@ -115,13 +140,13 @@ export function BannerNavbar({
             ))}
           </div>
 
-          {/* Hamburger — mobile only */}
+          {/* Hamburger */}
           <button
             ref={hamburgerRef}
             onClick={() => setMobileMenuOpen((p) => !p)}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
-            className="lg:hidden w-9 h-9 flex items-center justify-center text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            className="w-9 h-9 flex items-center justify-center text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
@@ -131,7 +156,7 @@ export function BannerNavbar({
       {/* ── Mobile dropdown rendered FIXED so nothing clips it ── */}
       <div
         ref={dropdownRef}
-        className={`lg:hidden fixed top-[60px] right-4 w-56 z-[999] rounded-2xl overflow-hidden shadow-2xl
+        className={`lg:hidden fixed top-[100px] right-4 w-56 z-[999] rounded-2xl overflow-hidden shadow-2xl
           transition-all duration-300 ease-out origin-top-right
           ${mobileMenuOpen
             ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
