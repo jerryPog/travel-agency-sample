@@ -3,7 +3,7 @@ import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
-const MANDATORY_MIN_LOAD_TIME_MS = 2600; // Mandatory 2.6s loading experience for all users
+const MANDATORY_MIN_LOAD_TIME_MS = 1500; // Mandatory display time for all users
 
 function getFrameUrl(index: number): string {
   const paddedIndex = String(index + 1).padStart(3, '0');

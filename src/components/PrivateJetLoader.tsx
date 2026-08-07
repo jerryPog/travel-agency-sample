@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { JetGraphic } from './JetGraphic';
 
-const DURATION_MS = 2600;
+const DURATION_MS = 1500;
 
 interface PrivateJetLoaderProps {
   progress: number;
