@@ -20,68 +20,17 @@ export function CanvasScroll() {
 
   useEffect(() => {
     let loadedCount = 0;
-    const imgArray: HTMLImageElement[] = [];
+    const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
-    // Preload 300 frame images
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      imgArray.push(img);
-
-      img.onload = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-        if (loadedCount >= TOTAL_FRAMES) {
-          setIsLoaded(true);
-        }
-      };
-
-      img.onerror = () => {
-        loadedCount++;
-        setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
-        if (loadedCount >= TOTAL_FRAMES) {
-          setIsLoaded(true);
-        }
-      };
-
-      img.src = getFrameUrl(i);
-    }
-
-    imagesRef.current = imgArray;
-
-    // Handle viewport resize
-    const handleResize = () => {
+    const updateCanvasSize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
-      updateTargetFrame();
     };
 
-    // Calculate frame position based on current page scroll
-    const updateTargetFrame = () => {
-      const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
-      const docHeight = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.scrollHeight,
-        document.documentElement.offsetHeight
-      );
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const maxScroll = docHeight - windowHeight;
-
-      if (maxScroll <= 0) {
-        targetFrameRef.current = 0;
-      } else {
-        const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
-        targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
-      }
-    };
-
-    handleResize();
-
-    window.addEventListener('scroll', updateTargetFrame, { passive: true });
-    window.addEventListener('resize', handleResize);
+    updateCanvasSize();
 
     // Draw frame to canvas with aspect-ratio cover scaling & globalAlpha
     const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
@@ -116,7 +65,6 @@ export function CanvasScroll() {
       ctx.restore();
     };
 
-    // Render current frame with sub-frame blending for ultra smoothness
     const renderFrame = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -151,11 +99,78 @@ export function CanvasScroll() {
       }
     };
 
-    // Smooth physics lerping loop
+    // Preload critical initial 30 frames first for an ultra-smooth start
+    const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.onload = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+          if (index === 0) renderFrame();
+          resolve(img);
+        };
+        img.onerror = () => {
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+          resolve(img);
+        };
+        img.src = getFrameUrl(index);
+        imgArray[index] = img;
+      });
+    };
+
+    // Load initial 30 frames first, then load the rest in parallel
+    const preloadAll = async () => {
+      const initialBatch = [];
+      for (let i = 0; i < 30; i++) {
+        initialBatch.push(loadSingleImage(i));
+      }
+      await Promise.all(initialBatch);
+      setIsLoaded(true);
+
+      // Load remaining frames
+      for (let i = 30; i < TOTAL_FRAMES; i++) {
+        loadSingleImage(i);
+      }
+    };
+
+    preloadAll();
+    imagesRef.current = imgArray;
+
+    // Calculate frame position based on current page scroll
+    const updateTargetFrame = () => {
+      const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+      );
+      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+      const maxScroll = docHeight - windowHeight;
+
+      if (maxScroll <= 0) {
+        targetFrameRef.current = 0;
+      } else {
+        const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
+        targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
+      }
+    };
+
+    const handleResize = () => {
+      updateCanvasSize();
+      updateTargetFrame();
+    };
+
+    window.addEventListener('scroll', updateTargetFrame, { passive: true });
+    window.addEventListener('resize', handleResize);
+
+    // Smooth physics lerping loop (optimized lerp factor 0.18 for instant smoothness)
     const renderLoop = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * 0.09;
+        currentFrameRef.current += diff * 0.18;
       } else {
         currentFrameRef.current = targetFrameRef.current;
       }
@@ -179,19 +194,19 @@ export function CanvasScroll() {
     <>
       {/* Preloader Overlay */}
       <div
-        className={`fixed inset-0 bg-[#04060a] z-50 flex items-center justify-center transition-opacity duration-500 pointer-events-none ${
+        className={`fixed inset-0 bg-[#04060a] z-50 flex items-center justify-center transition-opacity duration-700 pointer-events-none ${
           isLoaded ? 'opacity-0 visibility-hidden' : 'opacity-100'
         }`}
       >
         <div className="flex flex-col items-center space-y-3">
           <div className="w-48 h-1 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-500 shadow-[0_0_12px_#3b82f6] transition-all duration-150"
+              className="h-full bg-amber-400 shadow-[0_0_12px_#fbbf24] transition-all duration-200"
               style={{ width: `${loadProgress}%` }}
             />
           </div>
-          <span className="text-xs text-white/50 tracking-widest font-mono uppercase">
-            Loading Flight Experience {loadProgress}%
+          <span className="text-xs text-white/70 tracking-widest font-mono uppercase font-semibold">
+            Loading Paris Experience {loadProgress}%
           </span>
         </div>
       </div>
