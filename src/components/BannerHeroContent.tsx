@@ -10,7 +10,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 max-w-3xl mx-auto my-auto py-2 sm:py-4 z-10 relative">
+    <div className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-0 max-w-xl lg:max-w-[38vw] mx-auto my-auto py-2 sm:py-4 z-10 relative">
       {/* Soft Ambient Radial Gold Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
@@ -31,7 +31,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         id="hero-headline"
-        className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif-editorial text-white tracking-tight leading-[1.12] max-w-2xl mb-3 break-words text-gradient-shimmer"
+        className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-serif-editorial text-white tracking-tight leading-[1.15] mb-3 break-words text-gradient-shimmer"
       >
         {t('heroHeadline')}
       </motion.h1>
@@ -41,7 +41,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="text-xs sm:text-sm md:text-base text-white/90 font-normal max-w-lg mb-4 sm:mb-6 leading-relaxed break-words"
+        className="text-[11px] sm:text-xs md:text-sm text-white/90 font-normal mb-4 sm:mb-5 leading-relaxed break-words"
       >
         {t('heroSubtitle')}
       </motion.p>

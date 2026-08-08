@@ -191,8 +191,8 @@ export function CanvasScroll() {
       }
     };
 
-    preloadAll();
     imagesRef.current = imgArray;
+    preloadAll();
 
     const updateTargetFrame = () => {
       if (prefersReducedMotion) return;

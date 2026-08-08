@@ -5,9 +5,16 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  :root {
+    --color-navy: #0B132B;
+    --color-obsidian: #070B14;
+    --color-gold: #D4AF37;
+    --color-gold-light: #F3E5AB;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system, sans-serif;
-    background-color: #070b14;
+    background-color: var(--color-obsidian);
     color: #ffffff;
   }
 

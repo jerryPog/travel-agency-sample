@@ -16,7 +16,7 @@ export function HomePage() {
     <AnimatedPage>
       <div className="w-full space-y-12 pb-12">
         {/* Hero Section */}
-        <section className="w-full max-w-[1440px] min-h-[500px] lg:min-h-[640px] flex flex-col justify-between mx-auto px-4 sm:px-6 pt-4 pb-8">
+        <section className="w-full max-w-[1440px] min-h-[520px] lg:min-h-[680px] flex flex-col justify-between mx-auto px-4 sm:px-8 md:px-12 pt-4 pb-8">
           <BannerHeroContent onCtaClick={() => navigate('/custom-itinerary')} />
           <BannerGlassCards />
         </section>
