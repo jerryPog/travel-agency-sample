@@ -1,84 +1,137 @@
 import { useEffect, useRef, useState } from 'react';
 import { PrivateJetLoader } from './PrivateJetLoader';
 
-interface VideoScrollProps {
-  videoSrc?: string;
-  posterSrc?: string;
+const TOTAL_FRAMES = 300;
+const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
+const EIFFEL_TOWER_MOBILE_BG = 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1200&q=80';
+
+function getFrameUrl(index: number): string {
+  const paddedIndex = String(index + 1).padStart(3, '0');
+  return `${FRAME_FOLDER}/ezgif-frame-${paddedIndex}.jpg`;
 }
 
-export function CanvasScroll({
-  videoSrc = '/plane-window.mp4',
-  posterSrc = '/ezgif-896d010404818b75-jpg/ezgif-frame-001.jpg',
-}: VideoScrollProps) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+export function CanvasScroll() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [loadProgress, setLoadProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [useFallbackPoster, setUseFallbackPoster] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
-  const targetTimeRef = useRef(0);
-  const currentTimeRef = useRef(0);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const targetFrameRef = useRef(0);
+  const currentFrameRef = useRef(0);
   const animFrameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      return mobile;
+    };
+
+    const mobile = checkMobile();
+    if (mobile) {
+      // On Mobile: Single Eiffel Tower frame background (instant 100% loaded)
+      setLoadProgress(100);
+      setIsLoaded(true);
+      return;
+    }
+
+    // On Desktop: Original 300-frame Canvas scroll sequence
+    let loadedCount = 0;
+    const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    let isMetadataLoaded = false;
+    const updateCanvasSize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    const handleLoadedMetadata = () => {
-      isMetadataLoaded = true;
-      setLoadProgress(100);
-      setIsLoaded(true);
-      updateTargetTime();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
     };
 
-    const handleProgress = () => {
-      if (video.buffered.length > 0 && video.duration > 0) {
-        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
-        const percent = Math.min(100, Math.round((bufferedEnd / video.duration) * 100));
-        setLoadProgress(percent);
-      }
-    };
+    updateCanvasSize();
 
-    const handleError = () => {
-      // Mobile power saving mode or missing video source fallback
-      setUseFallbackPoster(true);
-      setLoadProgress(100);
-      setIsLoaded(true);
-    };
+    const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
+      const canvas = canvasRef.current;
+      if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
 
-    video.addEventListener('loadedmetadata', handleLoadedMetadata);
-    video.addEventListener('progress', handleProgress);
-    video.addEventListener('error', handleError);
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+      const imgWidth = img.naturalWidth;
+      const imgHeight = img.naturalHeight;
 
-    // Fallback timer: dismiss loader if metadata event takes > 1.5s
-    const fallbackTimer = setTimeout(() => {
-      if (!isMetadataLoaded) {
-        setLoadProgress(100);
-        setIsLoaded(true);
-      }
-    }, 1500);
+      const imgAspect = imgWidth / imgHeight;
+      const canvasAspect = canvasWidth / canvasHeight;
 
-    const renderLoop = () => {
-      if (video && !isNaN(video.duration) && video.duration > 0) {
-        const diff = targetTimeRef.current - currentTimeRef.current;
-        if (Math.abs(diff) > 0.01) {
-          currentTimeRef.current += diff * 0.25;
-          // Clamp currentTime strictly within video duration
-          const safeTime = Math.max(0, Math.min(video.duration - 0.01, currentTimeRef.current));
-          video.currentTime = safeTime;
-          animFrameIdRef.current = requestAnimationFrame(renderLoop);
-        } else {
-          currentTimeRef.current = targetTimeRef.current;
-          const safeTime = Math.max(0, Math.min(video.duration - 0.01, currentTimeRef.current));
-          video.currentTime = safeTime;
-          animFrameIdRef.current = null;
-        }
+      let renderWidth: number, renderHeight: number;
+
+      if (canvasAspect > imgAspect) {
+        renderWidth = canvasWidth;
+        renderHeight = canvasWidth / imgAspect;
       } else {
+        renderWidth = canvasHeight * imgAspect;
+        renderHeight = canvasHeight;
+      }
+
+      const offsetX = (canvasWidth - renderWidth) / 2;
+      const offsetY = (canvasHeight - renderHeight) / 2;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+      ctx.restore();
+    };
+
+    const renderFrame = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      }) as CanvasRenderingContext2D | null;
+
+      if (!ctx) return;
+
+      const clampedFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, currentFrameRef.current));
+      const index1 = Math.floor(clampedFrame);
+      const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
+      const blend = clampedFrame - index1;
+
+      const images = imagesRef.current;
+      const img1 = images[index1];
+      const img2 = images[index2];
+
+      if (img1 && img1.complete && img1.naturalWidth > 0) {
+        drawCoverImage(ctx, img1, 1);
+      } else {
+        for (let fallback = index1; fallback >= 0; fallback--) {
+          if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
+            drawCoverImage(ctx, images[fallback], 1);
+            break;
+          }
+        }
+      }
+
+      if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
+        drawCoverImage(ctx, img2, blend);
+      }
+    };
+
+    // Original Desktop Lerping Loop
+    const renderLoop = () => {
+      const diff = targetFrameRef.current - currentFrameRef.current;
+      if (Math.abs(diff) > 0.001) {
+        currentFrameRef.current += diff * 0.18;
+        renderFrame();
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+      } else {
+        currentFrameRef.current = targetFrameRef.current;
+        renderFrame();
         animFrameIdRef.current = null;
       }
     };
@@ -90,8 +143,55 @@ export function CanvasScroll({
       }
     };
 
-    const updateTargetTime = () => {
-      if (!video || isNaN(video.duration) || video.duration <= 0) return;
+    const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.decoding = 'async';
+
+        const handleSuccess = async () => {
+          try {
+            if ('decode' in img) {
+              await img.decode();
+            }
+          } catch {
+            // Ignore decode failures
+          }
+          loadedCount++;
+          setLoadProgress(Math.round((loadedCount / 30) * 100));
+          if (index === 0) renderFrame();
+          resolve(img);
+        };
+
+        img.onload = handleSuccess;
+        img.onerror = () => {
+          loadedCount++;
+          resolve(img);
+        };
+
+        img.src = getFrameUrl(index);
+        imgArray[index] = img;
+      });
+    };
+
+    const preloadAll = async () => {
+      const initialBatch = [];
+      for (let i = 0; i < 30; i++) {
+        initialBatch.push(loadSingleImage(i));
+      }
+      await Promise.all(initialBatch);
+      setLoadProgress(100);
+      setIsLoaded(true);
+
+      for (let i = 30; i < TOTAL_FRAMES; i++) {
+        loadSingleImage(i);
+      }
+    };
+
+    preloadAll();
+    imagesRef.current = imgArray;
+
+    const updateTargetFrame = () => {
+      if (prefersReducedMotion) return;
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       const docHeight = Math.max(
         document.body.scrollHeight,
@@ -103,28 +203,37 @@ export function CanvasScroll({
       const maxScroll = docHeight - windowHeight;
 
       if (maxScroll <= 0) {
-        targetTimeRef.current = 0;
+        targetFrameRef.current = 0;
       } else {
         const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
-        targetTimeRef.current = fraction * video.duration;
+        targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
       }
 
       triggerLoop();
     };
 
+    const handleResize = () => {
+      const mobileNow = checkMobile();
+      if (!mobileNow) {
+        updateCanvasSize();
+        if (!prefersReducedMotion) {
+          updateTargetFrame();
+        } else {
+          renderFrame();
+        }
+      }
+    };
+
     if (!prefersReducedMotion) {
-      window.addEventListener('scroll', updateTargetTime, { passive: true });
-      window.addEventListener('resize', updateTargetTime, { passive: true });
-      updateTargetTime();
+      window.addEventListener('scroll', updateTargetFrame, { passive: true });
+      triggerLoop();
     }
 
+    window.addEventListener('resize', handleResize, { passive: true });
+
     return () => {
-      clearTimeout(fallbackTimer);
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      video.removeEventListener('progress', handleProgress);
-      video.removeEventListener('error', handleError);
-      window.removeEventListener('scroll', updateTargetTime);
-      window.removeEventListener('resize', updateTargetTime);
+      window.removeEventListener('scroll', updateTargetFrame);
+      window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
       }
@@ -135,23 +244,18 @@ export function CanvasScroll({
     <>
       <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
-      {useFallbackPoster ? (
+      {isMobile ? (
         <img
-          src={posterSrc}
-          alt="Private Jet Background"
+          src={EIFFEL_TOWER_MOBILE_BG}
+          alt="Eiffel Tower Paris"
           aria-hidden="true"
-          className="fixed inset-0 w-full h-[100dvh] object-cover pointer-events-none z-0"
+          className="fixed inset-0 w-full h-[100dvh] object-cover pointer-events-none z-0 brightness-90"
         />
       ) : (
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          poster={posterSrc}
-          muted
-          playsInline
-          preload="auto"
+        <canvas
+          ref={canvasRef}
           aria-hidden="true"
-          className="fixed inset-0 w-full h-[100dvh] object-cover pointer-events-none z-0"
+          className="fixed top-0 left-0 w-full h-[100dvh] pointer-events-none z-0 object-cover"
         />
       )}
     </>
