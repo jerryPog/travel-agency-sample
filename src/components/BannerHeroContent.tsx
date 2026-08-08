@@ -10,7 +10,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
   const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-0 max-w-xl lg:max-w-[38vw] mx-auto my-auto py-2 sm:py-4 z-10 relative">
+    <div className="flex flex-col items-center justify-center text-center px-4 sm:px-6 lg:px-0 max-w-xl lg:max-w-[42vw] mx-auto my-auto py-2 sm:py-4 z-10 relative">
       {/* Soft Ambient Radial Gold Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true" />
 
@@ -22,7 +22,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
         className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/10 border border-amber-400/30 backdrop-blur-md text-[11px] font-mono tracking-widest uppercase font-semibold text-amber-300 mb-3 shadow-lg animate-float"
       >
         <Sparkles className="w-3 h-3 text-amber-300" aria-hidden="true" />
-        <span>PARIS • CANNES • MONACO</span>
+        <span>{t('heroBadge')}</span>
       </motion.div>
 
       {/* Main Editorial Serif Headline */}

@@ -4,7 +4,7 @@ export function BannerGlassCards() {
   const { t } = useLanguage();
 
   return (
-    <div className="w-full max-w-xl lg:max-w-[38vw] mx-auto px-2 sm:px-4 lg:px-0 mt-1 sm:mt-2 z-20 relative font-['DM_Sans',sans-serif]">
+    <div className="w-full max-w-xl lg:max-w-[42vw] mx-auto px-2 sm:px-4 lg:px-0 mt-1 sm:mt-2 z-20 relative font-['DM_Sans',sans-serif]">
       {/* 2 Equal Columns Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 items-stretch">
         
