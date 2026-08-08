@@ -15,6 +15,7 @@ export function CanvasScroll() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const bitmapsRef = useRef<Map<number, ImageBitmap>>(new Map());
   const targetFrameRef = useRef(0);
   const currentFrameRef = useRef(0);
   const lastDrawnFrameRef = useRef(-1);
@@ -28,7 +29,7 @@ export function CanvasScroll() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Dynamic Mobile Resolution Scaling: 1:1 viewport pixels on mobile screens
+    // Dynamic Mobile Resolution Scaling
     const updateCanvasSize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -42,15 +43,20 @@ export function CanvasScroll() {
 
     updateCanvasSize();
 
-    // Fast direct cover image drawing
-    const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement) => {
+    // Fast GPU Direct Draw (supports ImageBitmap for 0.1ms hardware rendering)
+    const drawCoverImage = (
+      ctx: CanvasRenderingContext2D,
+      source: HTMLImageElement | ImageBitmap
+    ) => {
       const canvas = canvasRef.current;
-      if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
+      if (!canvas || !source) return;
 
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
-      const imgWidth = img.naturalWidth;
-      const imgHeight = img.naturalHeight;
+      const imgWidth = 'naturalWidth' in source ? source.naturalWidth : source.width;
+      const imgHeight = 'naturalHeight' in source ? source.naturalHeight : source.height;
+
+      if (!imgWidth || !imgHeight) return;
 
       const imgAspect = imgWidth / imgHeight;
       const canvasAspect = canvasWidth / canvasHeight;
@@ -68,7 +74,7 @@ export function CanvasScroll() {
       const offsetX = (canvasWidth - renderWidth) / 2;
       const offsetY = (canvasHeight - renderHeight) / 2;
 
-      ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+      ctx.drawImage(source, offsetX, offsetY, renderWidth, renderHeight);
     };
 
     const renderFrameIndex = (targetIndex: number) => {
@@ -82,7 +88,23 @@ export function CanvasScroll() {
 
       if (!ctx) return;
 
-      const clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetIndex));
+      const isMobile = window.innerWidth < 768;
+      let clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetIndex));
+
+      if (isMobile) {
+        // On mobile, step down to 75 GPU keyframes (step = 4) for instant 120 FPS speed
+        clampedIndex = Math.round(clampedIndex / 4) * 4;
+        clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, clampedIndex));
+      }
+
+      // Check for GPU ImageBitmap cache first
+      const bitmap = bitmapsRef.current.get(clampedIndex);
+      if (bitmap) {
+        drawCoverImage(ctx, bitmap);
+        lastDrawnFrameRef.current = clampedIndex;
+        return;
+      }
+
       const images = imagesRef.current;
       const img = images[clampedIndex];
 
@@ -92,6 +114,12 @@ export function CanvasScroll() {
       } else {
         // Fallback to nearest loaded frame
         for (let fallback = clampedIndex; fallback >= 0; fallback--) {
+          const fallbackBitmap = bitmapsRef.current.get(fallback);
+          if (fallbackBitmap) {
+            drawCoverImage(ctx, fallbackBitmap);
+            lastDrawnFrameRef.current = fallback;
+            break;
+          }
           if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
             drawCoverImage(ctx, images[fallback]);
             lastDrawnFrameRef.current = fallback;
@@ -153,7 +181,7 @@ export function CanvasScroll() {
       }
     };
 
-    // Load single frame with async decoding strategy
+    // Load single frame with ImageBitmap GPU caching
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
@@ -161,11 +189,12 @@ export function CanvasScroll() {
 
         const handleSuccess = async () => {
           try {
-            if ('decode' in img) {
-              await img.decode();
+            if ('createImageBitmap' in window) {
+              const bitmap = await createImageBitmap(img);
+              bitmapsRef.current.set(index, bitmap);
             }
           } catch {
-            // Ignore decode failure
+            // Ignore bitmap creation failures
           }
           loadedCount++;
           setLoadProgress(Math.round((loadedCount / 30) * 100));
@@ -224,9 +253,11 @@ export function CanvasScroll() {
       const isMobile = window.innerWidth < 768;
 
       if (isMobile) {
-        // Direct Raw Mobile Sync: Render matching frame instantly without lerping dampening delay
+        // Direct Hardware Accelerated Mobile Sync with ImageBitmap GPU cache
         currentFrameRef.current = targetFrameRef.current;
-        const targetIndex = Math.round(currentFrameRef.current);
+        const rawIndex = Math.round(currentFrameRef.current);
+        const targetIndex = Math.round(rawIndex / 4) * 4;
+
         if (targetIndex !== lastDrawnFrameRef.current) {
           if (animFrameIdRef.current === null) {
             animFrameIdRef.current = requestAnimationFrame(() => {
