@@ -132,13 +132,25 @@ export function CanvasScroll() {
       }
     };
 
-    // Mobile Direct Sync Loop
+    // Mobile Fluid Motion Dampening Loop: Clamps max frame delta per tick to eliminate strobe jumps
     const renderLoopMobile = () => {
-      const targetIndex = Math.round(targetFrameRef.current);
-      if (targetIndex !== lastDrawnFrameRef.current) {
-        renderFrameIndex(targetIndex);
+      const diff = targetFrameRef.current - currentFrameRef.current;
+      if (Math.abs(diff) > 0.05) {
+        // Smooth motion dampening step: max 1.5 frames per 16ms tick
+        const step = Math.sign(diff) * Math.min(Math.abs(diff) * 0.28, 1.5);
+        currentFrameRef.current += step;
+
+        const targetIndex = Math.round(currentFrameRef.current);
+        if (targetIndex !== lastDrawnFrameRef.current) {
+          renderFrameIndex(targetIndex);
+        }
+
+        animFrameIdRef.current = requestAnimationFrame(renderLoopMobile);
+      } else {
+        currentFrameRef.current = targetFrameRef.current;
+        renderFrameIndex(Math.round(currentFrameRef.current));
+        animFrameIdRef.current = null;
       }
-      animFrameIdRef.current = null;
     };
 
     // Desktop Smooth Lerp Loop
@@ -170,7 +182,7 @@ export function CanvasScroll() {
       }
     };
 
-    // Load single frame
+    // Load single frame with async decoding strategy
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
