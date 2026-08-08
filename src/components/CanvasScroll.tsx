@@ -132,27 +132,6 @@ export function CanvasScroll() {
       }
     };
 
-    // Mobile Fluid Motion Dampening Loop: Clamps max frame delta per tick to eliminate strobe jumps
-    const renderLoopMobile = () => {
-      const diff = targetFrameRef.current - currentFrameRef.current;
-      if (Math.abs(diff) > 0.05) {
-        // Smooth motion dampening step: max 1.5 frames per 16ms tick
-        const step = Math.sign(diff) * Math.min(Math.abs(diff) * 0.28, 1.5);
-        currentFrameRef.current += step;
-
-        const targetIndex = Math.round(currentFrameRef.current);
-        if (targetIndex !== lastDrawnFrameRef.current) {
-          renderFrameIndex(targetIndex);
-        }
-
-        animFrameIdRef.current = requestAnimationFrame(renderLoopMobile);
-      } else {
-        currentFrameRef.current = targetFrameRef.current;
-        renderFrameIndex(Math.round(currentFrameRef.current));
-        animFrameIdRef.current = null;
-      }
-    };
-
     // Desktop Smooth Lerp Loop
     const renderLoopDesktop = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
@@ -167,18 +146,10 @@ export function CanvasScroll() {
       }
     };
 
-    const triggerLoop = () => {
+    const triggerLoopDesktop = () => {
       if (prefersReducedMotion) return;
-      const isMobile = window.innerWidth < 768;
-
-      if (isMobile) {
-        if (animFrameIdRef.current === null) {
-          animFrameIdRef.current = requestAnimationFrame(renderLoopMobile);
-        }
-      } else {
-        if (animFrameIdRef.current === null) {
-          animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
-        }
+      if (animFrameIdRef.current === null) {
+        animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
       }
     };
 
@@ -250,7 +221,23 @@ export function CanvasScroll() {
         targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
       }
 
-      triggerLoop();
+      const isMobile = window.innerWidth < 768;
+
+      if (isMobile) {
+        // Direct Raw Mobile Sync: Render matching frame instantly without lerping dampening delay
+        currentFrameRef.current = targetFrameRef.current;
+        const targetIndex = Math.round(currentFrameRef.current);
+        if (targetIndex !== lastDrawnFrameRef.current) {
+          if (animFrameIdRef.current === null) {
+            animFrameIdRef.current = requestAnimationFrame(() => {
+              renderFrameIndex(targetIndex);
+              animFrameIdRef.current = null;
+            });
+          }
+        }
+      } else {
+        triggerLoopDesktop();
+      }
     };
 
     const handleResize = () => {
@@ -264,7 +251,7 @@ export function CanvasScroll() {
 
     if (!prefersReducedMotion) {
       window.addEventListener('scroll', updateTargetFrame, { passive: true });
-      triggerLoop();
+      updateTargetFrame();
     }
 
     window.addEventListener('resize', handleResize, { passive: true });
