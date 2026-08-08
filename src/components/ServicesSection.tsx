@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Landmark, Sparkles, Sliders, Sun, Users2, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -5,6 +6,7 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1502602898657-3e91760c
 
 export function ServicesSection() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const services = [
     {
@@ -55,10 +57,7 @@ export function ServicesSection() {
   ];
 
   const handleExploreClick = () => {
-    const el = document.querySelector('#packages');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate('/custom-itinerary');
   };
 
   return (
@@ -75,14 +74,15 @@ export function ServicesSection() {
         </div>
       </div>
 
-      {/* Services Grid - Fully responsive on Mobile, Tablet & Desktop */}
+      {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {services.map((service) => {
           const Icon = service.icon;
           return (
             <div
               key={service.id}
-              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between glass-card-hover group min-h-[360px]"
+              onClick={handleExploreClick}
+              className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between glass-card-hover group min-h-[360px] cursor-pointer"
             >
               {/* Card Image Header */}
               <div className="relative h-48 w-full aspect-video overflow-hidden bg-black/40">
@@ -125,7 +125,10 @@ export function ServicesSection() {
                 </div>
 
                 <button
-                  onClick={handleExploreClick}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleExploreClick();
+                  }}
                   className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-[#0B132B] border border-white/20 font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer"
                 >
                   <span>{t('learnMore')}</span>

@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Clock, Send, CheckCircle, Sparkles, ArrowRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { siteConfig } from '../config/siteConfig';
@@ -6,6 +7,7 @@ import { submitContactForm } from '../services/formService';
 
 export function ContactSection() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
@@ -31,9 +33,8 @@ export function ContactSection() {
     }
   };
 
-  const scrollToPackages = () => {
-    const el = document.querySelector('#packages');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handlePackagesClick = () => {
+    navigate('/packages');
   };
 
   return (
@@ -117,7 +118,10 @@ export function ContactSection() {
         </div>
 
         {/* Center: Eiffel Tower Night Showcase Card */}
-        <div className="lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] shadow-2xl border border-white/20 group flex flex-col justify-between p-6 sm:p-8">
+        <div
+          onClick={handlePackagesClick}
+          className="lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[380px] sm:min-h-[440px] shadow-2xl border border-white/20 group flex flex-col justify-between p-6 sm:p-8 cursor-pointer"
+        >
           <img
             src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1000&q=80"
             alt="Eiffel Tower Night Sunset illuminated over the Seine"
@@ -143,7 +147,10 @@ export function ContactSection() {
               {t('eiffelDesc')}
             </p>
             <button
-              onClick={scrollToPackages}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePackagesClick();
+              }}
               className="w-full py-2.5 px-4 bg-white/10 hover:bg-white text-white hover:text-[#0B132B] border border-white/30 rounded-xl text-xs font-bold transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer shadow-lg"
             >
               <span>{t('exploreEiffelTours')}</span>

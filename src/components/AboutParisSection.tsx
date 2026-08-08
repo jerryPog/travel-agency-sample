@@ -1,8 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Car, Clock, Sun, MapPin, Award } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function AboutParisSection() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const stats = [
     { value: '5+', label: t('yearsExp') },
@@ -20,14 +22,12 @@ export function AboutParisSection() {
     { name: 'UNESCO', badge: t('badgeHeritage') },
   ];
 
-  const scrollToContact = () => {
-    const el = document.querySelector('#contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handleContactClick = () => {
+    navigate('/contact');
   };
 
-  const scrollToDistricts = () => {
-    const el = document.querySelector('#districts');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const handlePackagesClick = () => {
+    navigate('/packages');
   };
 
   return (
@@ -46,8 +46,11 @@ export function AboutParisSection() {
 
       {/* Bento Grid Row 1 */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-12">
-        {/* Card 1: Experience Overview */}
-        <div className="md:col-span-6 lg:col-span-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl min-h-[280px] glass-card-hover group">
+        {/* Card 1: Experience Overview (Functional Contact Card) */}
+        <div
+          onClick={handleContactClick}
+          className="md:col-span-6 lg:col-span-4 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 flex flex-col justify-between shadow-2xl min-h-[280px] glass-card-hover group cursor-pointer"
+        >
           <div>
             <div className="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center mb-4 text-white group-hover:bg-white group-hover:text-[#0B132B] transition-colors">
               <MapPin className="w-5 h-5" />
@@ -74,13 +77,19 @@ export function AboutParisSection() {
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={scrollToContact}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleContactClick();
+              }}
               className="bg-white text-[#0B132B] font-semibold text-xs px-5 py-2.5 rounded-full hover:bg-white/90 transition-all flex items-center space-x-2 cursor-pointer shadow-md group-hover:scale-105"
             >
               <span>{t('contactUs')}</span>
             </button>
             <button
-              onClick={scrollToContact}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleContactClick();
+              }}
               title="Contact Us"
               className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-[#0B132B] transition-all cursor-pointer shadow-md hover:scale-110"
             >
@@ -90,7 +99,10 @@ export function AboutParisSection() {
         </div>
 
         {/* Card 2: Featured Paris Image */}
-        <div className="md:col-span-6 lg:col-span-5 relative rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[300px] group shadow-2xl border border-white/20">
+        <div
+          onClick={handlePackagesClick}
+          className="md:col-span-6 lg:col-span-5 relative rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[300px] group shadow-2xl border border-white/20 cursor-pointer"
+        >
           <img
             src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1000&q=80"
             alt="Paris Explore"
@@ -104,7 +116,10 @@ export function AboutParisSection() {
         </div>
 
         {/* Card 3: Travelers Moments Gallery */}
-        <div className="md:col-span-12 lg:col-span-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 flex flex-col justify-between shadow-2xl min-h-[280px] glass-card-hover">
+        <div
+          onClick={() => navigate('/reviews')}
+          className="md:col-span-12 lg:col-span-3 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 flex flex-col justify-between shadow-2xl min-h-[280px] glass-card-hover cursor-pointer"
+        >
           <div className="grid grid-cols-3 gap-2 mb-4">
             <img
               src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=300&q=80"
@@ -221,7 +236,7 @@ export function AboutParisSection() {
 
         {/* Card C: Visual Moment Card (Interactive Button) */}
         <button
-          onClick={scrollToDistricts}
+          onClick={handlePackagesClick}
           className="md:col-span-12 lg:col-span-4 relative rounded-3xl overflow-hidden min-h-[260px] sm:min-h-[300px] shadow-2xl border border-white/20 group text-left cursor-pointer"
         >
           <img

@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, Sparkles, ArrowRight, Calculator, Users, Calendar } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function PricingPlansSection() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<'all' | 'romantic' | 'vip' | 'art' | 'family'>('all');
 
   // Custom Quote Calculator State
@@ -86,8 +88,7 @@ export function PricingPlansSection() {
   const estimatedTotalInr = estimatedTotalEur * 90;
 
   const handleChoosePlan = () => {
-    const el = document.querySelector('#contact');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    navigate('/contact');
   };
 
   return (
@@ -129,7 +130,8 @@ export function PricingPlansSection() {
         {filteredPlans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 glass-card-hover ${
+            onClick={handleChoosePlan}
+            className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 glass-card-hover cursor-pointer ${
               plan.isPopular
                 ? 'bg-gradient-to-b from-amber-500/20 via-white/10 to-white/5 border-2 border-amber-400 shadow-2xl scale-[1.01]'
                 : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl'
@@ -180,7 +182,10 @@ export function PricingPlansSection() {
             </div>
 
             <button
-              onClick={handleChoosePlan}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleChoosePlan();
+              }}
               className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer ${
                 plan.isPopular
                   ? 'bg-amber-400 hover:bg-amber-300 text-[#0B132B] shadow-lg'
