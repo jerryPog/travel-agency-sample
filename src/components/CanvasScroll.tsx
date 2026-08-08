@@ -4,6 +4,8 @@ import { PrivateJetLoader } from './PrivateJetLoader';
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
 const EIFFEL_TOWER_MOBILE_BG = 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1200&q=80';
+// Standardized scroll distance for consistent, calm frame pacing across short and long pages alike
+const REFERENCE_SCROLL_HEIGHT = 2800;
 
 function getFrameUrl(index: number): string {
   const paddedIndex = String(index + 1).padStart(3, '0');
@@ -122,11 +124,11 @@ export function CanvasScroll() {
       }
     };
 
-    // Original Desktop Lerping Loop
+    // Desktop Lerping Loop
     const renderLoop = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * 0.18;
+        currentFrameRef.current += diff * 0.12;
         renderFrame();
         animFrameIdRef.current = requestAnimationFrame(renderLoop);
       } else {
@@ -193,21 +195,10 @@ export function CanvasScroll() {
     const updateTargetFrame = () => {
       if (prefersReducedMotion) return;
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
-      const docHeight = Math.max(
-        document.body.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.scrollHeight,
-        document.documentElement.offsetHeight
-      );
-      const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-      const maxScroll = docHeight - windowHeight;
-
-      if (maxScroll <= 0) {
-        targetFrameRef.current = 0;
-      } else {
-        const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
-        targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
-      }
+      
+      // Calculate fraction using standardized REFERENCE_SCROLL_HEIGHT to prevent rapid scrubbing on shorter pages
+      const fraction = Math.max(0, Math.min(1, scrollTop / REFERENCE_SCROLL_HEIGHT));
+      targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
 
       triggerLoop();
     };
