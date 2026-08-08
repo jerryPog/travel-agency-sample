@@ -3,12 +3,10 @@
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
-    overscroll-behavior-y: none;
   }
 
   body {
     font-family: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system, sans-serif;
-    overscroll-behavior-y: none;
   }
 
   /* Eliminate 300ms mobile tap delay globally across all interactive elements */

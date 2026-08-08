@@ -35,15 +35,13 @@ export function CanvasScroll() {
       const isMobile = window.innerWidth < 768;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      // On mobile viewports or high-DPR screens, cap maximum canvas buffer resolution (e.g. 720p/1080p max width)
-      // to reduce offscreen pixel allocations and guarantee 60/120 FPS rendering on budget devices
       let targetWidth = window.innerWidth * dpr;
       let targetHeight = window.innerHeight * dpr;
 
       if (isMobile) {
-        const mobileScale = dpr > 1.5 ? 0.75 : 1.0;
-        targetWidth = Math.min(targetWidth * mobileScale, 1080);
-        targetHeight = Math.min(targetHeight * mobileScale, 1920);
+        // Cap canvas render buffer resolution on mobile for max GPU throughput
+        targetWidth = Math.min(targetWidth, 720);
+        targetHeight = Math.min(targetHeight, 1280);
       }
 
       canvas.width = Math.round(targetWidth);
@@ -78,17 +76,22 @@ export function CanvasScroll() {
       const offsetX = (canvasWidth - renderWidth) / 2;
       const offsetY = (canvasHeight - renderHeight) / 2;
 
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
-      ctx.restore();
+      if (alpha < 1) {
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+        ctx.restore();
+      } else {
+        ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+      }
     };
 
     const renderFrame = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      // Initialize 2D context with alpha: false and desynchronized: true for fast low-latency rendering
+      const isMobile = window.innerWidth < 768;
+
       const ctx = canvas.getContext('2d', {
         alpha: false,
         desynchronized: true,
@@ -96,45 +99,65 @@ export function CanvasScroll() {
 
       if (!ctx) return;
 
-      ctx.fillStyle = '#04060a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       const clampedFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, currentFrameRef.current));
-      const index1 = Math.floor(clampedFrame);
-      const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
-      const blend = clampedFrame - index1;
-
       const images = imagesRef.current;
-      const img1 = images[index1];
-      const img2 = images[index2];
 
-      if (img1 && img1.complete && img1.naturalWidth > 0) {
-        drawCoverImage(ctx, img1, 1);
-      } else {
-        for (let fallback = index1; fallback >= 0; fallback--) {
-          if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
-            drawCoverImage(ctx, images[fallback], 1);
-            break;
+      if (isMobile) {
+        // Mobile performance optimization: draw single nearest frame without dual alpha blending
+        const nearestIndex = Math.round(clampedFrame);
+        const img = images[nearestIndex];
+
+        if (img && img.complete && img.naturalWidth > 0) {
+          drawCoverImage(ctx, img, 1);
+        } else {
+          // Fallback search
+          for (let fallback = nearestIndex; fallback >= 0; fallback--) {
+            if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
+              drawCoverImage(ctx, images[fallback], 1);
+              break;
+            }
           }
         }
-      }
+      } else {
+        // Desktop high-power mode: dual-frame alpha blend
+        const index1 = Math.floor(clampedFrame);
+        const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
+        const blend = clampedFrame - index1;
 
-      if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
-        drawCoverImage(ctx, img2, blend);
+        const img1 = images[index1];
+        const img2 = images[index2];
+
+        if (img1 && img1.complete && img1.naturalWidth > 0) {
+          drawCoverImage(ctx, img1, 1);
+        } else {
+          for (let fallback = index1; fallback >= 0; fallback--) {
+            if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
+              drawCoverImage(ctx, images[fallback], 1);
+              break;
+            }
+          }
+        }
+
+        if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
+          drawCoverImage(ctx, img2, blend);
+        }
       }
     };
 
-    // Idling animation loop: runs only when diff > 0.001
+    // Responsive frame interpolation: fast instant response on mobile, smooth lerp on desktop
     const renderLoop = () => {
+      const isMobile = window.innerWidth < 768;
       const diff = targetFrameRef.current - currentFrameRef.current;
+      const lerpSpeed = isMobile ? 0.65 : 0.22;
+
       if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * 0.18;
+        currentFrameRef.current += diff * lerpSpeed;
         renderFrame();
         animFrameIdRef.current = requestAnimationFrame(renderLoop);
       } else {
         currentFrameRef.current = targetFrameRef.current;
         renderFrame();
-        animFrameIdRef.current = null; // IDLE loop when scrolling stops
+        animFrameIdRef.current = null;
       }
     };
 
@@ -145,7 +168,7 @@ export function CanvasScroll() {
       }
     };
 
-    // Load single frame with asynchronous decoding strategy
+    // Load single frame
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
@@ -157,7 +180,7 @@ export function CanvasScroll() {
               await img.decode();
             }
           } catch {
-            // Ignore decode failures and resolve immediately
+            // Ignore decode failure
           }
           loadedCount++;
           setLoadProgress(Math.round((loadedCount / 30) * 100));
@@ -227,7 +250,6 @@ export function CanvasScroll() {
 
     if (!prefersReducedMotion) {
       window.addEventListener('scroll', updateTargetFrame, { passive: true });
-      window.addEventListener('touchmove', updateTargetFrame, { passive: true });
       triggerLoop();
     }
 
@@ -235,7 +257,6 @@ export function CanvasScroll() {
 
     return () => {
       window.removeEventListener('scroll', updateTargetFrame);
-      window.removeEventListener('touchmove', updateTargetFrame);
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
