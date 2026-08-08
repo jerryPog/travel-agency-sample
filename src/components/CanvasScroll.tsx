@@ -4,7 +4,7 @@ import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
-const EIFFEL_TOWER_MOBILE_BG = 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1200&q=80';
+const EIFFEL_TOWER_MOBILE_BG = '/eiffel-clouds-bg.jpg';
 const REFERENCE_SCROLL_HEIGHT = 2800;
 
 function getFrameUrl(index: number): string {
