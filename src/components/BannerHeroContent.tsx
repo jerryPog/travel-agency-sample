@@ -31,7 +31,7 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
         id="hero-headline"
-        className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-serif-editorial text-white tracking-tight leading-[1.15] mb-3 break-words text-gradient-shimmer"
+        className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold font-serif-editorial text-white tracking-tight leading-[1.15] mb-3 break-words text-gradient-shimmer"
       >
         {t('heroHeadline')}
       </motion.h1>
