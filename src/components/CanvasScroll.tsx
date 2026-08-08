@@ -17,6 +17,7 @@ export function CanvasScroll() {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const targetFrameRef = useRef(0);
   const currentFrameRef = useRef(0);
+  const lastDrawnFrameRef = useRef(-1);
   const animFrameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -27,31 +28,22 @@ export function CanvasScroll() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Dynamic Mobile Resolution Scaling
+    // Dynamic Mobile Resolution Scaling: 1:1 viewport pixels on mobile screens
     const updateCanvasSize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
       const isMobile = window.innerWidth < 768;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
 
-      let targetWidth = window.innerWidth * dpr;
-      let targetHeight = window.innerHeight * dpr;
-
-      if (isMobile) {
-        // Cap canvas render buffer resolution on mobile for max GPU throughput
-        targetWidth = Math.min(targetWidth, 720);
-        targetHeight = Math.min(targetHeight, 1280);
-      }
-
-      canvas.width = Math.round(targetWidth);
-      canvas.height = Math.round(targetHeight);
+      canvas.width = Math.round(window.innerWidth * dpr);
+      canvas.height = Math.round(window.innerHeight * dpr);
     };
 
     updateCanvasSize();
 
-    // Draw frame with exact cover ratio without off-screen over-decoding
-    const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
+    // Fast direct cover image drawing
+    const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement) => {
       const canvas = canvasRef.current;
       if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
 
@@ -76,21 +68,42 @@ export function CanvasScroll() {
       const offsetX = (canvasWidth - renderWidth) / 2;
       const offsetY = (canvasHeight - renderHeight) / 2;
 
-      if (alpha < 1) {
-        ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
-        ctx.restore();
-      } else {
-        ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
-      }
+      ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
     };
 
-    const renderFrame = () => {
+    const renderFrameIndex = (targetIndex: number) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      const isMobile = window.innerWidth < 768;
+      const ctx = canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      }) as CanvasRenderingContext2D | null;
+
+      if (!ctx) return;
+
+      const clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetIndex));
+      const images = imagesRef.current;
+      const img = images[clampedIndex];
+
+      if (img && img.complete && img.naturalWidth > 0) {
+        drawCoverImage(ctx, img);
+        lastDrawnFrameRef.current = clampedIndex;
+      } else {
+        // Fallback to nearest loaded frame
+        for (let fallback = clampedIndex; fallback >= 0; fallback--) {
+          if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
+            drawCoverImage(ctx, images[fallback]);
+            lastDrawnFrameRef.current = fallback;
+            break;
+          }
+        }
+      }
+    };
+
+    const renderDesktopBlend = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
       const ctx = canvas.getContext('2d', {
         alpha: false,
@@ -100,71 +113,60 @@ export function CanvasScroll() {
       if (!ctx) return;
 
       const clampedFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, currentFrameRef.current));
+      const index1 = Math.floor(clampedFrame);
+      const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
+      const blend = clampedFrame - index1;
+
       const images = imagesRef.current;
+      const img1 = images[index1];
+      const img2 = images[index2];
 
-      if (isMobile) {
-        // Mobile performance optimization: draw single nearest frame without dual alpha blending
-        const nearestIndex = Math.round(clampedFrame);
-        const img = images[nearestIndex];
-
-        if (img && img.complete && img.naturalWidth > 0) {
-          drawCoverImage(ctx, img, 1);
-        } else {
-          // Fallback search
-          for (let fallback = nearestIndex; fallback >= 0; fallback--) {
-            if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
-              drawCoverImage(ctx, images[fallback], 1);
-              break;
-            }
-          }
-        }
-      } else {
-        // Desktop high-power mode: dual-frame alpha blend
-        const index1 = Math.floor(clampedFrame);
-        const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
-        const blend = clampedFrame - index1;
-
-        const img1 = images[index1];
-        const img2 = images[index2];
-
-        if (img1 && img1.complete && img1.naturalWidth > 0) {
-          drawCoverImage(ctx, img1, 1);
-        } else {
-          for (let fallback = index1; fallback >= 0; fallback--) {
-            if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
-              drawCoverImage(ctx, images[fallback], 1);
-              break;
-            }
-          }
-        }
-
-        if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
-          drawCoverImage(ctx, img2, blend);
-        }
+      if (img1 && img1.complete && img1.naturalWidth > 0) {
+        drawCoverImage(ctx, img1);
+      }
+      if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
+        ctx.save();
+        ctx.globalAlpha = blend;
+        drawCoverImage(ctx, img2);
+        ctx.restore();
       }
     };
 
-    // Responsive frame interpolation: fast instant response on mobile, smooth lerp on desktop
-    const renderLoop = () => {
-      const isMobile = window.innerWidth < 768;
-      const diff = targetFrameRef.current - currentFrameRef.current;
-      const lerpSpeed = isMobile ? 0.65 : 0.22;
+    // Mobile Direct Sync Loop
+    const renderLoopMobile = () => {
+      const targetIndex = Math.round(targetFrameRef.current);
+      if (targetIndex !== lastDrawnFrameRef.current) {
+        renderFrameIndex(targetIndex);
+      }
+      animFrameIdRef.current = null;
+    };
 
+    // Desktop Smooth Lerp Loop
+    const renderLoopDesktop = () => {
+      const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * lerpSpeed;
-        renderFrame();
-        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+        currentFrameRef.current += diff * 0.22;
+        renderDesktopBlend();
+        animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
       } else {
         currentFrameRef.current = targetFrameRef.current;
-        renderFrame();
+        renderDesktopBlend();
         animFrameIdRef.current = null;
       }
     };
 
     const triggerLoop = () => {
       if (prefersReducedMotion) return;
-      if (animFrameIdRef.current === null) {
-        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+      const isMobile = window.innerWidth < 768;
+
+      if (isMobile) {
+        if (animFrameIdRef.current === null) {
+          animFrameIdRef.current = requestAnimationFrame(renderLoopMobile);
+        }
+      } else {
+        if (animFrameIdRef.current === null) {
+          animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
+        }
       }
     };
 
@@ -184,7 +186,7 @@ export function CanvasScroll() {
           }
           loadedCount++;
           setLoadProgress(Math.round((loadedCount / 30) * 100));
-          if (index === 0) renderFrame();
+          if (index === 0) renderFrameIndex(0);
           resolve(img);
         };
 
@@ -244,7 +246,7 @@ export function CanvasScroll() {
       if (!prefersReducedMotion) {
         updateTargetFrame();
       } else {
-        renderFrame();
+        renderFrameIndex(0);
       }
     };
 
