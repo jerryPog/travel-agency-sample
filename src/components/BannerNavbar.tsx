@@ -3,36 +3,10 @@ import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { playTactileClick } from '../utils/audio';
 
 interface BannerNavbarProps {
   brandName: string;
-}
-
-// Low-volume Web Audio API tactile feedback synthesizer
-function playTactileClick(muted: boolean) {
-  if (muted || typeof window === 'undefined') return;
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.04);
-
-    gain.gain.setValueAtTime(0.04, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.04);
-  } catch {
-    // Ignore audio failures
-  }
 }
 
 export function BannerNavbar({ brandName }: BannerNavbarProps) {
