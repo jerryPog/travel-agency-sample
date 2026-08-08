@@ -152,7 +152,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
         </div>
 
         {/* Body Content */}
-        <div className="p-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-6 max-h-[75vh] overflow-y-auto scroll-contain">
           {submitted ? (
             <div className="text-center py-10 space-y-4">
               <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-400/40 flex items-center justify-center mx-auto animate-bounce">

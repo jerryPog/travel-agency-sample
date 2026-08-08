@@ -105,13 +105,13 @@ export default function App() {
         style={{
           backgroundColor: `${getNavyHex()}35`, // 35 hex = ~20% opacity so canvas animation shines through
         }}
-        className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
+        className="min-h-[100dvh] w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
         {/* Hero Section Container */}
         <section
           id="home"
           aria-labelledby="hero-headline"
-          className="w-full max-w-[1440px] min-h-[560px] lg:h-screen lg:max-h-[780px] flex flex-col justify-between relative overflow-hidden pt-1 pb-3 px-4 sm:px-6"
+          className="w-full max-w-[1440px] min-h-[560px] lg:h-[100dvh] lg:max-h-[780px] flex flex-col justify-between relative overflow-hidden pt-1 pb-3 px-4 sm:px-6"
         >
           <BannerNavbar
             brandName={config.brandName}

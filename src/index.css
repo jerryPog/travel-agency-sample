@@ -1,9 +1,46 @@
 @import "tailwindcss";
 
 @layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: none;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', 'DM Sans', system-ui, -apple-system, sans-serif;
+    overscroll-behavior-y: none;
   }
+
+  /* Eliminate 300ms mobile tap delay globally across all interactive elements */
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role="button"],
+  .glass-card-hover {
+    touch-action: manipulation;
+  }
+}
+
+/* GPU Hardware Acceleration Utilities */
+.gpu-layer {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Tactile Active Spring Press Feedback */
+.active-press {
+  transition: transform 0.1s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.active-press:active {
+  transform: scale(0.96);
 }
 
 /* Design System Glassmorphism Tokens */
@@ -13,10 +50,11 @@
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  transform: translateZ(0);
 }
 
 .glass-card-hover {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .glass-card-hover:hover {
@@ -27,10 +65,11 @@
 }
 
 .glass-panel {
-  background: rgba(8, 16, 40, 0.85);
+  background: rgba(8, 16, 40, 0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
+  transform: translateZ(0);
 }
 
 .glass-badge {
@@ -45,12 +84,29 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all 0.2s ease-in-out;
+  transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .glass-button:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Mobile Hardware Performance Optimization: Lower blur intensity on mobile viewports (<768px) */
+@media (max-width: 768px) {
+  .glass-card,
+  .glass-panel {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(8, 16, 40, 0.94);
+  }
+
+  .glass-button,
+  .glass-badge {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    background: rgba(255, 255, 255, 0.18);
+  }
 }
 
 /* WCAG Contrast Scrim Overlay */
@@ -61,50 +117,50 @@
 /* Scroll Animation Engine Classes */
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(24px) translateZ(0);
+  transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: opacity, transform;
 }
 
 .reveal-on-scroll.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) translateZ(0);
 }
 
 .reveal-fade-left {
   opacity: 0;
-  transform: translateX(-40px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-30px) translateZ(0);
+  transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: opacity, transform;
 }
 
 .reveal-fade-left.is-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translateZ(0);
 }
 
 .reveal-fade-right {
   opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(30px) translateZ(0);
+  transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: opacity, transform;
 }
 
 .reveal-fade-right.is-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) translateZ(0);
 }
 
 .reveal-scale {
   opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: scale(0.94) translateZ(0);
+  transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1), transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: opacity, transform;
 }
 
 .reveal-scale.is-visible {
   opacity: 1;
-  transform: scale(1);
+  transform: scale(1) translateZ(0);
 }
 
 /* Staggered Delays */
@@ -116,12 +172,8 @@
 
 /* Dynamic Floating Animation */
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-float {
-  animation: floatSlow 5s ease-in-out infinite;
+  0%, 100% { transform: translateY(0px) translateZ(0); }
+  50% { transform: translateY(-8px) translateZ(0); }
 }
 
 /* Shimmer Gradient Text Effect */
@@ -139,12 +191,18 @@
   animation: textGradient 6s ease infinite;
 }
 
-/* Private Jet Floating & Cloud Passing Animations */
+/* Private Jet Floating Animation */
 @keyframes jetFloat {
-  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-  50% { transform: translateY(-12px) rotate(-2deg) scale(1.02); }
+  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1) translateZ(0); }
+  50% { transform: translateY(-12px) rotate(-2deg) scale(1.02) translateZ(0); }
 }
 
 .animate-jet-float {
   animation: jetFloat 2.5s ease-in-out infinite;
+}
+
+/* Modal and Drawer Overscroll Containment */
+.scroll-contain {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }

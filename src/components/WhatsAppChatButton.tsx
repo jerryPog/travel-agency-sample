@@ -194,7 +194,7 @@ export function WhatsAppChatButton() {
               </div>
 
               {/* FAQ Accordion List */}
-              <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-0">
+              <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar min-h-0 scroll-contain">
                 {filteredFaqs.length > 0 ? (
                   filteredFaqs.map((faq) => {
                     const isExpanded = openFaqId === faq.id;

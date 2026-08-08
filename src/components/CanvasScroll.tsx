@@ -27,17 +27,32 @@ export function CanvasScroll() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Dynamic Mobile Resolution Scaling
     const updateCanvasSize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
+
+      const isMobile = window.innerWidth < 768;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+
+      // On mobile viewports or high-DPR screens, cap maximum canvas buffer resolution (e.g. 720p/1080p max width)
+      // to reduce offscreen pixel allocations and guarantee 60/120 FPS rendering on budget devices
+      let targetWidth = window.innerWidth * dpr;
+      let targetHeight = window.innerHeight * dpr;
+
+      if (isMobile) {
+        const mobileScale = dpr > 1.5 ? 0.75 : 1.0;
+        targetWidth = Math.min(targetWidth * mobileScale, 1080);
+        targetHeight = Math.min(targetHeight * mobileScale, 1920);
+      }
+
+      canvas.width = Math.round(targetWidth);
+      canvas.height = Math.round(targetHeight);
     };
 
     updateCanvasSize();
 
-    // Draw frame with exact cover ratio without off-screen over-decoding (no 1.25x crop scale)
+    // Draw frame with exact cover ratio without off-screen over-decoding
     const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
       const canvas = canvasRef.current;
       if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
@@ -72,10 +87,17 @@ export function CanvasScroll() {
     const renderFrame = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const ctx = canvas.getContext('2d');
+
+      // Initialize 2D context with alpha: false and desynchronized: true for fast low-latency rendering
+      const ctx = canvas.getContext('2d', {
+        alpha: false,
+        desynchronized: true,
+      }) as CanvasRenderingContext2D | null;
+
       if (!ctx) return;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#04060a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const clampedFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, currentFrameRef.current));
       const index1 = Math.floor(clampedFrame);
@@ -123,21 +145,32 @@ export function CanvasScroll() {
       }
     };
 
-    // Load single frame
+    // Load single frame with asynchronous decoding strategy
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
         img.decoding = 'async';
-        img.onload = () => {
+
+        const handleSuccess = async () => {
+          try {
+            if ('decode' in img) {
+              await img.decode();
+            }
+          } catch {
+            // Ignore decode failures and resolve immediately
+          }
           loadedCount++;
           setLoadProgress(Math.round((loadedCount / 30) * 100));
           if (index === 0) renderFrame();
           resolve(img);
         };
+
+        img.onload = handleSuccess;
         img.onerror = () => {
           loadedCount++;
           resolve(img);
         };
+
         img.src = getFrameUrl(index);
         imgArray[index] = img;
       });
@@ -194,13 +227,15 @@ export function CanvasScroll() {
 
     if (!prefersReducedMotion) {
       window.addEventListener('scroll', updateTargetFrame, { passive: true });
+      window.addEventListener('touchmove', updateTargetFrame, { passive: true });
       triggerLoop();
     }
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', updateTargetFrame);
+      window.removeEventListener('touchmove', updateTargetFrame);
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
@@ -215,7 +250,7 @@ export function CanvasScroll() {
       <canvas
         ref={canvasRef}
         aria-hidden="true"
-        className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 object-cover"
+        className="fixed top-0 left-0 w-full h-[100dvh] pointer-events-none z-0 object-cover"
       />
     </>
   );

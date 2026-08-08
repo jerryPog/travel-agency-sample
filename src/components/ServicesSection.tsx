@@ -85,7 +85,7 @@ export function ServicesSection() {
               className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between glass-card-hover group min-h-[360px]"
             >
               {/* Card Image Header */}
-              <div className="relative h-48 w-full overflow-hidden bg-black/40">
+              <div className="relative h-48 w-full aspect-video overflow-hidden bg-black/40">
                 <img
                   src={service.image}
                   alt={service.title}
