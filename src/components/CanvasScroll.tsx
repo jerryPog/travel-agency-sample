@@ -228,7 +228,10 @@ export function CanvasScroll() {
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
+        animFrameIdRef.current = null;
       }
+      currentFrameRef.current = 0;
+      targetFrameRef.current = 0;
     };
   }, [isSubpage]);
 
