@@ -8,7 +8,6 @@ import { FooterNav } from './FooterNav';
 import { WhatsAppChatButton } from './WhatsAppChatButton';
 import { ScrollToTop } from './ScrollToTop';
 import { MetaManager } from './MetaManager';
-import { ScrollProgressBar } from './ScrollProgressBar';
 import { siteConfig } from '../config/siteConfig';
 
 export function Layout() {
@@ -16,9 +15,6 @@ export function Layout() {
 
   return (
     <>
-      {/* Gold Scroll Depth Progress Bar */}
-      <ScrollProgressBar />
-
       {/* Dynamic Title & Meta Tags */}
       <MetaManager />
 
