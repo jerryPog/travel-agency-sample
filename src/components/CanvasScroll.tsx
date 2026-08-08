@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
 const EIFFEL_TOWER_MOBILE_BG = 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1200&q=80';
-// Standardized scroll distance for consistent, calm frame pacing across short and long pages alike
 const REFERENCE_SCROLL_HEIGHT = 2800;
 
 function getFrameUrl(index: number): string {
@@ -13,6 +13,9 @@ function getFrameUrl(index: number): string {
 }
 
 export function CanvasScroll() {
+  const location = useLocation();
+  const isSubpage = location.pathname !== '/';
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [loadProgress, setLoadProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -31,14 +34,14 @@ export function CanvasScroll() {
     };
 
     const mobile = checkMobile();
-    if (mobile) {
-      // On Mobile: Single Eiffel Tower frame background (instant 100% loaded)
+    if (mobile || isSubpage) {
+      // On Mobile or any Subpage: Render Eiffel Tower background image (instant 100% loaded)
       setLoadProgress(100);
       setIsLoaded(true);
       return;
     }
 
-    // On Desktop: Original 300-frame Canvas scroll sequence
+    // On Desktop Home Page: 300-frame Canvas scroll sequence
     let loadedCount = 0;
     const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
 
@@ -124,7 +127,6 @@ export function CanvasScroll() {
       }
     };
 
-    // Desktop Lerping Loop
     const renderLoop = () => {
       const diff = targetFrameRef.current - currentFrameRef.current;
       if (Math.abs(diff) > 0.001) {
@@ -196,7 +198,6 @@ export function CanvasScroll() {
       if (prefersReducedMotion) return;
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       
-      // Calculate fraction using standardized REFERENCE_SCROLL_HEIGHT to prevent rapid scrubbing on shorter pages
       const fraction = Math.max(0, Math.min(1, scrollTop / REFERENCE_SCROLL_HEIGHT));
       targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
 
@@ -205,7 +206,7 @@ export function CanvasScroll() {
 
     const handleResize = () => {
       const mobileNow = checkMobile();
-      if (!mobileNow) {
+      if (!mobileNow && !isSubpage) {
         updateCanvasSize();
         if (!prefersReducedMotion) {
           updateTargetFrame();
@@ -229,13 +230,13 @@ export function CanvasScroll() {
         cancelAnimationFrame(animFrameIdRef.current);
       }
     };
-  }, []);
+  }, [isSubpage]);
 
   return (
     <>
       <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
-      {isMobile ? (
+      {isMobile || isSubpage ? (
         <img
           src={EIFFEL_TOWER_MOBILE_BG}
           alt="Eiffel Tower Paris"
