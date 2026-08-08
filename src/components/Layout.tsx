@@ -8,7 +8,6 @@ import { FooterNav } from './FooterNav';
 import { WhatsAppChatButton } from './WhatsAppChatButton';
 import { ScrollToTop } from './ScrollToTop';
 import { MetaManager } from './MetaManager';
-import { CustomCursor } from './CustomCursor';
 import { ScrollProgressBar } from './ScrollProgressBar';
 import { siteConfig } from '../config/siteConfig';
 
@@ -17,9 +16,6 @@ export function Layout() {
 
   return (
     <>
-      {/* Desktop Hardware-Accelerated Custom Cursor */}
-      <CustomCursor />
-
       {/* Gold Scroll Depth Progress Bar */}
       <ScrollProgressBar />
 
