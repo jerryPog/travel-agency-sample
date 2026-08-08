@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { MessageCircle, X, Send, HelpCircle, ChevronDown, ChevronUp, Search, ExternalLink, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { siteConfig } from '../config/siteConfig';
@@ -290,18 +291,20 @@ export function WhatsAppChatButton() {
       )}
 
       {/* Main Floating Trigger Button */}
-      <button
+      <motion.button
         ref={triggerRef}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Open WhatsApp Chat & Paris Travel FAQ Guide"
         aria-expanded={isOpen}
-        className="group relative flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-3 rounded-full shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105"
+        className="group relative flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-3 rounded-full shadow-2xl transition-colors cursor-pointer"
       >
         <MessageCircle className="w-5 h-5 fill-current" aria-hidden="true" />
         <span className="text-xs font-bold font-['Plus_Jakarta_Sans',sans-serif] whitespace-nowrap">
           {t('waChatWithGuide')}
         </span>
-      </button>
+      </motion.button>
     </div>
   );
 }

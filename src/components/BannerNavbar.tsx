@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -49,46 +50,60 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
     <>
       <header className="w-full pt-3 sm:pt-4 pb-2 px-3 sm:px-6 md:px-12 z-20 relative flex items-center justify-between">
         {/* Brand Logo */}
-        <Link
-          to="/"
-          className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif] text-left truncate max-w-[180px] sm:max-w-none"
-        >
-          {brandName}
-        </Link>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
+          <Link
+            to="/"
+            className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif] text-left truncate max-w-[180px] sm:max-w-none block"
+          >
+            {brandName}
+          </Link>
+        </motion.div>
 
-        {/* Desktop Nav Pills */}
+        {/* Desktop Nav Pills with Framer Motion Active Indicator */}
         <nav className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                  isActive
-                    ? 'bg-white text-[#0B132B] font-semibold shadow-sm'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                `relative px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer whitespace-nowrap ${
+                  isActive ? 'text-[#0B132B] font-bold' : 'text-white/80 hover:text-white'
                 }`
               }
             >
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavPill"
+                      className="absolute inset-0 bg-white rounded-full shadow-sm"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
 
         {/* Controls — EN/FR toggle + Wizard trigger button + Hamburger */}
         <div className="flex items-center space-x-2 shrink-0">
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/custom-itinerary')}
-            className="hidden sm:inline-flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs px-3.5 py-1.5 rounded-full shadow-md transition-all active:scale-95 cursor-pointer"
+            className="hidden sm:inline-flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs px-3.5 py-1.5 rounded-full shadow-md transition-colors cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Wizard</span>
-          </button>
+          </motion.button>
 
           <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 p-0.5 sm:p-1 rounded-full text-[11px] sm:text-xs font-semibold">
             {(['en', 'fr'] as const).map((lang) => (
-              <button
+              <motion.button
                 key={lang}
+                whileTap={{ scale: 0.92 }}
                 onClick={() => setLanguage(lang)}
                 aria-label={`Switch language to ${lang.toUpperCase()}`}
                 className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full transition-all cursor-pointer ${
@@ -98,58 +113,62 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
                 }`}
               >
                 {lang.toUpperCase()}
-              </button>
+              </motion.button>
             ))}
           </div>
 
           {/* Hamburger Menu (Mobile Only) */}
-          <button
+          <motion.button
             ref={hamburgerRef}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setMobileMenuOpen((p) => !p)}
             aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={mobileMenuOpen}
-            className="lg:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 flex items-center justify-center text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 active:scale-95 transition-all cursor-pointer"
+            className="lg:hidden w-8.5 h-8.5 sm:w-9 sm:h-9 flex items-center justify-center text-white bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-white/20 transition-all cursor-pointer"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-          </button>
+          </motion.button>
         </div>
       </header>
 
-      {/* ── Mobile dropdown menu ── */}
-      <div
-        ref={dropdownRef}
-        className={`lg:hidden fixed top-[75px] right-3 w-60 z-[999] rounded-2xl overflow-hidden shadow-2xl
-          transition-all duration-300 ease-out origin-top-right
-          ${mobileMenuOpen
-            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
-            : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'
-          }`}
-        style={{
-          background: 'rgba(8, 16, 40, 0.96)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          maxHeight: 'calc(100dvh - 80px)',
-          overflowY: 'auto',
-        }}
-      >
-        <div className="flex flex-col p-2 space-y-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) =>
-                `w-full px-4 py-3 text-left text-xs sm:text-sm font-medium rounded-xl transition-all cursor-pointer ${
-                  isActive
-                    ? 'bg-white text-[#0B132B] font-bold'
-                    : 'text-white/85 hover:text-white hover:bg-white/10 active:bg-white/20'
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-      </div>
+      {/* ── Mobile dropdown menu with Framer Motion AnimatePresence ── */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            ref={dropdownRef}
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="lg:hidden fixed top-[75px] right-3 w-60 z-[999] rounded-2xl overflow-hidden shadow-2xl origin-top-right"
+            style={{
+              background: 'rgba(8, 16, 40, 0.96)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              maxHeight: 'calc(100dvh - 80px)',
+              overflowY: 'auto',
+            }}
+          >
+            <div className="flex flex-col p-2 space-y-1">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `w-full px-4 py-3 text-left text-xs sm:text-sm font-medium rounded-xl transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-white text-[#0B132B] font-bold'
+                        : 'text-white/85 hover:text-white hover:bg-white/10 active:bg-white/20'
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

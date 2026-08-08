@@ -1,4 +1,6 @@
-import { Outlet } from 'react-router-dom';
+import React from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { CanvasScroll } from './CanvasScroll';
 import { WeatherCurrencyWidget } from './WeatherCurrencyWidget';
 import { BannerNavbar } from './BannerNavbar';
@@ -9,6 +11,8 @@ import { MetaManager } from './MetaManager';
 import { siteConfig } from '../config/siteConfig';
 
 export function Layout() {
+  const location = useLocation();
+
   return (
     <>
       {/* Dynamic Title & Meta Tags */}
@@ -29,9 +33,13 @@ export function Layout() {
           {/* Global Header Navigation */}
           <BannerNavbar brandName={siteConfig.brandName} />
 
-          {/* Dynamic Page Route Content */}
+          {/* Dynamic Page Route Content with Framer Motion AnimatePresence */}
           <main className="w-full">
-            <Outlet />
+            <AnimatePresence mode="wait">
+              <React.Fragment key={location.pathname}>
+                <Outlet />
+              </React.Fragment>
+            </AnimatePresence>
           </main>
         </div>
 

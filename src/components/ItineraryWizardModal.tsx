@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { X, Check, Compass, Users, Sparkles, Calendar, DollarSign, Send, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { submitItineraryWizard } from '../services/formService';
@@ -111,12 +112,22 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200 font-['DM_Sans',sans-serif]">
-      <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl font-['DM_Sans',sans-serif]"
+    >
+      <motion.div
         ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="wizard-modal-title"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         className="bg-[#081028] border border-white/20 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative text-white"
       >
         {/* Header */}
@@ -410,7 +421,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
           )}
         </div>
 
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
