@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Check, Copy, X, Code2 } from 'lucide-react';
 import { BannerConfig } from '../types';
 
@@ -11,6 +11,27 @@ interface CodeExportModalProps {
 export function CodeExportModal({ config, getNavyHex, onClose }: CodeExportModalProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'html' | 'react'>('react');
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    closeBtnRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
   const navyHex = getNavyHex();
 
@@ -135,20 +156,27 @@ export default function ParisTravelBanner() {
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-[#0F172A] border border-white/20 rounded-3xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="code-modal-title"
+        className="bg-[#0F172A] border border-white/20 rounded-3xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 text-white"
+      >
         {/* Header */}
         <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/5">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-white/10 rounded-xl">
-              <Code2 className="w-5 h-5 text-white" />
+              <Code2 className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Banner Source Code</h2>
+              <h2 id="code-modal-title" className="text-xl font-bold text-white">Banner Source Code</h2>
               <p className="text-xs text-white/60">Export complete HTML & Tailwind or React component</p>
             </div>
           </div>
           <button
+            ref={closeBtnRef}
             onClick={onClose}
+            aria-label="Close export modal"
             className="p-2 rounded-full hover:bg-white/10 text-white/70 hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -186,12 +214,12 @@ export default function ParisTravelBanner() {
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 text-green-300" />
+                <Check className="w-4 h-4 text-green-300" aria-hidden="true" />
                 <span>Copied!</span>
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4" />
+                <Copy className="w-4 h-4" aria-hidden="true" />
                 <span>Copy Code</span>
               </>
             )}

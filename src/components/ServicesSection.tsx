@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Landmark, Sparkles, Sliders, Sun, Users2, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -6,7 +5,6 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1502602898657-3e91760c
 
 export function ServicesSection() {
   const { t } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   const services = [
     {

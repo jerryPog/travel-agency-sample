@@ -3,7 +3,6 @@ import { PrivateJetLoader } from './PrivateJetLoader';
 
 const TOTAL_FRAMES = 300;
 const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
-const MANDATORY_MIN_LOAD_TIME_MS = 1500; // Mandatory display time for all users
 
 function getFrameUrl(index: number): string {
   const paddedIndex = String(index + 1).padStart(3, '0');
@@ -22,9 +21,11 @@ export function CanvasScroll() {
 
   useEffect(() => {
     let loadedCount = 0;
-    let imagesReady = false;
-    let minTimePassed = false;
     const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const updateCanvasSize = () => {
       const canvas = canvasRef.current;
@@ -36,7 +37,7 @@ export function CanvasScroll() {
 
     updateCanvasSize();
 
-    // Draw frame to canvas with wider plane window scale & centered cover ratio
+    // Draw frame with exact cover ratio without off-screen over-decoding (no 1.25x crop scale)
     const drawCoverImage = (ctx: CanvasRenderingContext2D, img: HTMLImageElement, alpha = 1) => {
       const canvas = canvasRef.current;
       if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
@@ -58,11 +59,6 @@ export function CanvasScroll() {
         renderWidth = canvasHeight * imgAspect;
         renderHeight = canvasHeight;
       }
-
-      // Expand scale (1.25x) for an ultra-spacious, wide plane window view
-      const scale = 1.25;
-      renderWidth *= scale;
-      renderHeight *= scale;
 
       const offsetX = (canvasWidth - renderWidth) / 2;
       const offsetY = (canvasHeight - renderHeight) / 2;
@@ -93,7 +89,6 @@ export function CanvasScroll() {
       if (img1 && img1.complete && img1.naturalWidth > 0) {
         drawCoverImage(ctx, img1, 1);
       } else {
-        // Fallback to nearest loaded frame
         for (let fallback = index1; fallback >= 0; fallback--) {
           if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
             drawCoverImage(ctx, images[fallback], 1);
@@ -107,37 +102,35 @@ export function CanvasScroll() {
       }
     };
 
-    const checkComplete = () => {
-      if (imagesReady && minTimePassed) {
-        setLoadProgress(100);
-        setTimeout(() => {
-          setIsLoaded(true);
-        }, 200);
+    // Idling animation loop: runs only when diff > 0.001
+    const renderLoop = () => {
+      const diff = targetFrameRef.current - currentFrameRef.current;
+      if (Math.abs(diff) > 0.001) {
+        currentFrameRef.current += diff * 0.18;
+        renderFrame();
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
+      } else {
+        currentFrameRef.current = targetFrameRef.current;
+        renderFrame();
+        animFrameIdRef.current = null; // IDLE loop when scrolling stops
       }
     };
 
-    // Smooth Mandatory Timer Ticker (0 to 100%)
-    const startTime = Date.now();
-    const progressInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const timePercent = Math.min(100, Math.round((elapsed / MANDATORY_MIN_LOAD_TIME_MS) * 100));
-      
-      setLoadProgress((prev) => Math.max(prev, Math.min(99, timePercent)));
-
-      if (elapsed >= MANDATORY_MIN_LOAD_TIME_MS) {
-        minTimePassed = true;
-        clearInterval(progressInterval);
-        checkComplete();
+    const triggerLoop = () => {
+      if (prefersReducedMotion) return;
+      if (animFrameIdRef.current === null) {
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
       }
-    }, 30);
+    };
 
-    // Preload critical initial 30 frames first
+    // Load single frame
     const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
       return new Promise((resolve) => {
         const img = new Image();
         img.decoding = 'async';
         img.onload = () => {
           loadedCount++;
+          setLoadProgress(Math.round((loadedCount / 30) * 100));
           if (index === 0) renderFrame();
           resolve(img);
         };
@@ -150,17 +143,16 @@ export function CanvasScroll() {
       });
     };
 
-    // Load initial 30 frames first, then load the rest in parallel
     const preloadAll = async () => {
       const initialBatch = [];
       for (let i = 0; i < 30; i++) {
         initialBatch.push(loadSingleImage(i));
       }
       await Promise.all(initialBatch);
-      imagesReady = true;
-      checkComplete();
+      setLoadProgress(100);
+      setIsLoaded(true);
 
-      // Load remaining frames in background
+      // Background loading for remaining frames
       for (let i = 30; i < TOTAL_FRAMES; i++) {
         loadSingleImage(i);
       }
@@ -169,8 +161,8 @@ export function CanvasScroll() {
     preloadAll();
     imagesRef.current = imgArray;
 
-    // Calculate frame position based on current page scroll
     const updateTargetFrame = () => {
+      if (prefersReducedMotion) return;
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       const docHeight = Math.max(
         document.body.scrollHeight,
@@ -187,33 +179,27 @@ export function CanvasScroll() {
         const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
         targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
       }
+
+      triggerLoop();
     };
 
     const handleResize = () => {
       updateCanvasSize();
-      updateTargetFrame();
+      if (!prefersReducedMotion) {
+        updateTargetFrame();
+      } else {
+        renderFrame();
+      }
     };
 
-    window.addEventListener('scroll', updateTargetFrame, { passive: true });
+    if (!prefersReducedMotion) {
+      window.addEventListener('scroll', updateTargetFrame, { passive: true });
+      triggerLoop();
+    }
+
     window.addEventListener('resize', handleResize);
 
-    // Smooth physics lerping loop (optimized lerp factor 0.18 for instant smoothness)
-    const renderLoop = () => {
-      const diff = targetFrameRef.current - currentFrameRef.current;
-      if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * 0.18;
-      } else {
-        currentFrameRef.current = targetFrameRef.current;
-      }
-
-      renderFrame();
-      animFrameIdRef.current = requestAnimationFrame(renderLoop);
-    };
-
-    animFrameIdRef.current = requestAnimationFrame(renderLoop);
-
     return () => {
-      clearInterval(progressInterval);
       window.removeEventListener('scroll', updateTargetFrame);
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) {
@@ -224,12 +210,11 @@ export function CanvasScroll() {
 
   return (
     <>
-      {/* Mandatory Animated Private Jet Preloader */}
       <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
-      {/* Fixed Background Canvas */}
       <canvas
         ref={canvasRef}
+        aria-hidden="true"
         className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 object-cover"
       />
     </>

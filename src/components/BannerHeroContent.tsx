@@ -12,12 +12,12 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
     <div className="flex flex-col items-center justify-center text-center px-4 max-w-2xl mx-auto my-auto py-1 sm:py-2 z-10 relative">
       {/* Top Floating Experience Badge */}
       <div className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-[11px] font-semibold text-amber-300 mb-2 shadow-lg animate-float">
-        <Sparkles className="w-3 h-3" />
+        <Sparkles className="w-3 h-3" aria-hidden="true" />
         <span>{t('heroBadge')}</span>
       </div>
 
       {/* Main Headline */}
-      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.14] max-w-xl mb-2 font-['Plus_Jakarta_Sans',sans-serif]">
+      <h1 id="hero-headline" className="text-xl sm:text-2xl md:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.14] max-w-xl mb-2 font-['Plus_Jakarta_Sans',sans-serif]">
         {t('heroHeadline')}
       </h1>
 

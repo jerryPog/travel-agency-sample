@@ -6,7 +6,7 @@
   }
 }
 
-/* Glassmorphism Utilities */
+/* Design System Glassmorphism Tokens */
 .glass-card {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(16px);
@@ -24,6 +24,38 @@
   border-color: rgba(255, 255, 255, 0.35);
   transform: translateY(-4px) scale(1.01);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel {
+  background: rgba(8, 16, 40, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-badge {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* WCAG Contrast Scrim Overlay */
+.text-scrim {
+  background: linear-gradient(180deg, rgba(5, 12, 30, 0) 0%, rgba(5, 12, 30, 0.75) 100%);
 }
 
 /* Scroll Animation Engine Classes */
@@ -92,12 +124,6 @@
   animation: floatSlow 5s ease-in-out infinite;
 }
 
-/* 5-Second Timer Bar Progress Keyframes */
-@keyframes timerProgress {
-  0% { width: 0%; }
-  100% { width: 100%; }
-}
-
 /* Shimmer Gradient Text Effect */
 @keyframes textGradient {
   0% { background-position: 0% 50%; }
@@ -119,50 +145,6 @@
   50% { transform: translateY(-12px) rotate(-2deg) scale(1.02); }
 }
 
-@keyframes cloudPass1 {
-  0% { transform: translateY(-80%) translateX(0) scale(0.8); opacity: 0; }
-  30% { opacity: 0.35; }
-  100% { transform: translateY(140%) translateX(60px) scale(1.3); opacity: 0; }
-}
-
-@keyframes cloudPass2 {
-  0% { transform: translateY(-70%) translateX(0) scale(0.9); opacity: 0; }
-  40% { opacity: 0.25; }
-  100% { transform: translateY(150%) translateX(-70px) scale(1.4); opacity: 0; }
-}
-
-@keyframes speedLine {
-  0% { transform: translateY(-60px); opacity: 0; }
-  50% { opacity: 0.9; }
-  100% { transform: translateY(220px); opacity: 0; }
-}
-
 .animate-jet-float {
   animation: jetFloat 2.5s ease-in-out infinite;
-}
-
-.animate-cloud-pass-1 {
-  animation: cloudPass1 1.8s linear infinite;
-}
-
-.animate-cloud-pass-2 {
-  animation: cloudPass2 2.3s linear infinite;
-}
-
-.animate-cloud-pass-3 {
-  animation: cloudPass1 2.8s linear infinite reverse;
-}
-
-.animate-speed-line-1 {
-  animation: speedLine 0.5s linear infinite;
-}
-
-.animate-speed-line-2 {
-  animation: speedLine 0.7s linear infinite 0.2s;
-}
-
-/* Mobile nav dropdown */
-@keyframes mobileMenuIn {
-  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }

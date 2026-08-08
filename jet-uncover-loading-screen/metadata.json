@@ -1,6 +1,0 @@
-{
-  "name": "Jet Uncover Loading Screen",
-  "description": "Hyper-realistic private jet loading screen animation that moves from bottom to top uncovering the website.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

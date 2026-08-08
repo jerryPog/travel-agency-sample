@@ -1,29 +1,33 @@
 // Realistic jet engine Doppler flyby sound — Web Audio API synthesis
-// Low-pass engine rumble + bandpass turbine whine + volume envelope
+// Singleton AudioContext pattern for optimal performance & resource efficiency
 
 let audioCtx: AudioContext | null = null;
 
-export function playJetSound(durationInSeconds: number = 2.6) {
-  try {
+function getAudioContext(): AudioContext | null {
+  if (typeof window === 'undefined') return null;
+
+  if (!audioCtx || audioCtx.state === 'closed') {
     const AudioContextClass =
       window.AudioContext ||
       (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-
-    // Always create fresh ctx so repeated calls work
-    if (audioCtx) {
-      try { audioCtx.close(); } catch (_) {}
-      audioCtx = null;
-    }
-
+    if (!AudioContextClass) return null;
     audioCtx = new AudioContextClass();
+  }
 
-    // If browser blocked it, resume (requires prior gesture)
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {
+      // Autoplay blocked by browser policy until user gesture
+    });
+  }
 
-    const ctx = audioCtx;
+  return audioCtx;
+}
+
+export function playJetSound(durationInSeconds: number = 2.6) {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state === 'suspended') return;
+
     const now = ctx.currentTime;
 
     // ── 1. White noise buffer (jet roar source) ──────────────────────
@@ -74,7 +78,6 @@ export function playJetSound(durationInSeconds: number = 2.6) {
     subGain.gain.linearRampToValueAtTime(0.0, now + durationInSeconds);
 
     // ── 6. Master gain → Doppler volume envelope ─────────────────────
-    //    Spool up → roar peak as jet crosses center → fade out (flyby)
     const master = ctx.createGain();
     master.gain.setValueAtTime(0.001, now);
     master.gain.exponentialRampToValueAtTime(0.55, now + durationInSeconds * 0.42);
@@ -98,6 +101,6 @@ export function playJetSound(durationInSeconds: number = 2.6) {
     subOsc.start(now);
     subOsc.stop(now + durationInSeconds + 0.3);
   } catch (e) {
-    console.warn('Jet audio not supported or blocked:', e);
+    console.warn('Jet audio sound prevented or not supported:', e);
   }
 }

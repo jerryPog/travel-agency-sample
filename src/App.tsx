@@ -16,13 +16,18 @@ import { ParisDistrictMap } from './components/ParisDistrictMap';
 import { WhatsAppChatButton } from './components/WhatsAppChatButton';
 import { LanguageProvider } from './context/LanguageContext';
 import { BannerConfig } from './types';
+import { siteConfig } from './config/siteConfig';
+
+// Developer-only UI tools
+import { BannerControlToolbar } from './components/BannerControlToolbar';
+import { CodeExportModal } from './components/CodeExportModal';
 
 const defaultBannerConfig: BannerConfig = {
   navyTheme: 'classic',
   customNavyColor: '#0B132B',
-  brandName: 'Paris Travel Co.',
-  headline: 'Discover Paris, Beyond the Postcard',
-  subtitle: 'Handcrafted Paris experiences — from timeless landmarks to hidden corners only locals know.',
+  brandName: siteConfig.brandName,
+  headline: siteConfig.tagline,
+  subtitle: siteConfig.description,
   ctaText: 'Plan My Trip',
   activeNav: 'Home',
   cleanEnergyValue: '1,200+',
@@ -48,7 +53,6 @@ export default function App() {
   const [showWizardModal, setShowWizardModal] = useState(false);
 
   useEffect(() => {
-    // Disable browser automatic scroll restoration and force page to top on refresh
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
@@ -76,15 +80,39 @@ export default function App() {
       {/* Live Weather & Currency Bar */}
       <WeatherCurrencyWidget />
 
+      {/* Dev-only controls isolated behind import.meta.env.DEV */}
+      {import.meta.env.DEV && (
+        <>
+          <BannerControlToolbar
+            config={config}
+            onChange={handleUpdateConfig}
+            onOpenCode={() => handleUpdateConfig({ showCodeModal: true })}
+            onReset={() => setConfig(defaultBannerConfig)}
+            navyPresets={navyPresets}
+          />
+          {config.showCodeModal && (
+            <CodeExportModal
+              config={config}
+              getNavyHex={getNavyHex}
+              onClose={() => handleUpdateConfig({ showCodeModal: false })}
+            />
+          )}
+        </>
+      )}
+
       {/* Foreground Translucent Content Container */}
       <main
         style={{
-          backgroundColor: `${getNavyHex()}35`, // 35 hex = ~20% opacity so canvas animation shines through crisp & bright
+          backgroundColor: `${getNavyHex()}35`, // 35 hex = ~20% opacity so canvas animation shines through
         }}
         className="min-h-screen w-full text-white font-sans flex flex-col items-center justify-start relative z-10 overflow-x-hidden selection:bg-white selection:text-[#0B132B] transition-colors duration-500"
       >
         {/* Hero Section Container */}
-        <section id="home" className="w-full max-w-[1440px] min-h-[560px] lg:h-screen lg:max-h-[780px] flex flex-col justify-between relative overflow-hidden pt-1 pb-3 px-4 sm:px-6">
+        <section
+          id="home"
+          aria-labelledby="hero-headline"
+          className="w-full max-w-[1440px] min-h-[560px] lg:h-screen lg:max-h-[780px] flex flex-col justify-between relative overflow-hidden pt-1 pb-3 px-4 sm:px-6"
+        >
           <BannerNavbar
             brandName={config.brandName}
             activeNav={config.activeNav}
@@ -92,47 +120,45 @@ export default function App() {
             onBrandClick={() => handleUpdateConfig({ activeNav: 'Home' })}
           />
 
-          <BannerHeroContent
-            onCtaClick={() => setShowWizardModal(true)}
-          />
+          <BannerHeroContent onCtaClick={() => setShowWizardModal(true)} />
 
           <BannerGlassCards />
         </section>
 
         {/* Section 1: About & Bento Grid */}
-        <div id="about" className="w-full">
+        <section id="about" aria-labelledby="about-heading" className="w-full">
           <AboutParisSection />
-        </div>
+        </section>
 
         {/* Section 2: Interactive District Explorer Map */}
-        <div className="w-full">
+        <section id="districts" aria-labelledby="districts-heading" className="w-full">
           <ParisDistrictMap />
-        </div>
+        </section>
 
         {/* Section 3: About Us Story */}
-        <div className="w-full">
+        <section id="story" aria-labelledby="story-heading" className="w-full">
           <AboutUsStorySection />
-        </div>
+        </section>
 
         {/* Section 4: Services */}
-        <div id="services" className="w-full">
+        <section id="services" aria-labelledby="services-heading" className="w-full">
           <ServicesSection />
-        </div>
+        </section>
 
         {/* Section 5: Pricing Packages & Custom Calculator */}
-        <div id="packages" className="w-full">
+        <section id="packages" aria-labelledby="packages-heading" className="w-full">
           <PricingPlansSection />
-        </div>
+        </section>
 
         {/* Section 6: Why Choose Us / Testimonials */}
-        <div id="why-us" className="w-full">
+        <section id="why-us" aria-labelledby="why-heading" className="w-full">
           <TestimonialsTrustSection />
-        </div>
+        </section>
 
         {/* Section 7: Contact Section */}
-        <div id="contact" className="w-full">
+        <section id="contact-wrapper" aria-labelledby="contact-heading" className="w-full">
           <ContactSection />
-        </div>
+        </section>
 
         {/* Interactive Itinerary Wizard Modal */}
         {showWizardModal && (

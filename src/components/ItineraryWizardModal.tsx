@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Check, Compass, Users, Sparkles, Calendar, DollarSign, Send, ArrowRight, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Check, Compass, Users, Sparkles, Calendar, DollarSign, Send, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { submitItineraryWizard } from '../services/formService';
 
 interface ItineraryWizardModalProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
   const { t } = useLanguage();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State
   const [duration, setDuration] = useState('5 Days (Classic Paris)');
@@ -19,6 +21,31 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Lock body scroll, focus close button, listen for Escape key
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    closeBtnRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onClose]);
 
   const durationOptions = [
     { label: '3 Days (Weekend Break)', sub: 'Fast-paced highlights & iconic landmarks' },
@@ -57,23 +84,49 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setErrors({});
+
+    const res = await submitItineraryWizard({
+      duration,
+      travelers,
+      interests,
+      budget,
+      name,
+      email,
+      notes,
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success) {
+      setSubmitted(true);
+    } else if (res.errors) {
+      setErrors(res.errors);
+    }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-in fade-in duration-200 font-['DM_Sans',sans-serif]">
-      <div className="bg-[#081028] border border-white/20 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative text-white">
-        
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wizard-modal-title"
+        className="bg-[#081028] border border-white/20 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl relative text-white"
+      >
         {/* Header */}
         <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between bg-white/5">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-300 flex items-center justify-center">
-              <Compass className="w-4 h-4" />
+              <Compass className="w-4 h-4" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif]">
+              <h3 id="wizard-modal-title" className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif]">
                 {t('wizTitle')}
               </h3>
               <p className="text-xs text-white/60">{t('wizStepSub').replace('{step}', step.toString())}</p>
@@ -81,7 +134,9 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
           </div>
 
           <button
+            ref={closeBtnRef}
             onClick={onClose}
+            aria-label="Close itinerary wizard"
             className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
           >
             <X className="w-4 h-4" />
@@ -122,7 +177,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
               {step === 1 && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
-                    <Calendar className="w-4 h-4 text-amber-300" />
+                    <Calendar className="w-4 h-4 text-amber-300" aria-hidden="true" />
                     <span>{t('wizStep1Title')}</span>
                   </h4>
                   <div className="grid grid-cols-1 gap-3">
@@ -143,7 +198,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                             {opt.sub}
                           </div>
                         </div>
-                        {duration === opt.label && <Check className="w-4 h-4 text-[#0B132B]" />}
+                        {duration === opt.label && <Check className="w-4 h-4 text-[#0B132B]" aria-hidden="true" />}
                       </button>
                     ))}
                   </div>
@@ -154,7 +209,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
               {step === 2 && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-amber-300" />
+                    <Users className="w-4 h-4 text-amber-300" aria-hidden="true" />
                     <span>{t('wizStep2Title')}</span>
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -175,7 +230,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                             {opt.desc}
                           </div>
                         </div>
-                        {travelers === opt.label && <Check className="w-4 h-4 text-[#0B132B] self-end mt-2" />}
+                        {travelers === opt.label && <Check className="w-4 h-4 text-[#0B132B] self-end mt-2" aria-hidden="true" />}
                       </button>
                     ))}
                   </div>
@@ -186,7 +241,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
               {step === 3 && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-amber-300" />
+                    <Sparkles className="w-4 h-4 text-amber-300" aria-hidden="true" />
                     <span>{t('wizStep3Title')}</span>
                   </h4>
                   <div className="grid grid-cols-2 gap-3">
@@ -204,7 +259,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                           }`}
                         >
                           <span>{opt}</span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-[#0B132B]" />}
+                          {isSelected && <Check className="w-3.5 h-3.5 text-[#0B132B]" aria-hidden="true" />}
                         </button>
                       );
                     })}
@@ -216,7 +271,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
               {step === 4 && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <h4 className="text-lg font-bold font-['Plus_Jakarta_Sans',sans-serif] flex items-center space-x-2">
-                    <DollarSign className="w-4 h-4 text-amber-300" />
+                    <DollarSign className="w-4 h-4 text-amber-300" aria-hidden="true" />
                     <span>{t('wizStep4Title')}</span>
                   </h4>
                   <div className="grid grid-cols-1 gap-3">
@@ -232,7 +287,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                         }`}
                       >
                         <span>{opt}</span>
-                        {budget === opt && <Check className="w-4 h-4 text-[#0B132B]" />}
+                        {budget === opt && <Check className="w-4 h-4 text-[#0B132B]" aria-hidden="true" />}
                       </button>
                     ))}
                   </div>
@@ -241,7 +296,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
 
               {/* STEP 5: Summary & Submit */}
               {step === 5 && (
-                <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in duration-200">
+                <form onSubmit={handleSubmit} className="space-y-4 animate-in fade-in duration-200" noValidate>
                   <div className="bg-white/10 border border-white/20 rounded-2xl p-4 text-xs space-y-2">
                     <div className="font-bold text-amber-300 uppercase tracking-wider">{t('wizStep5Summary')}</div>
                     <div className="grid grid-cols-2 gap-2 text-white/80">
@@ -253,38 +308,49 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">
+                    <label htmlFor="wiz-name" className="block text-xs font-medium text-white/80 mb-1">
                       {t('yourName')} *
                     </label>
                     <input
+                      id="wiz-name"
                       type="text"
                       required
+                      autoComplete="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. Jean Dupont"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
+                      className={`w-full bg-white/10 border ${
+                        errors.name ? 'border-red-400' : 'border-white/20'
+                      } rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300`}
                     />
+                    {errors.name && <p className="text-[11px] text-red-300 mt-1">{errors.name}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">
+                    <label htmlFor="wiz-email" className="block text-xs font-medium text-white/80 mb-1">
                       {t('emailAddr')} *
                     </label>
                     <input
+                      id="wiz-email"
                       type="email"
                       required
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. jean@example.com"
-                      className="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300"
+                      className={`w-full bg-white/10 border ${
+                        errors.email ? 'border-red-400' : 'border-white/20'
+                      } rounded-xl p-3 text-xs text-white placeholder-white/40 focus:outline-none focus:border-amber-300`}
                     />
+                    {errors.email && <p className="text-[11px] text-red-300 mt-1">{errors.email}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-white/80 mb-1">
+                    <label htmlFor="wiz-notes" className="block text-xs font-medium text-white/80 mb-1">
                       {t('tellTrip')}
                     </label>
                     <textarea
+                      id="wiz-notes"
                       rows={2}
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
@@ -295,10 +361,20 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
 
                   <button
                     type="submit"
-                    className="w-full bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs py-3 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="w-full bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-[#0B132B] font-bold text-xs py-3 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2 cursor-pointer"
                   >
-                    <span>{t('wizBtnSubmit')}</span>
-                    <Send className="w-3.5 h-3.5" />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Submitting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t('wizBtnSubmit')}</span>
+                        <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                      </>
+                    )}
                   </button>
                 </form>
               )}
@@ -314,7 +390,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                       step === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-white/10 text-white cursor-pointer'
                     }`}
                   >
-                    <ArrowLeft className="w-3.5 h-3.5" />
+                    <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>{t('wizBtnBack')}</span>
                   </button>
 
@@ -325,7 +401,7 @@ export function ItineraryWizardModal({ onClose }: ItineraryWizardModalProps) {
                       className="flex items-center space-x-1.5 bg-white text-[#0B132B] hover:bg-white/90 font-bold text-xs px-5 py-2 rounded-xl shadow-md transition-all cursor-pointer"
                     >
                       <span>{t('wizBtnContinue')}</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                     </button>
                   )}
                 </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sliders, Code, Eye, RefreshCw, Palette, Type } from 'lucide-react';
+import { Sliders, Code, RefreshCw, Palette, Type } from 'lucide-react';
 import { BannerConfig } from '../types';
 
 interface BannerControlToolbarProps {
@@ -10,17 +10,23 @@ interface BannerControlToolbarProps {
   navyPresets: Array<{ id: BannerConfig['navyTheme']; name: string; hex: string }>;
 }
 
-export function BannerControlToolbar() {
-  return null;
-}
+export function BannerControlToolbar({
+  config,
+  onChange,
+  onOpenCode,
+  onReset,
+  navyPresets,
+}: BannerControlToolbarProps) {
+  const [panelOpen, setPanelOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'colors' | 'text'>('colors');
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center">
       {/* Floating Toolbar Badge */}
       <div className="bg-[#050C1E]/90 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full shadow-2xl flex items-center space-x-3 text-xs font-medium text-white">
         <span className="flex items-center space-x-1.5 font-semibold text-white/90 pr-2 border-r border-white/20">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span>Navy Solar Banner</span>
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true" />
+          <span>Dev Toolbar</span>
         </span>
 
         {/* Color Presets Quick Picker */}
@@ -50,7 +56,7 @@ export function BannerControlToolbar() {
                 : 'bg-white/10 hover:bg-white/20 text-white'
             }`}
           >
-            <Sliders className="w-3.5 h-3.5" />
+            <Sliders className="w-3.5 h-3.5" aria-hidden="true" />
             <span>{panelOpen ? 'Close Settings' : 'Customize'}</span>
           </button>
 
@@ -58,7 +64,7 @@ export function BannerControlToolbar() {
             onClick={onOpenCode}
             className="px-3 py-1.5 bg-[#1A62FF] hover:bg-[#004FFF] text-white rounded-full flex items-center space-x-1.5 font-semibold shadow-md transition-all cursor-pointer"
           >
-            <Code className="w-3.5 h-3.5" />
+            <Code className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Export Code</span>
           </button>
 
@@ -67,7 +73,7 @@ export function BannerControlToolbar() {
             title="Reset to Original"
             className="p-1.5 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all cursor-pointer"
           >
-            <RefreshCw className="w-3.5 h-3.5" />
+            <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -86,7 +92,7 @@ export function BannerControlToolbar() {
                     : 'text-white/70 hover:text-white'
                 }`}
               >
-                <Palette className="w-3.5 h-3.5" />
+                <Palette className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Navy Color</span>
               </button>
               <button
@@ -97,7 +103,7 @@ export function BannerControlToolbar() {
                     : 'text-white/70 hover:text-white'
                 }`}
               >
-                <Type className="w-3.5 h-3.5" />
+                <Type className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Text & Copy</span>
               </button>
             </div>

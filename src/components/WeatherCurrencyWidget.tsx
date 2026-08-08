@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Sun, Clock, ArrowRightLeft } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { convertToEUR, CurrencyCode } from '../utils/currency';
 
 export function WeatherCurrencyWidget() {
   const { t } = useLanguage();
   const [parisTime, setParisTime] = useState('');
   const [amount, setAmount] = useState('10000');
-  const [currency, setCurrency] = useState<'INR' | 'USD' | 'GBP' | 'CAD'>('INR');
-  const rates = { INR: 0.011, USD: 0.92, GBP: 1.18, CAD: 0.68 };
+  const [currency, setCurrency] = useState<CurrencyCode>('INR');
 
   useEffect(() => {
     const updateTime = () => {
@@ -26,26 +26,26 @@ export function WeatherCurrencyWidget() {
     return () => clearInterval(interval);
   }, []);
 
-  const eurValue = (parseFloat(amount || '0') * rates[currency]).toFixed(2);
+  const eurValue = convertToEUR(amount, currency);
 
   return (
     <div className="w-full bg-[#050C1E]/80 backdrop-blur-md border-b border-white/10 text-xs py-2 px-4 md:px-12 flex flex-wrap items-center justify-between gap-2 z-30 relative font-['DM_Sans',sans-serif]">
       {/* Left: Weather & Paris Time */}
       <div className="flex items-center space-x-4 text-white/90">
         <div className="flex items-center space-x-1.5 font-medium">
-          <Sun className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+          <Sun className="w-3.5 h-3.5 text-amber-300 animate-pulse" aria-hidden="true" />
           <span>Paris 21°C / 70°F {t('sunny')}</span>
         </div>
 
         <div className="flex items-center space-x-1.5 text-white/70 border-l border-white/20 pl-4">
-          <Clock className="w-3.5 h-3.5 text-blue-300" />
+          <Clock className="w-3.5 h-3.5 text-blue-300" aria-hidden="true" />
           <span>{parisTime ? `${parisTime} CET` : 'Paris Time'}</span>
         </div>
       </div>
 
       {/* Right: Quick Currency Converter */}
       <div className="flex items-center space-x-2 text-white/80">
-        <ArrowRightLeft className="w-3.5 h-3.5 text-emerald-400" />
+        <ArrowRightLeft className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
         <span className="hidden sm:inline font-medium text-white/70">{t('currencyConverter')}:</span>
         
         <div className="flex items-center space-x-1.5 bg-white/10 border border-white/20 rounded-full px-2.5 py-0.5">
@@ -53,11 +53,13 @@ export function WeatherCurrencyWidget() {
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
+            aria-label="Amount to convert"
             className="w-16 bg-transparent text-center text-white font-mono text-xs focus:outline-none"
           />
           <select
             value={currency}
-            onChange={(e) => setCurrency(e.target.value as any)}
+            onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+            aria-label="Currency code"
             className="bg-transparent text-amber-300 font-bold focus:outline-none cursor-pointer text-xs"
           >
             <option value="INR" className="bg-[#050C1E] text-white">INR (₹)</option>
@@ -68,7 +70,11 @@ export function WeatherCurrencyWidget() {
           <span className="text-white/50">≈</span>
           <span className="font-bold text-emerald-300 font-mono">€{eurValue}</span>
         </div>
+        <span className="text-[10px] text-white/50 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+          {t('indicativeRates')}
+        </span>
       </div>
     </div>
   );
 }
+

@@ -108,6 +108,7 @@ export function BannerNavbar({
                 <button
                   key={lang}
                   onClick={() => setLanguage(lang)}
+                  aria-label={`Switch language to ${lang.toUpperCase()}`}
                   className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
                     language === lang
                       ? 'bg-white text-[#0B132B] font-bold shadow-sm'
