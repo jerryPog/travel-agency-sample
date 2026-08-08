@@ -1,238 +1,97 @@
 import { useEffect, useRef, useState } from 'react';
 import { PrivateJetLoader } from './PrivateJetLoader';
 
-const TOTAL_FRAMES = 300;
-const FRAME_FOLDER = '/ezgif-896d010404818b75-jpg';
-
-function getFrameUrl(index: number): string {
-  const paddedIndex = String(index + 1).padStart(3, '0');
-  return `${FRAME_FOLDER}/ezgif-frame-${paddedIndex}.jpg`;
+interface VideoScrollProps {
+  videoSrc?: string;
+  posterSrc?: string;
 }
 
-export function CanvasScroll() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export function CanvasScroll({
+  videoSrc = '/ezgif-jet-scroll.mp4',
+  posterSrc = '/ezgif-896d010404818b75-jpg/ezgif-frame-001.jpg',
+}: VideoScrollProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [loadProgress, setLoadProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [useFallbackPoster, setUseFallbackPoster] = useState(false);
 
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const bitmapsRef = useRef<Map<number, ImageBitmap>>(new Map());
-  const targetFrameRef = useRef(0);
-  const currentFrameRef = useRef(0);
-  const lastDrawnFrameRef = useRef(-1);
+  const targetTimeRef = useRef(0);
+  const currentTimeRef = useRef(0);
   const animFrameIdRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let loadedCount = 0;
-    const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
+    const video = videoRef.current;
+    if (!video) return;
 
     const prefersReducedMotion =
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Dynamic Mobile Resolution Scaling
-    const updateCanvasSize = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+    let isMetadataLoaded = false;
 
-      const isMobile = window.innerWidth < 768;
-      const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
-
-      canvas.width = Math.round(window.innerWidth * dpr);
-      canvas.height = Math.round(window.innerHeight * dpr);
+    const handleLoadedMetadata = () => {
+      isMetadataLoaded = true;
+      setLoadProgress(100);
+      setIsLoaded(true);
+      updateTargetTime();
     };
 
-    updateCanvasSize();
-
-    // Fast GPU Direct Draw (supports ImageBitmap for 0.1ms hardware rendering)
-    const drawCoverImage = (
-      ctx: CanvasRenderingContext2D,
-      source: HTMLImageElement | ImageBitmap
-    ) => {
-      const canvas = canvasRef.current;
-      if (!canvas || !source) return;
-
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
-      const imgWidth = 'naturalWidth' in source ? source.naturalWidth : source.width;
-      const imgHeight = 'naturalHeight' in source ? source.naturalHeight : source.height;
-
-      if (!imgWidth || !imgHeight) return;
-
-      const imgAspect = imgWidth / imgHeight;
-      const canvasAspect = canvasWidth / canvasHeight;
-
-      let renderWidth: number, renderHeight: number;
-
-      if (canvasAspect > imgAspect) {
-        renderWidth = canvasWidth;
-        renderHeight = canvasWidth / imgAspect;
-      } else {
-        renderWidth = canvasHeight * imgAspect;
-        renderHeight = canvasHeight;
+    const handleProgress = () => {
+      if (video.buffered.length > 0 && video.duration > 0) {
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const percent = Math.min(100, Math.round((bufferedEnd / video.duration) * 100));
+        setLoadProgress(percent);
       }
-
-      const offsetX = (canvasWidth - renderWidth) / 2;
-      const offsetY = (canvasHeight - renderHeight) / 2;
-
-      ctx.drawImage(source, offsetX, offsetY, renderWidth, renderHeight);
     };
 
-    const renderFrameIndex = (targetIndex: number) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+    const handleError = () => {
+      // Mobile power saving mode or missing video source fallback
+      setUseFallbackPoster(true);
+      setLoadProgress(100);
+      setIsLoaded(true);
+    };
 
-      const ctx = canvas.getContext('2d', {
-        alpha: false,
-        desynchronized: true,
-      }) as CanvasRenderingContext2D | null;
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('progress', handleProgress);
+    video.addEventListener('error', handleError);
 
-      if (!ctx) return;
-
-      const isMobile = window.innerWidth < 768;
-      let clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, targetIndex));
-
-      if (isMobile) {
-        // On mobile, step down to 75 GPU keyframes (step = 4) for instant 120 FPS speed
-        clampedIndex = Math.round(clampedIndex / 4) * 4;
-        clampedIndex = Math.max(0, Math.min(TOTAL_FRAMES - 1, clampedIndex));
+    // Fallback timer: dismiss loader if metadata event takes > 1.5s
+    const fallbackTimer = setTimeout(() => {
+      if (!isMetadataLoaded) {
+        setLoadProgress(100);
+        setIsLoaded(true);
       }
+    }, 1500);
 
-      // Check for GPU ImageBitmap cache first
-      const bitmap = bitmapsRef.current.get(clampedIndex);
-      if (bitmap) {
-        drawCoverImage(ctx, bitmap);
-        lastDrawnFrameRef.current = clampedIndex;
-        return;
-      }
-
-      const images = imagesRef.current;
-      const img = images[clampedIndex];
-
-      if (img && img.complete && img.naturalWidth > 0) {
-        drawCoverImage(ctx, img);
-        lastDrawnFrameRef.current = clampedIndex;
-      } else {
-        // Fallback to nearest loaded frame
-        for (let fallback = clampedIndex; fallback >= 0; fallback--) {
-          const fallbackBitmap = bitmapsRef.current.get(fallback);
-          if (fallbackBitmap) {
-            drawCoverImage(ctx, fallbackBitmap);
-            lastDrawnFrameRef.current = fallback;
-            break;
-          }
-          if (images[fallback] && images[fallback].complete && images[fallback].naturalWidth > 0) {
-            drawCoverImage(ctx, images[fallback]);
-            lastDrawnFrameRef.current = fallback;
-            break;
-          }
+    const renderLoop = () => {
+      if (video && !isNaN(video.duration) && video.duration > 0) {
+        const diff = targetTimeRef.current - currentTimeRef.current;
+        if (Math.abs(diff) > 0.01) {
+          currentTimeRef.current += diff * 0.25;
+          // Clamp currentTime strictly within video duration
+          const safeTime = Math.max(0, Math.min(video.duration - 0.01, currentTimeRef.current));
+          video.currentTime = safeTime;
+          animFrameIdRef.current = requestAnimationFrame(renderLoop);
+        } else {
+          currentTimeRef.current = targetTimeRef.current;
+          const safeTime = Math.max(0, Math.min(video.duration - 0.01, currentTimeRef.current));
+          video.currentTime = safeTime;
+          animFrameIdRef.current = null;
         }
-      }
-    };
-
-    const renderDesktopBlend = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const ctx = canvas.getContext('2d', {
-        alpha: false,
-        desynchronized: true,
-      }) as CanvasRenderingContext2D | null;
-
-      if (!ctx) return;
-
-      const clampedFrame = Math.max(0, Math.min(TOTAL_FRAMES - 1, currentFrameRef.current));
-      const index1 = Math.floor(clampedFrame);
-      const index2 = Math.min(TOTAL_FRAMES - 1, index1 + 1);
-      const blend = clampedFrame - index1;
-
-      const images = imagesRef.current;
-      const img1 = images[index1];
-      const img2 = images[index2];
-
-      if (img1 && img1.complete && img1.naturalWidth > 0) {
-        drawCoverImage(ctx, img1);
-      }
-      if (blend > 0.01 && index1 !== index2 && img2 && img2.complete && img2.naturalWidth > 0) {
-        ctx.save();
-        ctx.globalAlpha = blend;
-        drawCoverImage(ctx, img2);
-        ctx.restore();
-      }
-    };
-
-    // Desktop Smooth Lerp Loop
-    const renderLoopDesktop = () => {
-      const diff = targetFrameRef.current - currentFrameRef.current;
-      if (Math.abs(diff) > 0.001) {
-        currentFrameRef.current += diff * 0.22;
-        renderDesktopBlend();
-        animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
       } else {
-        currentFrameRef.current = targetFrameRef.current;
-        renderDesktopBlend();
         animFrameIdRef.current = null;
       }
     };
 
-    const triggerLoopDesktop = () => {
+    const triggerLoop = () => {
       if (prefersReducedMotion) return;
       if (animFrameIdRef.current === null) {
-        animFrameIdRef.current = requestAnimationFrame(renderLoopDesktop);
+        animFrameIdRef.current = requestAnimationFrame(renderLoop);
       }
     };
 
-    // Load single frame with ImageBitmap GPU caching
-    const loadSingleImage = (index: number): Promise<HTMLImageElement> => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.decoding = 'async';
-
-        const handleSuccess = async () => {
-          try {
-            if ('createImageBitmap' in window) {
-              const bitmap = await createImageBitmap(img);
-              bitmapsRef.current.set(index, bitmap);
-            }
-          } catch {
-            // Ignore bitmap creation failures
-          }
-          loadedCount++;
-          setLoadProgress(Math.round((loadedCount / 30) * 100));
-          if (index === 0) renderFrameIndex(0);
-          resolve(img);
-        };
-
-        img.onload = handleSuccess;
-        img.onerror = () => {
-          loadedCount++;
-          resolve(img);
-        };
-
-        img.src = getFrameUrl(index);
-        imgArray[index] = img;
-      });
-    };
-
-    const preloadAll = async () => {
-      const initialBatch = [];
-      for (let i = 0; i < 30; i++) {
-        initialBatch.push(loadSingleImage(i));
-      }
-      await Promise.all(initialBatch);
-      setLoadProgress(100);
-      setIsLoaded(true);
-
-      // Background loading for remaining frames
-      for (let i = 30; i < TOTAL_FRAMES; i++) {
-        loadSingleImage(i);
-      }
-    };
-
-    preloadAll();
-    imagesRef.current = imgArray;
-
-    const updateTargetFrame = () => {
-      if (prefersReducedMotion) return;
+    const updateTargetTime = () => {
+      if (!video || isNaN(video.duration) || video.duration <= 0) return;
       const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       const docHeight = Math.max(
         document.body.scrollHeight,
@@ -244,52 +103,28 @@ export function CanvasScroll() {
       const maxScroll = docHeight - windowHeight;
 
       if (maxScroll <= 0) {
-        targetFrameRef.current = 0;
+        targetTimeRef.current = 0;
       } else {
         const fraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
-        targetFrameRef.current = fraction * (TOTAL_FRAMES - 1);
+        targetTimeRef.current = fraction * video.duration;
       }
 
-      const isMobile = window.innerWidth < 768;
-
-      if (isMobile) {
-        // Direct Hardware Accelerated Mobile Sync with ImageBitmap GPU cache
-        currentFrameRef.current = targetFrameRef.current;
-        const rawIndex = Math.round(currentFrameRef.current);
-        const targetIndex = Math.round(rawIndex / 4) * 4;
-
-        if (targetIndex !== lastDrawnFrameRef.current) {
-          if (animFrameIdRef.current === null) {
-            animFrameIdRef.current = requestAnimationFrame(() => {
-              renderFrameIndex(targetIndex);
-              animFrameIdRef.current = null;
-            });
-          }
-        }
-      } else {
-        triggerLoopDesktop();
-      }
-    };
-
-    const handleResize = () => {
-      updateCanvasSize();
-      if (!prefersReducedMotion) {
-        updateTargetFrame();
-      } else {
-        renderFrameIndex(0);
-      }
+      triggerLoop();
     };
 
     if (!prefersReducedMotion) {
-      window.addEventListener('scroll', updateTargetFrame, { passive: true });
-      updateTargetFrame();
+      window.addEventListener('scroll', updateTargetTime, { passive: true });
+      window.addEventListener('resize', updateTargetTime, { passive: true });
+      updateTargetTime();
     }
 
-    window.addEventListener('resize', handleResize, { passive: true });
-
     return () => {
-      window.removeEventListener('scroll', updateTargetFrame);
-      window.removeEventListener('resize', handleResize);
+      clearTimeout(fallbackTimer);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('progress', handleProgress);
+      video.removeEventListener('error', handleError);
+      window.removeEventListener('scroll', updateTargetTime);
+      window.removeEventListener('resize', updateTargetTime);
       if (animFrameIdRef.current) {
         cancelAnimationFrame(animFrameIdRef.current);
       }
@@ -300,11 +135,25 @@ export function CanvasScroll() {
     <>
       <PrivateJetLoader progress={loadProgress} isLoaded={isLoaded} />
 
-      <canvas
-        ref={canvasRef}
-        aria-hidden="true"
-        className="fixed top-0 left-0 w-full h-[100dvh] pointer-events-none z-0 object-cover"
-      />
+      {useFallbackPoster ? (
+        <img
+          src={posterSrc}
+          alt="Private Jet Background"
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-[100dvh] object-cover pointer-events-none z-0"
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          poster={posterSrc}
+          muted
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          className="fixed inset-0 w-full h-[100dvh] object-cover pointer-events-none z-0"
+        />
+      )}
     </>
   );
 }
