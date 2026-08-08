@@ -7,8 +7,8 @@ export function CustomItineraryPage() {
 
   return (
     <AnimatedPage>
-      <div className="w-full min-h-[80dvh] flex items-center justify-center py-8">
-        <ItineraryWizardModal onClose={() => navigate('/')} />
+      <div className="w-full min-h-[85dvh] flex flex-col items-center justify-center py-10 px-4">
+        <ItineraryWizardModal isModal={false} onClose={() => navigate('/')} />
       </div>
     </AnimatedPage>
   );
