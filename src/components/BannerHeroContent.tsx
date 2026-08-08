@@ -17,12 +17,12 @@ export function BannerHeroContent({ onCtaClick }: BannerHeroContentProps) {
       </div>
 
       {/* Main Headline */}
-      <h1 id="hero-headline" className="text-xl sm:text-2xl md:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.14] max-w-xl mb-2 font-['Plus_Jakarta_Sans',sans-serif]">
+      <h1 id="hero-headline" className="text-xl sm:text-2xl md:text-3xl lg:text-[38px] font-extrabold text-white tracking-tight leading-[1.16] max-w-xl mb-2 font-['Plus_Jakarta_Sans',sans-serif] break-words">
         {t('heroHeadline')}
       </h1>
 
       {/* Subtitle */}
-      <p className="text-[11px] sm:text-xs md:text-sm text-white/85 font-normal max-w-md mb-3 sm:mb-4 leading-relaxed">
+      <p className="text-[11px] sm:text-xs md:text-sm text-white/85 font-normal max-w-md mb-3 sm:mb-4 leading-relaxed break-words">
         {t('heroSubtitle')}
       </p>
 

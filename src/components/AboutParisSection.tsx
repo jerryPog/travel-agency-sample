@@ -247,16 +247,16 @@ export function AboutParisSection() {
         <p className="text-center text-xs text-white/50 font-semibold tracking-widest uppercase mb-8">
           {t('trustedByPartners')}
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 items-center justify-items-center opacity-80 hover:opacity-100 transition-opacity">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-4 items-center justify-items-center opacity-80 hover:opacity-100 transition-opacity">
           {brandLogos.map((brand, i) => (
             <div
               key={i}
-              className="bg-white/5 hover:bg-white/15 border border-white/15 px-2.5 py-2 rounded-2xl w-full h-20 flex flex-col items-center justify-center text-center transition-all group cursor-default hover:scale-105 shadow-md shrink-0"
+              className="bg-white/5 hover:bg-white/15 border border-white/15 px-2 py-2 rounded-2xl w-full h-20 flex flex-col items-center justify-center text-center transition-all group cursor-default hover:scale-105 shadow-md shrink-0"
             >
-              <span className="text-[11px] sm:text-xs font-extrabold tracking-wider text-white leading-tight font-['Plus_Jakarta_Sans',sans-serif]">
+              <span className="text-[10px] sm:text-xs font-extrabold tracking-wider text-white leading-tight font-['Plus_Jakarta_Sans',sans-serif]">
                 {brand.name}
               </span>
-              <span className="text-[10px] text-white/50 mt-1 font-medium leading-none whitespace-nowrap">
+              <span className="text-[9px] text-white/50 mt-1 font-medium leading-tight text-center">
                 {brand.badge}
               </span>
             </div>

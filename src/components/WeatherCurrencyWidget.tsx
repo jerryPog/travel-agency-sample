@@ -50,58 +50,58 @@ export function WeatherCurrencyWidget() {
   const getWeatherIcon = () => {
     const code = weather.weatherCode;
     if (code === 0 || code === 1) {
-      return <Sun className="w-3.5 h-3.5 text-amber-300 animate-pulse" aria-hidden="true" />;
+      return <Sun className="w-3.5 h-3.5 text-amber-300 animate-pulse shrink-0" aria-hidden="true" />;
     }
     if (code === 2 || code === 3) {
-      return <CloudSun className="w-3.5 h-3.5 text-amber-200" aria-hidden="true" />;
+      return <CloudSun className="w-3.5 h-3.5 text-amber-200 shrink-0" aria-hidden="true" />;
     }
     if (code >= 51 && code <= 82) {
-      return <CloudRain className="w-3.5 h-3.5 text-blue-300" aria-hidden="true" />;
+      return <CloudRain className="w-3.5 h-3.5 text-blue-300 shrink-0" aria-hidden="true" />;
     }
     if (code >= 71 && code <= 75) {
-      return <Snowflake className="w-3.5 h-3.5 text-blue-200" aria-hidden="true" />;
+      return <Snowflake className="w-3.5 h-3.5 text-blue-200 shrink-0" aria-hidden="true" />;
     }
     if (code >= 95) {
-      return <CloudLightning className="w-3.5 h-3.5 text-purple-300" aria-hidden="true" />;
+      return <CloudLightning className="w-3.5 h-3.5 text-purple-300 shrink-0" aria-hidden="true" />;
     }
-    return <Cloud className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />;
+    return <Cloud className="w-3.5 h-3.5 text-white/80 shrink-0" aria-hidden="true" />;
   };
 
   return (
-    <div className="w-full bg-[#050C1E]/90 backdrop-blur-md border-b border-white/10 text-xs py-2 px-4 md:px-12 flex flex-wrap items-center justify-between gap-2 z-30 relative font-['DM_Sans',sans-serif]">
+    <div className="w-full bg-[#050C1E]/90 backdrop-blur-md border-b border-white/10 text-[11px] sm:text-xs py-1.5 px-3 sm:px-6 md:px-12 flex flex-wrap items-center justify-center sm:justify-between gap-1.5 sm:gap-2 z-30 relative font-['DM_Sans',sans-serif]">
       {/* Left: Realtime Live Weather & Realtime Ticking Paris Clock */}
-      <div className="flex items-center space-x-4 text-white/90">
-        <div className="flex items-center space-x-1.5 font-medium">
+      <div className="flex flex-wrap items-center justify-center space-x-3 text-white/90">
+        <div className="flex items-center space-x-1 font-medium">
           {getWeatherIcon()}
           <span>
             Paris {weather.tempC}°C / {weather.tempF}°F {weather.condition}
           </span>
         </div>
 
-        <div className="flex items-center space-x-1.5 text-white/80 border-l border-white/20 pl-4 font-mono">
-          <Clock className="w-3.5 h-3.5 text-blue-300 shrink-0" aria-hidden="true" />
+        <div className="flex items-center space-x-1 text-white/80 border-l border-white/20 pl-3 font-mono">
+          <Clock className="w-3 h-3 text-blue-300 shrink-0" aria-hidden="true" />
           <span>{parisTime.timeString ? `${parisTime.timeString} ${parisTime.tzAbbr}` : 'Paris Time'}</span>
         </div>
       </div>
 
       {/* Right: Quick Currency Converter */}
-      <div className="flex items-center space-x-2 text-white/80">
-        <ArrowRightLeft className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-        <span className="hidden sm:inline font-medium text-white/70">{t('currencyConverter')}:</span>
+      <div className="flex items-center space-x-1.5 text-white/80">
+        <ArrowRightLeft className="w-3 h-3 text-emerald-400 shrink-0" aria-hidden="true" />
+        <span className="hidden md:inline font-medium text-white/70">{t('currencyConverter')}:</span>
         
-        <div className="flex items-center space-x-1.5 bg-white/10 border border-white/20 rounded-full px-2.5 py-0.5">
+        <div className="flex items-center space-x-1 bg-white/10 border border-white/20 rounded-full px-2 py-0.5">
           <input
             type="number"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             aria-label="Amount to convert"
-            className="w-16 bg-transparent text-center text-white font-mono text-xs focus:outline-none"
+            className="w-14 sm:w-16 bg-transparent text-center text-white font-mono text-[11px] sm:text-xs focus:outline-none"
           />
           <select
             value={currency}
             onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
             aria-label="Currency code"
-            className="bg-transparent text-amber-300 font-bold focus:outline-none cursor-pointer text-xs"
+            className="bg-transparent text-amber-300 font-bold focus:outline-none cursor-pointer text-[11px] sm:text-xs"
           >
             <option value="INR" className="bg-[#050C1E] text-white">INR (₹)</option>
             <option value="USD" className="bg-[#050C1E] text-white">USD ($)</option>
@@ -111,7 +111,7 @@ export function WeatherCurrencyWidget() {
           <span className="text-white/50">≈</span>
           <span className="font-bold text-emerald-300 font-mono">€{eurValue}</span>
         </div>
-        <span className="text-[10px] text-white/50 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+        <span className="text-[9px] sm:text-[10px] text-white/50 bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10">
           {t('indicativeRates')}
         </span>
       </div>

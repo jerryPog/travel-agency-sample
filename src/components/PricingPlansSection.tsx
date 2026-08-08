@@ -158,8 +158,8 @@ export function PricingPlansSection() {
               </p>
 
               <div className="mb-6 pb-6 border-b border-white/10">
-                <div className="flex items-baseline space-x-1">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-white font-['Plus_Jakarta_Sans',sans-serif]">
+                <div className="flex items-baseline space-x-1 flex-wrap">
+                  <span className="text-2xl sm:text-4xl font-extrabold text-white font-['Plus_Jakarta_Sans',sans-serif] break-words">
                     {plan.price}
                   </span>
                   <span className="text-xs text-white/60 font-normal">/{plan.pricePeriod}</span>
