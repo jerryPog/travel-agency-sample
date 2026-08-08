@@ -107,6 +107,44 @@
   background: linear-gradient(180deg, rgba(5, 12, 30, 0) 0%, rgba(5, 12, 30, 0.75) 100%);
 }
 
+/* Route Redirection Transition Keyframes */
+@keyframes routePageEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.99);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.animate-route-transition {
+  animation: routePageEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform, filter;
+}
+
+@keyframes routeProgressBar {
+  0% {
+    width: 0%;
+    opacity: 1;
+  }
+  50% {
+    width: 70%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-route-progress {
+  animation: routeProgressBar 0.45s ease-out forwards;
+}
+
 /* Scroll Animation Engine Classes */
 .reveal-on-scroll {
   opacity: 0;

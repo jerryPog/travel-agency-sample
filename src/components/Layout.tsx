@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { CanvasScroll } from './CanvasScroll';
 import { WeatherCurrencyWidget } from './WeatherCurrencyWidget';
 import { BannerNavbar } from './BannerNavbar';
@@ -9,8 +9,16 @@ import { MetaManager } from './MetaManager';
 import { siteConfig } from '../config/siteConfig';
 
 export function Layout() {
+  const location = useLocation();
+
   return (
     <>
+      {/* Top Shimmer Route Redirection Progress Bar */}
+      <div
+        key={`progress-${location.pathname}`}
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 z-[9999] pointer-events-none animate-route-progress shadow-[0_0_12px_rgba(251,191,36,0.8)]"
+      />
+
       {/* Dynamic Title & Meta Tags */}
       <MetaManager />
 
@@ -29,8 +37,8 @@ export function Layout() {
           {/* Global Header Navigation */}
           <BannerNavbar brandName={siteConfig.brandName} />
 
-          {/* Dynamic Page Route Content */}
-          <main className="w-full">
+          {/* Dynamic Page Route Content with Smooth Redirection Transition Animation */}
+          <main key={location.pathname} className="w-full animate-route-transition">
             <Outlet />
           </main>
         </div>
