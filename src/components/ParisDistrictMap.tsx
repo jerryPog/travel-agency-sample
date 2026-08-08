@@ -86,10 +86,8 @@ export function ParisDistrictMap() {
             {t('distMapPinboard')}
           </div>
 
-          {/* Seine River Curve Background SVG */}
-          <svg className="absolute inset-0 w-full h-full opacity-25 pointer-events-none" viewBox="0 0 600 400" fill="none">
-            <path d="M0 260 C 150 280, 250 180, 380 200 C 480 220, 550 160, 600 140" stroke="#38BDF8" strokeWidth="24" strokeLinecap="round" />
-          </svg>
+
+
 
           {/* District Pins Container */}
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 gap-4 my-auto pt-8">
