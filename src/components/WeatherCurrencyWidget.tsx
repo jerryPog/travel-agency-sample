@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Sun, Clock, ArrowRightLeft, Cloud, CloudRain, CloudSun, Snowflake, CloudLightning } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { convertToEUR, CurrencyCode } from '../utils/currency';
+import { convertToEUR, fetchLiveRates, hasLiveRates, CurrencyCode } from '../utils/currency';
 import { fetchLiveParisWeather, getFormattedParisTime, RealtimeWeatherData } from '../services/weatherService';
 
 export function WeatherCurrencyWidget() {
@@ -16,6 +16,8 @@ export function WeatherCurrencyWidget() {
   });
   const [amount, setAmount] = useState('10000');
   const [currency, setCurrency] = useState<CurrencyCode>('INR');
+  const [liveRates, setLiveRates] = useState<Record<string, number> | undefined>(undefined);
+  const [isLive, setIsLive] = useState(false);
 
   // Real-time ticking clock (updates every 1 second)
   useEffect(() => {
@@ -44,7 +46,26 @@ export function WeatherCurrencyWidget() {
     };
   }, []);
 
-  const eurValue = convertToEUR(amount, currency);
+  // Real-time live currency exchange rates (fetches on mount, refreshes every 10 minutes)
+  useEffect(() => {
+    let isMounted = true;
+    const loadRates = async () => {
+      const rates = await fetchLiveRates();
+      if (isMounted) {
+        setLiveRates(rates);
+        setIsLive(hasLiveRates());
+      }
+    };
+
+    loadRates();
+    const ratesInterval = setInterval(loadRates, 600000); // 10 mins
+    return () => {
+      isMounted = false;
+      clearInterval(ratesInterval);
+    };
+  }, []);
+
+  const eurValue = convertToEUR(amount, currency, liveRates);
 
   // Dynamic Weather Icon mapping based on live WMO code
   const getWeatherIcon = () => {
@@ -111,8 +132,9 @@ export function WeatherCurrencyWidget() {
           <span className="text-white/50">≈</span>
           <span className="font-bold text-emerald-300 font-mono">€{eurValue}</span>
         </div>
-        <span className="text-[9px] sm:text-[10px] text-white/50 bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10">
-          {t('indicativeRates')}
+        <span className={`text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full border flex items-center space-x-1 ${isLive ? 'text-emerald-300/80 bg-emerald-400/10 border-emerald-400/20' : 'text-white/50 bg-white/5 border-white/10'}`}>
+          {isLive && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />}
+          <span>{isLive ? t('liveRates') : t('indicativeRates')}</span>
         </span>
       </div>
     </div>

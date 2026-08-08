@@ -24,6 +24,7 @@ export const en = {
   sunny: 'Sunny',
   currencyConverter: 'Currency Reference',
   indicativeRates: 'Indicative Rates',
+  liveRates: 'Live Rates',
 
   // About Section
   aboutBadge: 'About Paris Travel Co.',

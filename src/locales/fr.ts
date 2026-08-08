@@ -26,6 +26,7 @@ export const fr: Record<keyof typeof en, string> = {
   sunny: 'Ensoleillé',
   currencyConverter: 'Convertisseur Devise',
   indicativeRates: 'Taux Indicatifs',
+  liveRates: 'Taux en Direct',
 
   // About Section
   aboutBadge: 'À Propos de Paris Travel Co.',
