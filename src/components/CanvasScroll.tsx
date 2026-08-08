@@ -7,7 +7,7 @@ interface VideoScrollProps {
 }
 
 export function CanvasScroll({
-  videoSrc = '/ezgif-jet-scroll.mp4',
+  videoSrc = '/plane-window.mp4',
   posterSrc = '/ezgif-896d010404818b75-jpg/ezgif-frame-001.jpg',
 }: VideoScrollProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
