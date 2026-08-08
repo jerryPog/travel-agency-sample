@@ -1,16 +1,44 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Volume2, VolumeX } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 interface BannerNavbarProps {
   brandName: string;
 }
 
+// Low-volume Web Audio API tactile feedback synthesizer
+function playTactileClick(muted: boolean) {
+  if (muted || typeof window === 'undefined') return;
+  try {
+    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.04);
+
+    gain.gain.setValueAtTime(0.04, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.04);
+  } catch {
+    // Ignore audio failures
+  }
+}
+
 export function BannerNavbar({ brandName }: BannerNavbarProps) {
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(true); // Default muted
   const hamburgerRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -53,21 +81,23 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
           <Link
             to="/"
-            className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-['Plus_Jakarta_Sans',sans-serif] text-left truncate max-w-[180px] sm:max-w-none block"
+            onClick={() => playTactileClick(isAudioMuted)}
+            className="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-wider text-white hover:opacity-90 transition-opacity focus:outline-none shrink-0 font-serif-editorial text-left truncate max-w-[180px] sm:max-w-none block text-gold-gradient"
           >
             {brandName}
           </Link>
         </motion.div>
 
         {/* Desktop Nav Pills with Framer Motion Active Indicator */}
-        <nav className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden lg:flex items-center space-x-1 bg-[#070B14]/80 backdrop-blur-md border border-white/20 p-1.5 rounded-full shadow-lg absolute left-1/2 -translate-x-1/2">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => playTactileClick(isAudioMuted)}
               className={({ isActive }) =>
                 `relative px-3.5 xl:px-4 py-1.5 text-xs xl:text-sm font-medium rounded-full transition-colors duration-200 cursor-pointer whitespace-nowrap ${
-                  isActive ? 'text-[#0B132B] font-bold' : 'text-white/80 hover:text-white'
+                  isActive ? 'text-[#070B14] font-bold' : 'text-white/80 hover:text-white'
                 }`
               }
             >
@@ -76,7 +106,7 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
                   {isActive && (
                     <motion.div
                       layoutId="activeNavPill"
-                      className="absolute inset-0 bg-white rounded-full shadow-sm"
+                      className="absolute inset-0 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-200 rounded-full shadow-sm"
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -87,13 +117,27 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
           ))}
         </nav>
 
-        {/* Controls — EN/FR toggle + Wizard trigger button + Hamburger */}
+        {/* Controls — Audio Toggle + EN/FR + Wizard + Hamburger */}
         <div className="flex items-center space-x-2 shrink-0">
+          {/* Audio Feedback Toggle */}
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => setIsAudioMuted(!isAudioMuted)}
+            aria-label={isAudioMuted ? 'Unmute luxury sound effects' : 'Mute luxury sound effects'}
+            title={isAudioMuted ? 'Unmute sound effects' : 'Mute sound effects'}
+            className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:text-white transition-colors cursor-pointer"
+          >
+            {isAudioMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-amber-300" />}
+          </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/custom-itinerary')}
-            className="hidden sm:inline-flex items-center space-x-1.5 bg-amber-400 hover:bg-amber-300 text-[#0B132B] font-bold text-xs px-3.5 py-1.5 rounded-full shadow-md transition-colors cursor-pointer"
+            onClick={() => {
+              playTactileClick(isAudioMuted);
+              navigate('/custom-itinerary');
+            }}
+            className="hidden sm:inline-flex items-center space-x-1.5 bg-gradient-to-r from-amber-400 to-yellow-200 text-[#070B14] font-bold text-xs px-3.5 py-1.5 rounded-full shadow-md transition-colors cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Wizard</span>
@@ -108,7 +152,7 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
                 aria-label={`Switch language to ${lang.toUpperCase()}`}
                 className={`px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full transition-all cursor-pointer ${
                   language === lang
-                    ? 'bg-white text-[#0B132B] font-bold shadow-sm'
+                    ? 'bg-amber-400 text-[#070B14] font-bold shadow-sm'
                     : 'text-white/70 hover:text-white'
                 }`}
               >
@@ -142,7 +186,7 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="lg:hidden fixed top-[75px] right-3 w-60 z-[999] rounded-2xl overflow-hidden shadow-2xl origin-top-right"
             style={{
-              background: 'rgba(8, 16, 40, 0.96)',
+              background: 'rgba(7, 11, 20, 0.96)',
               border: '1px solid rgba(255,255,255,0.15)',
               maxHeight: 'calc(100dvh - 80px)',
               overflowY: 'auto',
@@ -153,11 +197,14 @@ export function BannerNavbar({ brandName }: BannerNavbarProps) {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => {
+                    playTactileClick(isAudioMuted);
+                    setMobileMenuOpen(false);
+                  }}
                   className={({ isActive }) =>
                     `w-full px-4 py-3 text-left text-xs sm:text-sm font-medium rounded-xl transition-all cursor-pointer ${
                       isActive
-                        ? 'bg-white text-[#0B132B] font-bold'
+                        ? 'bg-amber-400 text-[#070B14] font-bold'
                         : 'text-white/85 hover:text-white hover:bg-white/10 active:bg-white/20'
                     }`
                   }

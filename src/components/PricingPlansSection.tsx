@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, Sparkles, ArrowRight, Calculator, Users, Calendar } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2, Sparkles, ArrowRight, Calculator, Users, Calendar, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export function PricingPlansSection() {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState<'all' | 'romantic' | 'vip' | 'art' | 'family'>('all');
+  const [activeCategory, setActiveCategory] = useState<'all' | 'jet' | 'michelin' | 'romantic' | 'fashion'>('all');
 
   // Custom Quote Calculator State
   const [calcDays, setCalcDays] = useState(5);
@@ -14,22 +15,22 @@ export function PricingPlansSection() {
 
   const categories = [
     { id: 'all', label: t('filterAll') },
-    { id: 'romantic', label: t('filterRomantic') },
-    { id: 'vip', label: t('filterVIP') },
-    { id: 'art', label: t('filterFood') },
-    { id: 'family', label: t('filterFamily') },
+    { id: 'jet', label: '✈️ Private Jet Charters' },
+    { id: 'michelin', label: '🍷 Michelin & Vineyards' },
+    { id: 'romantic', label: '💍 Romantic Getaways' },
+    { id: 'fashion', label: '🛍️ Haute Couture Shopping' },
   ];
 
   const plans = [
     {
       id: 'discovery',
-      category: ['all', 'art', 'family'],
+      category: ['all', 'romantic', 'fashion'],
       name: t('planDiscTitle'),
       price: '₹43,900',
       subPrice: '≈ €490',
       pricePeriod: 'per trip',
       tagline: t('planDiscTagline'),
-      badge: 'Essential',
+      badge: 'Essential VIP',
       isPopular: false,
       features: [
         t('planDiscH1'),
@@ -37,11 +38,11 @@ export function PricingPlansSection() {
         t('planDiscH3'),
         t('planDiscH4'),
       ],
-      ctaText: 'Choose Discovery',
+      ctaText: 'Reserve Discovery',
     },
     {
       id: 'classic',
-      category: ['all', 'romantic', 'art'],
+      category: ['all', 'michelin', 'romantic'],
       name: t('planClassTitle'),
       price: '₹85,500',
       subPrice: '≈ €950',
@@ -56,17 +57,17 @@ export function PricingPlansSection() {
         t('planClassH4'),
         t('planClassH5'),
       ],
-      ctaText: 'Choose Classic Plan',
+      ctaText: 'Reserve Classic Luxury',
     },
     {
       id: 'premium',
-      category: ['all', 'vip', 'romantic'],
+      category: ['all', 'jet', 'michelin', 'romantic', 'fashion'],
       name: t('planPremTitle'),
       price: '₹1,66,500',
       subPrice: '≈ €1,850',
       pricePeriod: 'per trip',
       tagline: t('planPremTagline'),
-      badge: 'Bespoke VIP',
+      badge: 'Bespoke Private Jet',
       isPopular: false,
       features: [
         t('planPremH1'),
@@ -75,7 +76,7 @@ export function PricingPlansSection() {
         t('planPremH4'),
         t('planPremH5'),
       ],
-      ctaText: 'Choose Bespoke VIP',
+      ctaText: 'Reserve Bespoke VIP',
     },
   ];
 
@@ -96,18 +97,24 @@ export function PricingPlansSection() {
       
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-xs font-semibold text-amber-300 mb-3 shadow-lg">
+        <div className="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-amber-400/10 border border-amber-400/30 text-xs font-semibold text-amber-300 mb-3 shadow-lg">
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
           <span>{t('pricingBadge')}</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Plus_Jakarta_Sans',sans-serif] tracking-tight text-white mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold font-serif-editorial tracking-tight text-white mb-3">
           {t('pricingTitle')}
         </h2>
-        <p className="text-xs sm:text-sm text-white/70">
+        <p className="text-xs sm:text-sm text-white/70 max-w-lg mx-auto">
           {t('pricingSub')}
         </p>
 
-        {/* Category Filter Pills */}
+        {/* Exclusivity Badge */}
+        <div className="mt-4 inline-flex items-center space-x-2 text-[11px] font-mono text-amber-300/90 bg-white/5 border border-amber-400/20 px-3 py-1 rounded-full">
+          <ShieldCheck className="w-3.5 h-3.5 text-amber-300 shrink-0" />
+          <span>Limited to 12 Bespoke Itineraries Per Season • Rated 4.98★ by 200+ HNW Travelers</span>
+        </div>
+
+        {/* Category Filter Pills with Framer Motion layout */}
         <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
           {categories.map((cat) => (
             <button
@@ -115,7 +122,7 @@ export function PricingPlansSection() {
               onClick={() => setActiveCategory(cat.id as any)}
               className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                 activeCategory === cat.id
-                  ? 'bg-white text-[#0B132B] font-bold shadow-md'
+                  ? 'bg-amber-400 text-[#070B14] font-bold shadow-md'
                   : 'bg-white/10 hover:bg-white/20 text-white/80'
               }`}
             >
@@ -125,88 +132,97 @@ export function PricingPlansSection() {
         </div>
       </div>
 
-      {/* Pricing Cards Grid */}
+      {/* Pricing Cards Grid with Framer Motion layout transitions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 items-stretch mb-12 sm:mb-16">
-        {filteredPlans.map((plan) => (
-          <div
-            key={plan.id}
-            onClick={handleChoosePlan}
-            className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 glass-card-hover cursor-pointer ${
-              plan.isPopular
-                ? 'bg-gradient-to-b from-amber-500/20 via-white/10 to-white/5 border-2 border-amber-400 shadow-2xl scale-[1.01]'
-                : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl'
-            }`}
-          >
-            {plan.isPopular && (
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-400 text-[#0B132B] text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-md">
-                {plan.badge}
-              </div>
-            )}
-
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg sm:text-xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white">
-                  {plan.name}
-                </h3>
-                {!plan.isPopular && (
-                  <span className="text-[10px] font-mono uppercase bg-white/10 px-2 py-0.5 rounded-full text-white/70">
-                    {plan.badge}
-                  </span>
-                )}
-              </div>
-
-              <p className="text-xs text-white/70 mb-6 font-normal min-h-[32px]">
-                {plan.tagline}
-              </p>
-
-              <div className="mb-6 pb-6 border-b border-white/10">
-                <div className="flex items-baseline space-x-1 flex-wrap">
-                  <span className="text-2xl sm:text-4xl font-extrabold text-white font-['Plus_Jakarta_Sans',sans-serif] break-words">
-                    {plan.price}
-                  </span>
-                  <span className="text-xs text-white/60 font-normal">/{plan.pricePeriod}</span>
-                </div>
-                <div className="text-xs font-mono text-amber-300/80 mt-1">
-                  ({plan.subPrice})
-                </div>
-              </div>
-
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-start space-x-2.5 text-xs text-white/90">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleChoosePlan();
-              }}
-              className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-all cursor-pointer ${
+        <AnimatePresence mode="popLayout">
+          {filteredPlans.map((plan) => (
+            <motion.div
+              layout
+              key={plan.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              onClick={handleChoosePlan}
+              className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 glass-card-hover cursor-pointer ${
                 plan.isPopular
-                  ? 'bg-amber-400 hover:bg-amber-300 text-[#0B132B] shadow-lg'
-                  : 'bg-white hover:bg-white/90 text-[#0B132B]'
+                  ? 'bg-gradient-to-b from-amber-500/20 via-white/10 to-white/5 border-2 border-amber-400 shadow-2xl scale-[1.01]'
+                  : 'bg-white/10 backdrop-blur-xl border border-white/20 shadow-xl'
               }`}
             >
-              <span>{plan.ctaText}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        ))}
+              {plan.isPopular && (
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-yellow-200 text-[#070B14] text-[11px] font-extrabold uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-md font-['Plus_Jakarta_Sans',sans-serif]">
+                  {plan.badge}
+                </div>
+              )}
+
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg sm:text-xl font-bold font-serif-editorial text-white">
+                    {plan.name}
+                  </h3>
+                  {!plan.isPopular && (
+                    <span className="text-[10px] font-mono uppercase bg-white/10 px-2 py-0.5 rounded-full text-amber-300 border border-amber-400/30">
+                      {plan.badge}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-white/70 mb-6 font-normal min-h-[32px]">
+                  {plan.tagline}
+                </p>
+
+                <div className="mb-6 pb-6 border-b border-white/10">
+                  <div className="flex items-baseline space-x-1 flex-wrap">
+                    <span className="text-2xl sm:text-4xl font-extrabold text-white font-['Plus_Jakarta_Sans',sans-serif] break-words">
+                      {plan.price}
+                    </span>
+                    <span className="text-xs text-white/60 font-normal">/{plan.pricePeriod}</span>
+                  </div>
+                  <div className="text-xs font-mono text-amber-300/90 mt-1">
+                    ({plan.subPrice})
+                  </div>
+                </div>
+
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-start space-x-2.5 text-xs text-white/90">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleChoosePlan();
+                }}
+                className={`w-full py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition-colors cursor-pointer ${
+                  plan.isPopular
+                    ? 'bg-amber-400 hover:bg-amber-300 text-[#070B14] shadow-lg font-bold'
+                    : 'bg-white hover:bg-white/90 text-[#070B14]'
+                }`}
+              >
+                <span>{plan.ctaText}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </motion.button>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Interactive Custom Quote Calculator Bar */}
-      <div className="bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl">
+      <div className="bg-white/5 backdrop-blur-2xl border border-gradient-gold rounded-3xl p-6 sm:p-8 shadow-2xl">
         <div className="flex items-center space-x-2 text-amber-300 text-xs font-bold font-mono mb-2 uppercase tracking-wider">
           <Calculator className="w-4 h-4" />
           <span>{t('calcTitle')}</span>
         </div>
 
-        <h3 className="text-lg sm:text-xl font-bold font-['Plus_Jakarta_Sans',sans-serif] text-white mb-6">
+        <h3 className="text-lg sm:text-xl font-bold font-serif-editorial text-white mb-6">
           {t('calcTitle')}
         </h3>
 
@@ -262,7 +278,7 @@ export function PricingPlansSection() {
             <div className="text-[11px] text-white/50">{t('calcSub')}</div>
             <button
               onClick={handleChoosePlan}
-              className="w-full mt-3 py-2 bg-white text-[#0B132B] hover:bg-white/90 font-bold text-xs rounded-xl transition-all cursor-pointer"
+              className="w-full mt-3 py-2 bg-white text-[#070B14] hover:bg-white/90 font-bold text-xs rounded-xl transition-all cursor-pointer"
             >
               {t('lockEstimate')}
             </button>
